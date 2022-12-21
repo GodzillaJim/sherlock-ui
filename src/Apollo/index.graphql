@@ -1,0 +1,63 @@
+type User {
+    firstName: String!
+    lastName: String!
+    email: String!
+    id: ID!
+    password: String
+    roles: [Role]
+}
+
+type UserDetails {
+    firstName: String!
+    lastName: String!
+    email: String!
+    id: ID!
+    roles: [Role]
+}
+
+input SignupParams {
+    firstName: String!
+    lastName: String!
+    email: String!
+    password: String
+}
+
+input LoginParams {
+    email: String!
+    password: String!
+}
+
+type AuthResponse {
+    token: String!
+    firstName: String!
+    lastName: String!
+    roles: [Role!]
+}
+
+enum RoleType {
+    ADMIN
+    EDITOR
+    WRITER
+    CUSTOMER
+}
+
+type Role {
+    name: RoleType
+}
+
+type Query{
+    signUp(payload: SignupParams!): AuthResponse
+    signIn(payload: LoginParams!): AuthResponse
+    me(token: String!): UserDetails
+}
+
+query SignIn($payload: LoginParams!) {
+    signIn(payload: $payload) {
+        token
+        firstName
+        lastName
+        roles {
+            name
+        }
+    }
+}
