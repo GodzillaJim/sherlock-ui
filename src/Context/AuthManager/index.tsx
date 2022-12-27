@@ -1,7 +1,7 @@
 import React from 'react'
-import { AuthResponse } from '../../generated/graphql'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { PUBLIC_PATHS } from '../../MainRouter/Paths'
+import { AuthResponse } from '../../generated'
 
 interface AuthContextType {
   authDetails?: AuthResponse
