@@ -46,6 +46,8 @@ const Notification = () => {
   const iconBackColor = "grey.100";
 
   const [open, setOpen] = React.useState(false);
+  const [anchorElement, setAnchorElement] =
+    React.useState<HTMLButtonElement | null>(null);
   const theme = useTheme();
   const matchesXS = useMediaQuery(theme.breakpoints.down("md"));
   const anchorRef = React.useRef<HTMLButtonElement | null>(null);
@@ -54,6 +56,7 @@ const Notification = () => {
   };
 
   const handleClose = (event: MouseEvent | TouchEvent) => {
+    setAnchorElement(event.target as HTMLButtonElement);
     if (
       anchorRef.current &&
       anchorRef.current?.contains(event.target as Node)
@@ -63,59 +66,65 @@ const Notification = () => {
     setOpen(false);
   };
   return (
-    <Box sx={{ flexShrink: 0, ml: 0.75 }}>
-      <IconButton
-        disableRipple
-        color="secondary"
-        sx={{
-          color: "text.primary",
-          bgcolor: open ? iconBackColorOpen : iconBackColor,
-        }}
-        aria-label="open profile"
-        ref={anchorRef}
-        aria-controls={open ? "profile-grow" : undefined}
-        aria-haspopup="true"
-        onClick={handleToggle}
-      >
-        <Badge badgeContent={4} color="primary">
-          <BellOutlined />
-        </Badge>
-      </IconButton>
-      <Popper
-        placement={matchesXS ? "bottom" : "bottom-end"}
-        open={open}
-        anchorEl={anchorRef.current}
-        role={undefined}
-        transition
-        disablePortal
-        popperOptions={{
-          modifiers: [
-            {
-              name: "offset",
-              options: [matchesXS ? -5 : 0, 9],
-            },
-          ],
-        }}
-      >
-        {({ TransitionProps }) => (
-          <Transitions
-            position="bottom"
-            type="fade"
-            in={open}
-            {...TransitionProps}
-          >
-            <Paper
-              sx={{
-                boxShadow: theme.shadows[3],
-                width: "100%",
-                minWidth: 285,
-                maxWidth: 420,
-                [theme.breakpoints.down("md")]: {
-                  maxWidth: 285,
-                },
-              }}
+    <ClickAwayListener onClickAway={handleClose}>
+      <Box sx={{ flexShrink: 0, ml: 0.75 }}>
+        <IconButton
+          disableRipple
+          color="secondary"
+          id="notification-popper"
+          sx={{
+            color: "text.primary",
+            bgcolor: open ? iconBackColorOpen : iconBackColor,
+          }}
+          aria-label="open profile"
+          ref={anchorRef}
+          aria-controls={open ? "profile-grow" : undefined}
+          aria-haspopup="true"
+          onClick={handleToggle}
+        >
+          <Badge badgeContent={4} color="info">
+            <BellOutlined />
+          </Badge>
+        </IconButton>
+        <Popper
+          placement={matchesXS ? "bottom" : "bottom-end"}
+          open={open}
+          anchorEl={anchorElement}
+          role={"contentinfo"}
+          transition
+          disablePortal
+          popperOptions={{
+            modifiers: [
+              {
+                name: "offset",
+                options: [matchesXS ? -5 : 0, 9],
+              },
+            ],
+          }}
+          sx={{
+            left: "calc(100% - 430px) !important",
+            top: "auto !important",
+            right: "auto !important",
+          }}
+        >
+          {({ TransitionProps }) => (
+            <Transitions
+              position="bottom-left"
+              type="fade"
+              in={open}
+              {...TransitionProps}
             >
-              <ClickAwayListener onClickAway={handleClose}>
+              <Paper
+                sx={{
+                  boxShadow: theme.shadows[3],
+                  width: "100%",
+                  minWidth: 285,
+                  maxWidth: 420,
+                  [theme.breakpoints.down("md")]: {
+                    maxWidth: 285,
+                  },
+                }}
+              >
                 <MainCard
                   title={"Notification"}
                   elevation={0}
@@ -275,12 +284,12 @@ const Notification = () => {
                     </ListItemButton>
                   </List>
                 </MainCard>
-              </ClickAwayListener>
-            </Paper>
-          </Transitions>
-        )}
-      </Popper>
-    </Box>
+              </Paper>
+            </Transitions>
+          )}
+        </Popper>
+      </Box>
+    </ClickAwayListener>
   );
 };
 

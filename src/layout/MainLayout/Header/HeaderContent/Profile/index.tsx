@@ -82,67 +82,79 @@ const Profile = () => {
     setValue(newValue);
   };
   return (
-    <Box sx={{ flexShrink: 0, ml: 0.75 }}>
-      <ButtonBase
-        sx={{
-          p: 0.25,
-          bgcolor: open ? iconBackColorOpen : "transparent",
-          borderRadius: 1,
-          "&:hover": { bgcolor: "secondary.lighter" },
-        }}
-        aria-label="open profile"
-        ref={anchorRef}
-        aria-controls={open ? "profile-grow" : undefined}
-        aria-haspopup="true"
-        onClick={handleToggle}
-      >
-        <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
-          <Avatar
-            alt="profile user"
-            src={avatar1}
-            sx={{ width: 32, height: 32 }}
-          />
-          <Typography variant="subtitle1">John Doe</Typography>
-        </Stack>
-      </ButtonBase>
-      <Popper
-        placement="bottom-end"
-        open={open}
-        anchorEl={anchorRef.current}
-        role={undefined}
-        transition
-        disablePortal
-        popperOptions={{
-          modifiers: [
-            {
-              name: "offset",
-              options: {
-                offset: [0, 9],
-              },
-            },
-          ],
-        }}
-      >
-        {({ TransitionProps }) => (
-          <Transitions
-            position="bottom"
-            type="fade"
-            in={open}
-            {...TransitionProps}
+    <ClickAwayListener onClickAway={handleClose}>
+      <Box sx={{ flexShrink: 0, ml: 0.75 }}>
+        <ButtonBase
+          sx={{
+            p: 0.25,
+            bgcolor: open ? iconBackColorOpen : "transparent",
+            borderRadius: 1,
+            "&:hover": { bgcolor: "secondary.lighter" },
+          }}
+          aria-label="open profile"
+          ref={anchorRef}
+          aria-controls={open ? "profile-grow" : undefined}
+          aria-haspopup="true"
+          onClick={handleToggle}
+        >
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="center"
+            sx={{ p: 0.5, ":hover": { color: theme.palette.primary.dark } }}
           >
-            {open ? (
-              <Paper
-                sx={{
-                  boxShadow: theme.shadows[1],
-                  width: 290,
-                  minWidth: 240,
-                  maxWidth: 290,
-                  [theme.breakpoints.down("md")]: {
-                    maxWidth: 250,
-                  },
-                }}
-              >
-                <ClickAwayListener onClickAway={handleClose}>
+            <Avatar
+              alt="profile user"
+              src={avatar1}
+              sx={{ width: 32, height: 32 }}
+            />
+            <Typography color="inherit" variant="subtitle1">
+              John Doe
+            </Typography>
+          </Stack>
+        </ButtonBase>
+        <Popper
+          placement="bottom-end"
+          open={open}
+          anchorEl={anchorRef.current}
+          role={undefined}
+          transition
+          disablePortal
+          popperOptions={{
+            modifiers: [
+              {
+                name: "offset",
+                options: {
+                  offset: [0, 9],
+                },
+              },
+            ],
+          }}
+          sx={{
+            left: "calc(100% - 430px) !important",
+            top: "auto !important",
+            right: "auto !important",
+          }}
+        >
+          {({ TransitionProps }) => (
+            <Transitions
+              position="bottom"
+              type="fade"
+              in={open}
+              {...TransitionProps}
+            >
+              {open ? (
+                <Paper
+                  sx={{
+                    boxShadow: theme.shadows[1],
+                    width: 290,
+                    minWidth: 240,
+                    maxWidth: 290,
+                    [theme.breakpoints.down("md")]: {
+                      maxWidth: 250,
+                    },
+                  }}
+                >
                   <MainCard elevation={0} border={false} content={false}>
                     <>
                       <CardContent sx={{ px: 2.5, pt: 3 }}>
@@ -243,15 +255,15 @@ const Profile = () => {
                       )}
                     </>
                   </MainCard>
-                </ClickAwayListener>
-              </Paper>
-            ) : (
-              <div />
-            )}
-          </Transitions>
-        )}
-      </Popper>
-    </Box>
+                </Paper>
+              ) : (
+                <div />
+              )}
+            </Transitions>
+          )}
+        </Popper>
+      </Box>
+    </ClickAwayListener>
   );
 };
 

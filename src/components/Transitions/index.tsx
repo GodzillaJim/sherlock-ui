@@ -1,4 +1,4 @@
-import React, { Children } from "react";
+import React from "react";
 import { Box, Fade, Grow } from "@mui/material";
 
 type TransitionsProps = {

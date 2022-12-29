@@ -19,7 +19,7 @@ type MainCardProps = {
   darkTitle?: boolean;
   divider?: boolean;
   elevation?: number;
-  secondary?: any;
+  secondary?: JSX.Element;
   shadow?: CSSProperties["boxShadow"];
   sx?: SxProps;
   title?: string | JSX.Element;
