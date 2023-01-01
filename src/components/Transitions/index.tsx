@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Fade, Grow } from "@mui/material";
+import { Box, Collapse, Fade, Grow } from "@mui/material";
 
 type TransitionsProps = {
   children: JSX.Element;
@@ -10,7 +10,7 @@ type TransitionsProps = {
     | "bottom-right"
     | "bottom"
     | "top-left";
-  type: "grow" | "fade";
+  type: "grow" | "fade" | "collapse";
   in: boolean;
 };
 
@@ -44,6 +44,11 @@ const Transitions = (props: TransitionsProps) => {
         <Fade in={props.in} timeout={{ appear: 0, enter: 300, exit: 150 }}>
           <Box sx={positionSX}>{children}</Box>
         </Fade>
+      )}
+      {type === "collapse" && (
+        <Collapse in={props.in}>
+          <Box sx={positionSX}>{children}</Box>
+        </Collapse>
       )}
     </Box>
   );

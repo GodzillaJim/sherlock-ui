@@ -1,9 +1,11 @@
 import React from "react";
 
-type MainContext = {
+export type MainContext = {
   layout: {
-    drawerStatus: boolean;
-    setDrawerStatus: CallableFunction;
+    drawerIsOpen: boolean;
+    setDrawerIsOpen: CallableFunction;
+    activeItems: number[];
+    setActiveItems: (items: number[]) => void;
   };
 };
 
