@@ -1,39 +1,34 @@
 import React from "react";
 import NavItem, { NavItemProps } from "../NavItem";
-import { MainContext } from "../../../../../Context/MainContext";
 import {
   List,
-  ListItemButton,
-  ListItemIcon,
   Typography,
-  Box,
-  ListItemText,
   Grid,
   Icon,
   useTheme,
-  Button,
   ButtonBase,
 } from "@mui/material";
-import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import { ChevronRight } from "@mui/icons-material";
 import Transitions from "../../../../../components/Transitions";
+import { v4 } from "uuid";
 
 type NavGroupProps = {
   item: NavItemProps["item"];
 };
 const NavGroup = ({ item }: NavGroupProps) => {
-  const mainContext = React.useContext(MainContext);
   const [expand, setExpand] = React.useState<boolean>(false);
   const theme = useTheme();
   const navCollapse = item.children?.map((menuItem) => {
     switch (menuItem.type) {
       case "item":
-        return <NavItem level={1} item={menuItem} />;
+        return <NavItem level={1} item={menuItem} key={`nav-group-${v4()}`} />;
       default:
-        return <Typography>{menuItem.title}</Typography>;
+        return (
+          <Typography key={`nav-group-${v4()}`}>{menuItem.title}</Typography>
+        );
     }
   });
 
-  const drawerOpen = mainContext?.layout.drawerIsOpen;
   return (
     <List
       subheader={
@@ -53,7 +48,7 @@ const NavGroup = ({ item }: NavGroupProps) => {
             },
           }}
         >
-          <Grid item>
+          <Grid item key={`nav-group-${v4()}`}>
             <Grid
               container
               direction="row"
@@ -79,7 +74,7 @@ const NavGroup = ({ item }: NavGroupProps) => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item>
+          <Grid item key={`nav-group-${v4()}`}>
             {!expand ? (
               <ChevronRight sx={{ color: theme.palette.grey[500] }} />
             ) : (
