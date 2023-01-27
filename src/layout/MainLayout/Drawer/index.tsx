@@ -21,7 +21,7 @@ type CustomDrawerProps = {
 };
 
 const CustomDrawer = ({ open, handleDrawerToggle }: CustomDrawerProps) => {
-  const drawerWidth = 250;
+  const drawerWidth = open ? 250 : 0;
   return (
     <Drawer
       sx={{
@@ -33,6 +33,7 @@ const CustomDrawer = ({ open, handleDrawerToggle }: CustomDrawerProps) => {
           top: "60px",
           padding: 2,
         },
+        transition: "width 0.5s ease-out",
       }}
       variant="persistent"
       anchor="left"

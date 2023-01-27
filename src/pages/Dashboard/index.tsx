@@ -3,7 +3,7 @@ import { AuthContext } from "../../Context/AuthManager";
 
 const Dashboard = (): JSX.Element => {
   const auth = React.useContext(AuthContext);
-  return <div>{auth?.authDetails?.firstName}</div>;
+  return <div>Hello world</div>;
 };
 
 export default Dashboard;
