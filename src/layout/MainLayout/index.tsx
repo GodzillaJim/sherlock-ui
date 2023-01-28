@@ -1,9 +1,16 @@
-import { Box, useMediaQuery, useTheme } from "@mui/material";
+import { Box, styled, useMediaQuery, useTheme } from "@mui/material";
 import React, { useContext, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { MainContext } from "../../Context/MainContext";
 import Header from "./Header";
 import CustomDrawer from "./Drawer";
+
+const Content = styled(Box)<{ drawerIsOpen: boolean }>(({ theme }) => ({
+  top: theme.spacing(5),
+  display: "block",
+  position: "relative",
+  transition: "width 0.5s ease-out",
+}));
 
 const MainLayout = () => {
   const theme = useTheme();
@@ -34,12 +41,13 @@ const MainLayout = () => {
     <Box sx={{ display: "flex", width: "100%" }}>
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       <CustomDrawer open={open} handleDrawerToggle={handleDrawerToggle} />
-      <Box
+      <Content
+        drawerIsOpen={Boolean(mainContext?.layout.drawerIsOpen)}
         component="main"
         sx={{ width: "100%", flexGrow: "1", p: { xs: 2, sm: 3 } }}
       >
         <Outlet />
-      </Box>
+      </Content>
     </Box>
   );
 };

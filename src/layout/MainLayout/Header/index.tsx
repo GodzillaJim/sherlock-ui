@@ -1,13 +1,6 @@
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import {
-  AppBar,
-  IconButton,
-  Toolbar,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
 import React from "react";
-import AppBarStyled from "./AppBarStyled";
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import { AppBar, IconButton, Toolbar, useTheme } from "@mui/material";
 import HeaderContent from "./HeaderContent";
 
 type HeaderProps = {
@@ -17,7 +10,6 @@ type HeaderProps = {
 
 const Header = ({ open, handleDrawerToggle }: HeaderProps) => {
   const theme = useTheme();
-  const matchDownMD = useMediaQuery(theme.breakpoints.down("lg"));
 
   const iconBackColor = "grey.100";
   const iconBackColorOpen = "grey.200";
@@ -34,6 +26,8 @@ const Header = ({ open, handleDrawerToggle }: HeaderProps) => {
           color: "text.primary",
           bgColor: open ? iconBackColorOpen : iconBackColor,
           ml: { xs: 0, lg: -2 },
+          minHeight: 40,
+          minWidth: 40,
         }}
       >
         {!open ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -42,31 +36,16 @@ const Header = ({ open, handleDrawerToggle }: HeaderProps) => {
     </Toolbar>
   );
 
-  const appBar = {
-    position: "fixed",
-    color: "inherit",
-    elevation: 0,
-    sx: {
-      borderBottom: `1px solid ${theme.palette.divider}`,
-    },
-  };
-
   return (
     <>
-      {!matchDownMD ? (
-        <AppBarStyled open={open} {...appBar}>
-          {mainHeader}
-        </AppBarStyled>
-      ) : (
-        <AppBar
-          position="fixed"
-          color="inherit"
-          elevation={0}
-          sx={{ borderBottom: `1px solid ${theme.palette.divider}` }}
-        >
-          {mainHeader}
-        </AppBar>
-      )}
+      <AppBar
+        position="fixed"
+        color="primary"
+        elevation={0}
+        sx={{ borderBottom: `1px solid ${theme.palette.divider}` }}
+      >
+        {mainHeader}
+      </AppBar>
     </>
   );
 };

@@ -1,4 +1,5 @@
 import React from "react";
+import { User } from "../../generated";
 
 export type MainContext = {
   layout: {
@@ -7,6 +8,7 @@ export type MainContext = {
     activeItems: number[];
     setActiveItems: (items: number[]) => void;
   };
+  user: User | null;
 };
 
 export const MainContext = React.createContext<MainContext | null>(null);
