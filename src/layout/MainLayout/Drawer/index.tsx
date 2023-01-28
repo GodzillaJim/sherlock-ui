@@ -1,5 +1,5 @@
 import React from "react";
-import { Inbox, Mail } from "@mui/icons-material";
+import { Person3 } from "@mui/icons-material";
 import {
   Divider,
   Drawer,
@@ -8,12 +8,11 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  useTheme,
 } from "@mui/material";
 import DrawerHeader from "./DrawerHeader";
-import NavItem from "./MenuItems/NavItem";
-import { MailFilled } from "@ant-design/icons";
-import getMenuItems from "./MenuItems";
-import NavGroup from "./MenuItems/NavGroup";
+import { useLocation, useNavigate } from "react-router-dom";
+import { HomeFilled } from "@ant-design/icons";
 
 type CustomDrawerProps = {
   open: boolean;
@@ -22,6 +21,17 @@ type CustomDrawerProps = {
 
 const CustomDrawer = ({ open, handleDrawerToggle }: CustomDrawerProps) => {
   const drawerWidth = open ? 250 : 0;
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const handleNavigation = (url: string) => {
+    navigate(url);
+  };
+
+  const isActive = (url: string) => {
+    return location.pathname === url;
+  };
+
   return (
     <Drawer
       sx={{
@@ -43,19 +53,49 @@ const CustomDrawer = ({ open, handleDrawerToggle }: CustomDrawerProps) => {
       <DrawerHeader />
       <Divider />
       <List>
-        {getMenuItems().map((menuItem) => (
-          <NavGroup item={menuItem} key={`navItem-${menuItem.id}`} />
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {["All mail", "Trash", "Spam"].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <Inbox /> : <Mail />}
+        {[
+          {
+            id: 1,
+            title: "Home",
+            type: "item",
+            icon: <HomeFilled />,
+            url: "/app",
+          },
+          {
+            id: 2,
+            title: "My Profile",
+            type: "item",
+            icon: <Person3 />,
+            url: "/app/profile",
+          },
+        ].map((item) => (
+          <ListItem
+            key={item.title}
+            disablePadding
+            onClick={() => {
+              if (item.url) {
+                handleNavigation(item.url);
+              }
+            }}
+          >
+            <ListItemButton
+              sx={{
+                color: isActive(item.url)
+                  ? theme.palette.primary.dark
+                  : "inherit",
+                bgcolor: isActive(item.url) ? theme.palette.divider : "inherit",
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  color: isActive(item.url)
+                    ? theme.palette.primary.dark
+                    : "inherit",
+                }}
+              >
+                {item.icon}
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary={item.title} />
             </ListItemButton>
           </ListItem>
         ))}

@@ -10,6 +10,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export type NavItemProps = {
   item: {
@@ -20,16 +21,21 @@ export type NavItemProps = {
     title: string;
     children?: NavItemProps["item"][];
     type: "group" | "item";
+    url?: string;
   };
   level: number;
 };
 
 const NavItem = ({ item, level }: NavItemProps) => {
+  const navigate = useNavigate();
   const mainContext = React.useContext(MainContext);
   const theme = useTheme();
   const handleItemClick = () => {
     if (mainContext) {
       mainContext.layout.setActiveItems([item.id]);
+    }
+    if (item.url) {
+      navigate(item.url);
     }
   };
 
@@ -45,6 +51,8 @@ const NavItem = ({ item, level }: NavItemProps) => {
   return (
     <ListItemButton
       disabled={item.disabled}
+      LinkComponent="a"
+      href={item.url || "#"}
       onClick={handleItemClick}
       sx={{
         zIndex: 1201,
