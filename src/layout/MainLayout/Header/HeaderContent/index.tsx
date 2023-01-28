@@ -1,5 +1,5 @@
-import { Box, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
+import { useMediaQuery, useTheme } from "@mui/material";
 import Search from "./Search";
 import Notification from "./Notification";
 import Profile from "./Profile";

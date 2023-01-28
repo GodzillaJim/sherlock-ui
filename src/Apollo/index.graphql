@@ -83,5 +83,6 @@ query LoggedInUser {
       offset
       utc
     }
+    profilePic
   }
 }

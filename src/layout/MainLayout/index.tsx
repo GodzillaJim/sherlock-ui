@@ -5,14 +5,12 @@ import { MainContext } from "../../Context/MainContext";
 import Header from "./Header";
 import CustomDrawer from "./Drawer";
 
-const Content = styled(Box)<{ drawerIsOpen: boolean }>(
-  ({ theme, drawerIsOpen }) => ({
-    top: theme.spacing(5),
-    display: "block",
-    position: "relative",
-    transition: "width 0.5s ease-out",
-  })
-);
+const Content = styled(Box)<{ drawerIsOpen: boolean }>(({ theme }) => ({
+  top: theme.spacing(5),
+  display: "block",
+  position: "relative",
+  transition: "width 0.5s ease-out",
+}));
 
 const MainLayout = () => {
   const theme = useTheme();
