@@ -27,7 +27,7 @@ const BasicInformation = () => {
             if (profileImage && typeof profileImage !== "string" && token) {
                 const formData = new FormData();
                 formData.append("file", profileImage);
-                await axios.post("/profile", formData, {
+                await axios.post("http://localhost:4000/profile", formData, {
                     headers: {
                         Authorization: token,
                         "Content-Type": "multipart/form-data",
