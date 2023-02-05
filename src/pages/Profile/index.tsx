@@ -12,6 +12,7 @@ import React from "react";
 import TabPanel from "../../components/Tabs/TabPanel";
 import { LocationOnOutlined, PaymentOutlined } from "@mui/icons-material";
 import BasicInformation from "../../components/profile/BasicInformation";
+import Transitions from "../../components/Transitions";
 
 const getProps = (index: number) => {
   return {
@@ -95,7 +96,9 @@ const Profile = () => {
             </Tabs>
           </Box>
           <TabPanel value={tabIndex} index={0}>
-            <BasicInformation />
+            <Transitions in={tabIndex === 0} position="top" type="collapse">
+              <BasicInformation />
+            </Transitions>
           </TabPanel>
           <TabPanel value={tabIndex} index={1}>
             Geography
