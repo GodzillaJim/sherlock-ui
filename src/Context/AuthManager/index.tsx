@@ -1,65 +1,69 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { LOGIN, PUBLIC_PATHS } from "../../MainRouter/Paths";
-import { AuthResponse } from "../../generated";
-import { AUTH_DETAILS } from "../../config/Constants";
+import {LOGIN, PUBLIC_PATHS} from "../../MainRouter/Paths";
+import {AuthResponse} from "../../generated";
+import {AUTH_DETAILS} from "../../config/Constants";
+import {useRouter} from "next/router";
 
 interface AuthContextType {
-  authDetails?: AuthResponse;
-  setAuthDetails: (details: AuthResponse) => void;
-  logout: () => void;
+    authDetails?: AuthResponse;
+    setAuthDetails: (details: AuthResponse) => void;
+    logout: () => void;
 }
+
 export const AuthContext = React.createContext<AuthContextType | null>(null);
+
 interface AuthManagerProps {
-  children: JSX.Element;
+    children: JSX.Element;
 }
-const AuthManager = ({ children }: AuthManagerProps): JSX.Element => {
-  const [authDetails, setAuthDetails] = React.useState<
-    AuthResponse | undefined
-  >(undefined);
-  const changeAuthDetails = (auth: AuthResponse): void => {
-    setAuthDetails(auth);
-  };
 
-  const authContext = React.useContext(AuthContext);
+const AuthManager = ({children}: AuthManagerProps): JSX.Element => {
+    const [authDetails, setAuthDetails] = React.useState<
+        AuthResponse | undefined
+    >(undefined);
+    const changeAuthDetails = (auth: AuthResponse): void => {
+        setAuthDetails(auth);
+    };
 
-  const navigate = useNavigate();
-  const location = useLocation();
+    const authContext = React.useContext(AuthContext);
 
-  React.useEffect(() => {
-    if (authDetails) {
-      return;
-    }
+    const router = useRouter()
 
-    const localAuthDetailsString = localStorage.getItem(AUTH_DETAILS);
-    if (localAuthDetailsString !== null) {
-      const localAuthDetails = JSON.parse(
-        localAuthDetailsString
-      ) as AuthResponse;
-      authContext?.setAuthDetails(localAuthDetails);
-      return setAuthDetails(localAuthDetails);
-    }
+    React.useEffect(() => {
+        const isPublic = PUBLIC_PATHS.find((path) => path === location.pathname);
+        if (isPublic) return;
 
-    const isPublic = PUBLIC_PATHS.find((path) => path === location.pathname);
-    if (!isPublic) {
-      return navigate(`/?redirect=${location.pathname}`);
-    }
-    return navigate("/");
-  }, []);
+        if (authDetails) {
+            return;
+        }
 
-  const logout = () => {
-    setAuthDetails(undefined);
-    localStorage.clear();
-    navigate(LOGIN);
-  };
+        const localAuthDetailsString = localStorage.getItem(AUTH_DETAILS);
+        if (localAuthDetailsString !== null) {
+            const localAuthDetails = JSON.parse(
+                localAuthDetailsString
+            ) as AuthResponse;
+            authContext?.setAuthDetails(localAuthDetails);
+            return setAuthDetails(localAuthDetails);
+        }
 
-  return (
-    <AuthContext.Provider
-      value={{ authDetails, setAuthDetails: changeAuthDetails, logout }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+        if (!isPublic) {
+            router.push(`/?redirect=${location.pathname}`).then();
+        }
+        router.push("/").then();
+    }, []);
+
+    const logout = () => {
+        setAuthDetails(undefined);
+        localStorage.clear();
+        router.push(LOGIN);
+    };
+
+    return (
+        <AuthContext.Provider
+            value={{authDetails, setAuthDetails: changeAuthDetails, logout}}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 export default AuthManager;
