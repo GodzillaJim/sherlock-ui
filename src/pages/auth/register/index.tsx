@@ -83,7 +83,7 @@ const Register = (): JSX.Element => {
                 confirmPassword: string()
                     .required()
                     .when("password", {
-                        is: (val: string) => (val && val.length > 0 ? true : false),
+                        is: (val: string) => (!!(val && val.length > 0)),
                         then: string().oneOf(
                             [ref("password")],
                             "Both passwords need to be the same!"
@@ -96,11 +96,21 @@ const Register = (): JSX.Element => {
     return (
         <Grid container direction={"row"} columns={12}>
             <Grid xs={0} sm={0} md={6} item>
-                <Content bgcolor={theme.palette.primary.main} height={'100vh'}>
-                    <Typography variant="h2" color={"HighlightText"}>
-                        Welcome!
-                    </Typography>
-                </Content>
+                <Grid container direction={"column"}>
+                    <Content container alignItems={'center'} justifyContent={'center'}
+                             bgcolor={theme.palette.primary.main} height={'100vh'}>
+                        <Grid item>
+                            <Typography variant="h2" color={"HighlightText"}>
+                                Welcome!
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Button variant={'contained'} color={'secondary'}
+                                    onClick={async () => await navigate('/auth/login')}>Sign In</Button>
+                        </Grid>
+                    </Content>
+                </Grid>
+
             </Grid>
             <Grid xs={12} sm={12} md={6} item sx={{pt: 4}}>
                 <Grid

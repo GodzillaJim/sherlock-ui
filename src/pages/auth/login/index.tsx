@@ -3,7 +3,6 @@ import {Alert, Button, Grid, TextField, Typography, useTheme,} from "@mui/materi
 import {Helmet} from "react-helmet";
 import {useFormik} from "formik";
 import {object, string} from "yup";
-import styled from "styled-components";
 
 import {AuthContext} from "../../../Context/AuthManager";
 import {AUTH_DETAILS} from "../../../config/Constants";
@@ -11,16 +10,7 @@ import LockOpenIcon from "@mui/icons-material/LockOpen";
 import CustomLoader from "../../../components/CustomLoader";
 import {AuthResponse, LoginPayload, useLoginMutation,} from "../../../generated";
 import {useRouter} from "next/router";
-import CustomButton from "../../components/Login/CustomButton";
 
-const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  justify-content: center;
-  text-align: center;
-  margin-top: 40%;
-`;
 const Login = (): JSX.Element => {
     const [login, {loading}] = useLoginMutation();
     const [err, setError] = React.useState<string>("");
@@ -102,14 +92,15 @@ const Login = (): JSX.Element => {
                 xl={6}
             >
                 <Grid container justifyContent={"center"} alignItems={"center"} height={"100vh"}>
-                    <Grid item>
+                    <Grid item textAlign={'center'}>
                         <div>
                             <Typography textAlign={"center"} variant={"h2"} color={"light"}>
                                 Welcome Back
                             </Typography>
                         </div>
                         <div>
-                            <CustomButton>Create Account</CustomButton>
+                            <Button variant={'contained'} color={'secondary'}
+                                    onClick={async () => await router.push('/auth/register')}>Create Account</Button>
                         </div>
                     </Grid>
                 </Grid>
