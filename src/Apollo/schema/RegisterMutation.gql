@@ -1,0 +1,12 @@
+mutation Register($payload: RegisterPayload) {
+    register(payload: $payload) {
+        email
+        firstName
+        jwtToken {
+            expiry
+            id
+            jwtToken
+            type
+        }
+    }
+}
