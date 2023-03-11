@@ -20,7 +20,7 @@ import MainCard from "../../../../../components/MainCard";
 import {LogoutOutlined, SettingOutlined, UserOutlined,} from "@ant-design/icons";
 import Transitions from "../../../../../components/Transitions";
 import SettingsTab from "./SettingsTab";
-import {AuthContext} from "../../../../../Context/AuthManager";
+import {useAuth} from "../../../../../Context/AuthManager";
 import {RoleType} from "../../../../../generated";
 import {MainContext} from "../../../../../Context/MainContext";
 import {imageHost} from "../../../../../config/Constants";
@@ -54,11 +54,11 @@ const allyProps = (index: number) => {
 
 const Profile = () => {
     const isClientSide = typeof window !== undefined
+    const {signOut} = useAuth()
     const theme = useTheme();
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(0);
 
-    const authContext = useContext(AuthContext);
     const main = useContext(MainContext);
 
     const handleToggle = () => {
@@ -95,7 +95,7 @@ const Profile = () => {
         setOpen(false);
     };
     const handleLogout = () => {
-        authContext?.logout();
+        signOut && signOut()
     };
     const iconBackColorOpen = `grey.300`;
 
@@ -106,7 +106,7 @@ const Profile = () => {
         setValue(newValue);
     };
 
-    const profilePic = `${imageHost}${user?.profilePic}`
+    const profilePic = `${imageHost}${user?.picture}`
     const avatar1 = '/images/users/avatar1.jpg'
 
     return (
