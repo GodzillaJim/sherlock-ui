@@ -1,0 +1,42 @@
+query CurrentUser {
+    me {
+        email
+        id
+        firstName
+        lastName
+        password
+        username
+        currency
+        language
+        orders
+        uid
+        picture
+        iss
+        aud
+        auth_time
+        user_id
+        sub
+        iat
+        exp
+        email_verified
+        roles {
+            name
+        }
+        timezone {
+            value
+            abbr
+            offset
+            isdst
+            text
+            utc
+        }
+        responses
+        firebase {
+            identities {
+                googlecom
+                email
+            }
+            sign_in_provider
+        }
+    }
+}

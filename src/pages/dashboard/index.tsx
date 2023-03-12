@@ -1,9 +1,14 @@
 import React from "react";
-import { AuthContext } from "../../Context/AuthManager";
+import { useAuth } from "../../Context/AuthManager";
+import MainLayout from "../../layout/MainLayout";
 
 const Dashboard = (): JSX.Element => {
-  const auth = React.useContext(AuthContext);
-  return <div>Hello world, {auth?.authDetails?.firstName}</div>;
+  const { user } = useAuth();
+  return <div>Hello world, {user?.email}</div>;
+};
+
+Dashboard.getLayout = function (page: React.ReactNode) {
+  return <MainLayout>{page}</MainLayout>;
 };
 
 export default Dashboard;

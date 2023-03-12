@@ -10,6 +10,8 @@
     "@cospired/i18n-iso-languages": "^4.0.1",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@firebase/app": "^0.9.4",
+    "@firebase/auth": "^0.21.4",
     "@graphql-codegen/introspection": "^2.2.3",
     "@graphql-codegen/typescript": "^2.8.5",
     "@graphql-codegen/typescript-operations": "^2.5.10",
@@ -21,6 +23,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
+    "@types/js-cookie": "^3.0.3",
     "@types/nprogress": "^0.2.0",
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.9",
@@ -30,9 +33,10 @@
     "formik": "^2.2.9",
     "graphql": "^16.6.0",
     "helmet": "^6.0.1",
+    "js-cookie": "^3.0.1",
     "next": "^13.1.6",
     "nprogress": "^0.2.0",
-    "prettier": "^2.8.1",
+    "prettier": "^2.8.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
@@ -48,7 +52,8 @@
     "generate": "graphql-codegen --config codegen.ts",
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "npx eslint . --fix"
   },
   "eslintConfig": {
     "extends": [

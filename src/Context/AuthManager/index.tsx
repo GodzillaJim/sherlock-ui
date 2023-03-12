@@ -1,69 +1,110 @@
-import React from "react";
-import {LOGIN, PUBLIC_PATHS} from "../../MainRouter/Paths";
-import {AuthResponse} from "../../generated";
-import {AUTH_DETAILS} from "../../config/Constants";
-import {useRouter} from "next/router";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  onIdTokenChanged,
+  signInWithPopup,
+  User,
+} from "@firebase/auth";
+import { User as LocalUser } from "../../generated/index";
+import {
+  clearAuthToken,
+  firebaseClient,
+  setAuthToken,
+} from "../../helpers/Auth";
+import { client } from "../../Apollo";
 
-interface AuthContextType {
-    authDetails?: AuthResponse;
-    setAuthDetails: (details: AuthResponse) => void;
-    logout: () => void;
-}
-
-export const AuthContext = React.createContext<AuthContextType | null>(null);
-
-interface AuthManagerProps {
-    children: JSX.Element;
-}
-
-const AuthManager = ({children}: AuthManagerProps): JSX.Element => {
-    const [authDetails, setAuthDetails] = React.useState<
-        AuthResponse | undefined
-    >(undefined);
-    const changeAuthDetails = (auth: AuthResponse): void => {
-        setAuthDetails(auth);
-    };
-
-    const authContext = React.useContext(AuthContext);
-
-    const router = useRouter()
-
-    React.useEffect(() => {
-        const isPublic = PUBLIC_PATHS.find((path) => path === location.pathname);
-        if (isPublic) return;
-
-        if (authDetails) {
-            return;
-        }
-
-        const localAuthDetailsString = localStorage.getItem(AUTH_DETAILS);
-        if (localAuthDetailsString !== null) {
-            const localAuthDetails = JSON.parse(
-                localAuthDetailsString
-            ) as AuthResponse;
-            authContext?.setAuthDetails(localAuthDetails);
-            return setAuthDetails(localAuthDetails);
-        }
-
-        if (!isPublic) {
-            router.push(`/?redirect=${location.pathname}`).then();
-        }
-        router.push("/").then();
-    }, []);
-
-    const logout = () => {
-        setAuthDetails(undefined);
-        localStorage.clear();
-        router.push(LOGIN);
-    };
-
-    return (
-        <AuthContext.Provider
-            value={{authDetails, setAuthDetails: changeAuthDetails, logout}}
-        >
-            {children}
-        </AuthContext.Provider>
-    );
+type AuthContextType = {
+  user?: User;
+  localUser?: LocalUser;
+  loading?: boolean;
+  signInWithGoogle?: () => void;
+  signOut?: () => void;
 };
 
+export const AuthContext = createContext<AuthContextType>({});
+
+type AuthManagerType = {
+  children: React.ReactNode | JSX.Element;
+};
+
+const AuthManager = ({ children }: AuthManagerType) => {
+  const [user, setUser] = useState<AuthContextType["user"] | undefined>(
+    undefined
+  );
+  const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
+  const { next } = router.query;
+
+  const handleRouteChange = async (url: string) => {
+    setLoading(true);
+    await router.push(url);
+    setLoading(false);
+  };
+
+  const handleUser = async (newUser: User | null) => {
+    if (newUser) {
+      const authToken = await newUser.getIdToken();
+      setAuthToken(authToken);
+      setUser(newUser);
+      setLoading(false);
+      return true;
+    }
+    setUser(undefined);
+    clearAuthToken();
+    setLoading(false);
+    return false;
+  };
+
+  useEffect(() => {
+    if (user && next && next !== "/") {
+      const redirect = Array.isArray(next) ? next[0] : next;
+      handleRouteChange(redirect).then();
+      return;
+    }
+    if (!user) {
+      handleRouteChange("/auth/login").then();
+      return;
+    }
+    handleRouteChange("/dashboard").then();
+  }, [user]);
+
+  useEffect(() => {
+    const auth = getAuth(firebaseClient);
+    const unsubscribe = onIdTokenChanged(auth, (user) => handleUser(user));
+    return () => unsubscribe();
+  }, []);
+
+  const signInWithGoogle = () => {
+    setLoading(true);
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+
+    signInWithPopup(auth, provider)
+      .then((result) => handleUser(result.user))
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const signOut = async () => {
+    setLoading(true);
+    await handleUser(null);
+    await handleRouteChange("/auth/login?/next=/");
+    clearAuthToken();
+    sessionStorage.clear();
+    await client.clearStore();
+    await client.resetStore();
+    setLoading(false);
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => useContext(AuthContext);
 export default AuthManager;

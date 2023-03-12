@@ -1,53 +1,35 @@
-import React, {useContext, useMemo} from "react";
+import React from "react";
 import {ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache, NextLink, Operation,} from "@apollo/client";
-import {AuthContext} from "../Context/AuthManager";
-import {AUTH_DETAILS} from "../config/Constants";
+import Cookies from "js-cookie";
 
 interface ApolloClientProps {
     children: JSX.Element;
 }
 
-const ApolloClientProvider = ({children}: ApolloClientProps) => {
-    const authContext = useContext(AuthContext);
-
-    if (typeof window === undefined) {
-        return <div/>
-    }
-
-    const token = useMemo(() => {
-        if (typeof window === "undefined") {
-            return ""
-        }
-
-        if (authContext?.authDetails?.jwtToken?.jwtToken) {
-            return authContext?.authDetails?.jwtToken?.jwtToken;
-        }
-        const authDetails = window.localStorage.getItem(AUTH_DETAILS);
-        if (authDetails) {
-            return JSON.parse(authDetails)["jwtToken"]["jwtToken"];
-        }
-        return "";
-
-    }, []);
-
-    const uri = "http://localhost:4000/graphql";
-    const httpLink = new HttpLink({uri});
-    const authLink = new ApolloLink((operation: Operation, foward: NextLink) => {
-        operation.setContext({
-            headers: {
-                Authorization: token,
-            },
-        });
-        return foward(operation);
-    });
-
-    const client = new ApolloClient({
-        cache: new InMemoryCache(),
-        link: authLink.concat(httpLink),
+const token = Cookies.get("authToken");
+const uri = "http://localhost:4000/graphql";
+const httpLink = new HttpLink({uri});
+const authLink = new ApolloLink((operation: Operation, forward: NextLink) => {
+    operation.setContext({
         headers: {
-            Authorization: authContext?.authDetails?.jwtToken?.jwtToken || "",
+            Authorization: `Bearer ${token}` || "",
         },
     });
+    return forward(operation);
+});
+
+export const client = new ApolloClient({
+    cache: new InMemoryCache(),
+    link: authLink.concat(httpLink),
+    headers: {
+        Authorization: `Bearer ${token}` || "",
+    },
+});
+const ApolloClientProvider = ({children}: ApolloClientProps) => {
+
+    if (typeof window === undefined) {
+        return <div/>;
+    }
 
     return <ApolloProvider client={client}>{children}</ApolloProvider>;
 };

@@ -1,88 +1,86 @@
 type User {
-  firstName: String!
-  lastName: String!
-  email: String!
-  id: ID!
-  password: String
-  roles: [Role]
+    id: ID
+    email: String!
+    firstName: String
+    lastName: String
+    password: String
+    roles: [Role]
+    username: String
+    currency: String
+    timezone: Timezone
+    language: String
+    orders: [String]
+    responses: [String]
+    uid: String
+    picture: String
+    iss: String
+    aud: String
+    auth_time: Float
+    user_id: String
+    sub: String
+    iat: Float
+    exp: Float
+    email_verified: Boolean
+    firebase: Firebase
+}
+
+type Firebase {
+    identities: Identity,
+    sign_in_provider: String
+}
+
+type Identity {
+    googlecom: [String]
+    email: [String]
+}
+
+type Timezone {
+    value: String
+    abbr: String
+    offset: Int
+    isdst: Boolean
+    text: String
+    utc: [String]
 }
 
 type UserDetails {
-  firstName: String!
-  lastName: String!
-  email: String!
-  id: ID!
-  roles: [Role]
+    firstName: String!
+    lastName: String!
+    email: String!
+    id: ID!
+    roles: [Role]
 }
 
 input SignupParams {
-  firstName: String!
-  lastName: String!
-  email: String!
-  password: String
+    firstName: String!
+    lastName: String!
+    email: String!
+    password: String
 }
 
 input LoginParams {
-  email: String!
-  password: String!
+    email: String!
+    password: String!
 }
 
 type AuthResponse {
-  token: String!
-  firstName: String!
-  lastName: String!
-  roles: [Role!]
+    token: String!
+    firstName: String!
+    lastName: String!
+    roles: [Role!]
 }
 
 enum RoleType {
-  ADMIN
-  EDITOR
-  WRITER
-  CUSTOMER
+    ADMIN
+    EDITOR
+    WRITER
+    CUSTOMER
 }
 
 type Role {
-  name: RoleType
+    name: RoleType
 }
 
 type Query {
-  signUp(payload: SignupParams!): AuthResponse
-  signIn(payload: LoginParams!): AuthResponse
-  me(token: String!): UserDetails
-}
-
-query SignIn($payload: LoginParams!) {
-  signIn(payload: $payload) {
-    token
-    firstName
-    lastName
-    roles {
-      name
-    }
-  }
-}
-
-query LoggedInUser {
-  me {
-    email
-    firstName
-    lastName
-    username
-    id
-    currency
-    language
-    roles {
-      name
-      __typename
-    }
-    timezone {
-      value
-      text
-      abbr
-      isdst
-      offset
-      utc
-    }
-    profilePic
-  }
+    me: User
 }
