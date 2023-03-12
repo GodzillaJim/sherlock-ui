@@ -1,63 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
-import {
-  Avatar,
-  Button,
-  Card,
-  CardContent,
-  CardMedia,
-  Grid,
-  TextField,
-} from "@mui/material";
+import React from "react";
+import { Avatar, Box, Card, CardContent, Grid } from "@mui/material";
 import AdditionalInformation from "./AdditionalInformation";
-import axios from "axios";
-import { AuthContext, useAuth } from "../../../Context/AuthManager";
-import { imageHost } from "../../../config/Constants";
+import { useAuth } from "../../../Context/AuthManager";
 import Image from "next/image";
 
 const BasicInformation = () => {
-  const { user: data } = useAuth();
-  const [profileImage, setProfileImage] = useState<File | string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
+  const image = user?.photoURL;
 
-  const authContext = useContext(AuthContext);
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length) {
-      setProfileImage(e.target.files[0]);
-    }
-  };
-
-  const saveImage = async () => {
-    setLoading(true);
-    try {
-      const token = authContext?.user?.uid;
-      if (profileImage && typeof profileImage !== "string" && token) {
-        const formData = new FormData();
-        formData.append("file", profileImage);
-        await axios.post("http://localhost:4000/profile", formData, {
-          headers: {
-            Authorization: token,
-            "Content-Type": "multipart/form-data",
-          },
-        });
-      }
-      alert("Image saved");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
-      alert("Error: " + e.message);
-      console.log(e);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    if (data) {
-      const image = null;
-      if (image) {
-        setProfileImage(image);
-      }
-    }
-  }, [data]);
   return (
     <Grid container direction={"row"} width={"100%"} gap={3}>
       <Grid xs={12} sm={12} md={3} item>
@@ -71,45 +21,21 @@ const BasicInformation = () => {
               gap={3}
             >
               <Grid item>
-                {!profileImage && (
+                {!image && (
                   <Avatar
-                    sx={{ width: "200px", height: "200px", margin: "auto" }}
+                    sx={{ width: "120px", height: "120px", margin: "auto" }}
                   />
                 )}
-                {profileImage && (
-                  <CardMedia sx={{ borderRadius: 8 }}>
+                {image && (
+                  <Box sx={{ width: 120, mx: "auto", borderRadius: 8 }}>
                     <Image
-                      width={200}
-                      height={200}
-                      src={
-                        typeof profileImage === "string"
-                          ? `${imageHost}${profileImage}`
-                          : URL.createObjectURL(profileImage)
-                      }
+                      width={120}
+                      height={120}
+                      src={image}
                       alt={"profile pic"}
                     />
-                  </CardMedia>
+                  </Box>
                 )}
-              </Grid>
-              <Grid item>
-                <TextField
-                  onChange={handleFileUpload}
-                  type={"file"}
-                  name="profile-image"
-                  size="small"
-                />
-              </Grid>
-              <Grid item>
-                <Button
-                  disabled={!profileImage || loading}
-                  fullWidth
-                  variant="contained"
-                  size="small"
-                  onClick={saveImage}
-                  color="secondary"
-                >
-                  Save image
-                </Button>
               </Grid>
             </Grid>
           </CardContent>
