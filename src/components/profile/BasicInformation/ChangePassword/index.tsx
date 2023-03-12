@@ -11,7 +11,7 @@ import React from "react";
 import { object, string } from "yup";
 import { useUpdatePasswordMutation } from "../../../../generated";
 
-const ChangePasword = () => {
+const ChangePassword = () => {
   const [updatePassword, { loading }] = useUpdatePasswordMutation({
     onCompleted: (data) => {
       alert(data.updatePassword?.message);
@@ -133,4 +133,4 @@ const ChangePasword = () => {
   );
 };
 
-export default ChangePasword;
+export default ChangePassword;

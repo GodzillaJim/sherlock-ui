@@ -1,5 +1,5 @@
-import React, {useEffect} from "react";
-import {useLoggedInUserQuery, User} from "../../generated";
+import React, {useContext, useEffect} from "react";
+import { User, useCurrentUserQuery } from "../../generated"
 
 export type MainContext = {
     layout: {
@@ -18,7 +18,7 @@ export const Context = ({children}: ContextProps) => {
     const [activeItems, setActiveItems] = React.useState<number[]>([]);
     const [user, setUser] = React.useState<User | null>(null);
 
-    const {data, loading, error} = useLoggedInUserQuery();
+    const {data, loading, error} = useCurrentUserQuery();
 
     useEffect(() => {
         if (data && data.me) {
@@ -39,3 +39,4 @@ export const Context = ({children}: ContextProps) => {
     }}>{children}</MainContext.Provider>
 }
 export const MainContext = React.createContext<MainContext | null>(null);
+export const useMainContext = () => useContext(MainContext)

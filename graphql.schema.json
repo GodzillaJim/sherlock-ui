@@ -1922,8 +1922,8 @@
               "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "OBJECT",
-                "name": "Response",
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },

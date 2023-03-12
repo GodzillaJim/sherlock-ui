@@ -4,7 +4,7 @@
  */
 const config = {
     images: {
-        domains: ['localhost']
+        domains: ['localhost', 'lh3.googleusercontent.com']
     },
     rewrites: async () => {
         return [
@@ -17,4 +17,5 @@ const config = {
     reactStrictMode: true
 }
 
+// eslint-disable-next-line no-undef
 module.exports = config

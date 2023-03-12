@@ -1,10 +1,46 @@
 type User {
-    firstName: String!
-    lastName: String!
+    id: ID
     email: String!
-    id: ID!
+    firstName: String
+    lastName: String
     password: String
     roles: [Role]
+    username: String
+    currency: String
+    timezone: Timezone
+    language: String
+    orders: [String]
+    responses: [String]
+    uid: String
+    picture: String
+    iss: String
+    aud: String
+    auth_time: Float
+    user_id: String
+    sub: String
+    iat: Float
+    exp: Float
+    email_verified: Boolean
+    firebase: Firebase
+}
+
+type Firebase {
+    identities: Identity,
+    sign_in_provider: String
+}
+
+type Identity {
+    googlecom: [String]
+    email: [String]
+}
+
+type Timezone {
+    value: String
+    abbr: String
+    offset: Int
+    isdst: Boolean
+    text: String
+    utc: [String]
 }
 
 type UserDetails {
@@ -46,19 +82,5 @@ type Role {
 }
 
 type Query {
-    signUp(payload: SignupParams!): AuthResponse
-    signIn(payload: LoginParams!): AuthResponse
-    me(token: String!): UserDetails
+    me: User
 }
-
-query SignIn($payload: LoginParams!) {
-    signIn(payload: $payload) {
-        token
-        firstName
-        lastName
-        roles {
-            name
-        }
-    }
-}
-

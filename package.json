@@ -36,7 +36,7 @@
     "js-cookie": "^3.0.1",
     "next": "^13.1.6",
     "nprogress": "^0.2.0",
-    "prettier": "^2.8.1",
+    "prettier": "^2.8.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
@@ -52,7 +52,8 @@
     "generate": "graphql-codegen --config codegen.ts",
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "npx eslint . --fix"
   },
   "eslintConfig": {
     "extends": [

@@ -12,8 +12,9 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import {
-  LoggedInUserDocument,
-  User,
+  CurrentUserDocument,
+  useCurrentUserQuery,
+  UserUpdatePayload,
   useUpdateUserMutation,
 } from "../../../generated";
 import CustomLoader from "../../CustomLoader";
@@ -21,19 +22,17 @@ import languages from "@cospired/i18n-iso-languages";
 import en from "@cospired/i18n-iso-languages/langs/en.json";
 import currencyCodes from "currency-codes";
 import timezones from "timezones.json";
-import ChangePasword from "./ChangePassword";
 import { object, string } from "yup";
-import { useAuth } from "../../../Context/AuthManager";
 
 languages.registerLocale(en);
 
 const AdditionalInformation = () => {
-  const { user: data, loading } = useAuth();
+  const { data, loading } = useCurrentUserQuery();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [updateUser, { loading: updating }] = useUpdateUserMutation({
-    refetchQueries: [LoggedInUserDocument],
+    refetchQueries: [CurrentUserDocument],
     onCompleted: () => alert("Success"),
     onError: (e) => {
       console.log("Error: ", e);
@@ -42,10 +41,35 @@ const AdditionalInformation = () => {
   });
 
   const user = useMemo(() => {
+    if (data && data.me) {
+      const {
+        email,
+        firstName,
+        lastName,
+        username,
+        language,
+        timezone,
+        currency,
+        id,
+      } = data.me;
+
+      const userData: UserUpdatePayload = {
+        email,
+        firstName: firstName || "",
+        lastName: lastName || "",
+        id: id || "-1",
+        username,
+        language,
+        timezone,
+        currency,
+      };
+
+      return userData;
+    }
     return { password: "", email: "", firstName: "", id: "", lastName: "" };
   }, [data]);
 
-  const formik = useFormik<User>({
+  const formik = useFormik<UserUpdatePayload>({
     initialValues: user,
     validationSchema: object().shape({
       email: string().required("This field is required"),
@@ -53,7 +77,13 @@ const AdditionalInformation = () => {
       lastName: string().required("This field is required"),
       username: string().required("This field is required"),
     }),
-    onSubmit: async (values: User) => {},
+    onSubmit: async (payload) => {
+      await updateUser({
+        variables: {
+          payload,
+        },
+      });
+    },
   });
 
   useEffect(() => {
@@ -126,6 +156,7 @@ const AdditionalInformation = () => {
                                         ? errors.firstName
                                         : undefined
                                     }
+                                    disabled={updating}
                                   />
                                 </div>
                                 <div>
@@ -145,6 +176,7 @@ const AdditionalInformation = () => {
                                         ? errors.lastName
                                         : undefined
                                     }
+                                    disabled={updating}
                                   />
                                 </div>
                               </Grid>
@@ -180,6 +212,7 @@ const AdditionalInformation = () => {
                                       ? errors.username
                                       : undefined
                                   }
+                                  disabled={updating}
                                 />
                               </div>
                             </Grid>
@@ -198,9 +231,6 @@ const AdditionalInformation = () => {
                           </Grid>
                         </CardContent>
                       </Card>
-                    </Grid>
-                    <Grid item>
-                      <ChangePasword />
                     </Grid>
                   </Grid>
                 </Grid>
