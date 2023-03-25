@@ -64,10 +64,13 @@ const AuthManager = ({ children }: AuthManagerType) => {
       return;
     }
     if (!user) {
-      handleRouteChange("/auth/login").then();
+      if (router.pathname !== "/auth/login")
+        handleRouteChange("/auth/login?next=" + router.pathname).then();
+      handleRouteChange("/auth/login");
       return;
     }
-    handleRouteChange("/dashboard").then();
+
+    if (user) handleRouteChange("/app").then();
   }, [user]);
 
   useEffect(() => {

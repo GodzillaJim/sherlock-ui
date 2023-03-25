@@ -14,7 +14,7 @@ const config = {
             }
         ]
     },
-    reactStrictMode: true
+    reactStrictMode: false
 }
 
 // eslint-disable-next-line no-undef
