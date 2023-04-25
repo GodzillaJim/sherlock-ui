@@ -1,5 +1,4 @@
-/* eslint-disable */
-// noinspection GraphQLUnresolvedReference
+// noinspection JSUnusedGlobalSymbols,GraphQLUnresolvedReference
 
 import * as Apollo from '@apollo/client';
 import {gql} from '@apollo/client';
@@ -18,6 +17,17 @@ export type Scalars = {
     Int: number;
     Float: number;
     Date: any;
+};
+
+export type Attachment = {
+    __typename?: 'Attachment';
+    key?: Maybe<Scalars['String']>;
+    location?: Maybe<Scalars['String']>;
+};
+
+export type AttachmentInput = {
+    key: Scalars['String'];
+    location: Scalars['String'];
 };
 
 export type AuthResponse = {
@@ -62,6 +72,7 @@ export type LoginPayload = {
 export type Mutation = {
     __typename?: 'Mutation';
     createOrder?: Maybe<Response>;
+    deleteAttachment?: Maybe<Response>;
     login?: Maybe<AuthResponse>;
     register?: Maybe<AuthResponse>;
     updateHealth?: Maybe<Scalars['String']>;
@@ -73,6 +84,12 @@ export type Mutation = {
 
 export type MutationCreateOrderArgs = {
     orderInput?: InputMaybe<OrderInput>;
+};
+
+
+export type MutationDeleteAttachmentArgs = {
+    attachmentKey?: InputMaybe<Scalars['String']>;
+    orderId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -103,7 +120,7 @@ export type MutationUpdateUserArgs = {
 
 export type Order = {
     __typename?: 'Order';
-    attachments?: Maybe<Array<Maybe<Scalars['String']>>>;
+    attachments: Array<Maybe<Attachment>>;
     createdAt?: Maybe<Scalars['Date']>;
     deadline: Scalars['Date'];
     description?: Maybe<Scalars['String']>;
@@ -116,7 +133,7 @@ export type Order = {
 };
 
 export type OrderInput = {
-    attachments?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+    attachments?: InputMaybe<Array<InputMaybe<AttachmentInput>>>;
     deadline: Scalars['Date'];
     description?: InputMaybe<Scalars['String']>;
     numberOfPages: Scalars['Float'];
