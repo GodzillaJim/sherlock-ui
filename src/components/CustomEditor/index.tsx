@@ -17,9 +17,10 @@ type CustomEditorProps = {
     value: EditorState | undefined;
     orderId?: string
     readView: boolean
+    setValue?: (description: string) => void
 };
 
-const CustomEditor = ({onChange, value, orderId, readView}: CustomEditorProps) => {
+const CustomEditor = ({onChange, value, orderId, readView,}: CustomEditorProps) => {
     const handleEditorChange = (newEditorSate: EditorState) => {
         onChange(newEditorSate);
     };

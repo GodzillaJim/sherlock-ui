@@ -39,6 +39,7 @@ const AuthManager = ({children}: AuthManagerType) => {
             setAuthToken(authToken);
             setUser(newUser);
             setLoading(false);
+            handleRouteChange(next as string || '/app').then()
             return true;
         }
         setUser(undefined);
@@ -59,8 +60,6 @@ const AuthManager = ({children}: AuthManagerType) => {
             handleRouteChange("/auth/login").then();
             return;
         }
-        //
-        if (user) handleRouteChange("/app").then();
     }, [user]);
 
     useEffect(() => {

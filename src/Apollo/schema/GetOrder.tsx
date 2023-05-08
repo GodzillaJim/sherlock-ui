@@ -8,8 +8,10 @@ export default gql`
             title
             description
             attachments {
-                key
+                name
                 location
+                key
+                mimeType
             }
             writingStyle
             type

@@ -53,7 +53,7 @@ const OrderDetails = (props: { order: Order }) => {
                                 />
                             </Paper>
                         </Grid>
-                        {order.attachments && order.attachments.length && <Grid item>
+                        {order.attachments && order.attachments.length ? <Grid item>
                             <Paper sx={{p: 3}}>
                                 {order.attachments?.map((value, index) => {
                                     const attachment = value as Attachment;
@@ -66,7 +66,7 @@ const OrderDetails = (props: { order: Order }) => {
                                     );
                                 })}
                             </Paper>
-                        </Grid>}
+                        </Grid> : ''}
                         <Grid item>
                             <Grid container spacing={3} justifyContent={"end"}>
                                 <Grid item>
@@ -133,6 +133,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         });
 
         return {props: {order: data.getOrder}};
+        // eslint-disable-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
         return {props: {errorCode: 500, error: JSON.stringify(e)}};
     }

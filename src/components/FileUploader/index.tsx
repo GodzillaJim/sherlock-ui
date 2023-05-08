@@ -35,7 +35,7 @@ type FileUploaderProps = {
 }
 const FileUploader = ({onChange}: FileUploaderProps) => {
     const [files, setFiles] = useState<Map<string, File>>(new Map());
-    const [showModal, setShowModal] = useState(true);
+    const [showModal, setShowModal] = useState(false);
     const classes = useStyles();
 
     const removeFile = (file: File) => {

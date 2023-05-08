@@ -25,11 +25,15 @@ export type Attachment = {
     __typename?: 'Attachment';
     key?: Maybe<Scalars['String']>;
     location?: Maybe<Scalars['String']>;
+    mimeType?: Maybe<Scalars['String']>;
+    name?: Maybe<Scalars['String']>;
 };
 
 export type AttachmentInput = {
     key: Scalars['String'];
     location: Scalars['String'];
+    mimeType: Scalars['String'];
+    name: Scalars['String'];
 };
 
 export type AuthResponse = {
@@ -150,7 +154,7 @@ export type Order = {
     attachments: Array<Maybe<Attachment>>;
     createdAt?: Maybe<Scalars['Date']>;
     deadline: Scalars['Date'];
-    description?: Maybe<Scalars['JSON']>;
+    description?: Maybe<Scalars['String']>;
     numberOfPages: Scalars['Float'];
     orderId: Scalars['String'];
     published?: Maybe<Scalars['Boolean']>;
@@ -162,9 +166,9 @@ export type Order = {
 };
 
 export type OrderInput = {
-    attachments?: InputMaybe<Array<InputMaybe<AttachmentInput>>>;
+    attachments: Array<InputMaybe<AttachmentInput>>;
     deadline: Scalars['Date'];
-    description?: InputMaybe<Scalars['JSON']>;
+    description?: InputMaybe<Scalars['String']>;
     numberOfPages: Scalars['Float'];
     title: Scalars['String'];
     type: Type;
@@ -361,14 +365,14 @@ export type GetMyOrdersQueryVariables = Exact<{
 }>;
 
 
-export type GetMyOrdersQuery = { __typename?: 'Query', getMyOrders?: { __typename?: 'OrderPage', totalDocs?: number | null, limit?: number | null, hasPrevPage?: boolean | null, hasNextPage?: boolean | null, page?: number | null, totalPages?: number | null, offset?: number | null, prevPage?: number | null, nextPage?: number | null, pagingCounter?: number | null, docs?: Array<{ __typename?: 'Order', orderId: string, title: string, description?: any | null, writingStyle: WritingStyle, type: Type, numberOfPages: number, wordsPerPage?: number | null, deadline: any, createdAt?: any | null, published?: boolean | null, attachments: Array<{ __typename?: 'Attachment', key?: string | null, location?: string | null } | null>, responses?: Array<{ __typename: 'OrderResponse', answer?: string | null, attachments?: Array<string | null> | null, comments?: string | null, date?: any | null, type?: ResponseType | null } | null> | null } | null> | null } | null };
+export type GetMyOrdersQuery = { __typename?: 'Query', getMyOrders?: { __typename?: 'OrderPage', totalDocs?: number | null, limit?: number | null, hasPrevPage?: boolean | null, hasNextPage?: boolean | null, page?: number | null, totalPages?: number | null, offset?: number | null, prevPage?: number | null, nextPage?: number | null, pagingCounter?: number | null, docs?: Array<{ __typename?: 'Order', orderId: string, title: string, description?: string | null, writingStyle: WritingStyle, type: Type, numberOfPages: number, wordsPerPage?: number | null, deadline: any, createdAt?: any | null, published?: boolean | null, attachments: Array<{ __typename?: 'Attachment', key?: string | null, location?: string | null } | null>, responses?: Array<{ __typename: 'OrderResponse', answer?: string | null, attachments?: Array<string | null> | null, comments?: string | null, date?: any | null, type?: ResponseType | null } | null> | null } | null> | null } | null };
 
 export type GetOrderQueryVariables = Exact<{
     orderId: Scalars['String'];
 }>;
 
 
-export type GetOrderQuery = { __typename?: 'Query', getOrder?: { __typename?: 'Order', title: string, description?: any | null, writingStyle: WritingStyle, type: Type, numberOfPages: number, wordsPerPage?: number | null, deadline: any, createdAt?: any | null, orderId: string, published?: boolean | null, attachments: Array<{ __typename?: 'Attachment', key?: string | null, location?: string | null } | null>, responses?: Array<{ __typename?: 'OrderResponse', answer?: string | null, attachments?: Array<string | null> | null, comments?: string | null, date?: any | null } | null> | null } | null };
+export type GetOrderQuery = { __typename?: 'Query', getOrder?: { __typename?: 'Order', title: string, description?: string | null, writingStyle: WritingStyle, type: Type, numberOfPages: number, wordsPerPage?: number | null, deadline: any, createdAt?: any | null, orderId: string, published?: boolean | null, attachments: Array<{ __typename?: 'Attachment', name?: string | null, location?: string | null, key?: string | null, mimeType?: string | null } | null>, responses?: Array<{ __typename?: 'OrderResponse', answer?: string | null, attachments?: Array<string | null> | null, comments?: string | null, date?: any | null } | null> | null } | null };
 
 export type SaveOrderDescriptionMutationVariables = Exact<{
     description: Scalars['JSON'];
@@ -377,6 +381,14 @@ export type SaveOrderDescriptionMutationVariables = Exact<{
 
 
 export type SaveOrderDescriptionMutation = { __typename?: 'Mutation', saveOrderDescription?: { __typename?: 'Response', status?: number | null, message?: string | null, success?: boolean | null } | null };
+
+export type UpdateOrderMutationVariables = Exact<{
+    orderId?: InputMaybe<Scalars['String']>;
+    orderInput?: InputMaybe<OrderInput>;
+}>;
+
+
+export type UpdateOrderMutation = { __typename?: 'Mutation', updateOrder?: { __typename?: 'Response', status?: number | null, message?: string | null, success?: boolean | null } | null };
 
 export type UpdateUserMutationVariables = Exact<{
     payload?: InputMaybe<UserUpdatePayload>;
@@ -550,8 +562,10 @@ export const GetOrderDocument = gql`
             title
             description
             attachments {
-                key
+                name
                 location
+                key
+                mimeType
             }
             writingStyle
             type
@@ -637,6 +651,43 @@ export function useSaveOrderDescriptionMutation(baseOptions?: Apollo.MutationHoo
 export type SaveOrderDescriptionMutationHookResult = ReturnType<typeof useSaveOrderDescriptionMutation>;
 export type SaveOrderDescriptionMutationResult = Apollo.MutationResult<SaveOrderDescriptionMutation>;
 export type SaveOrderDescriptionMutationOptions = Apollo.BaseMutationOptions<SaveOrderDescriptionMutation, SaveOrderDescriptionMutationVariables>;
+export const UpdateOrderDocument = gql`
+    mutation UpdateOrder($orderId: String, $orderInput: OrderInput) {
+        updateOrder(orderInput: $orderInput, orderId: $orderId) {
+            status
+            message
+            success
+        }
+    }
+`;
+export type UpdateOrderMutationFn = Apollo.MutationFunction<UpdateOrderMutation, UpdateOrderMutationVariables>;
+
+/**
+ * __useUpdateOrderMutation__
+ *
+ * To run a mutation, you first call `useUpdateOrderMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOrderMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOrderMutation, { data, loading, error }] = useUpdateOrderMutation({
+ *   variables: {
+ *      orderId: // value for 'orderId'
+ *      orderInput: // value for 'orderInput'
+ *   },
+ * });
+ */
+export function useUpdateOrderMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOrderMutation, UpdateOrderMutationVariables>) {
+    const options = {...defaultOptions, ...baseOptions}
+    return Apollo.useMutation<UpdateOrderMutation, UpdateOrderMutationVariables>(UpdateOrderDocument, options);
+}
+
+export type UpdateOrderMutationHookResult = ReturnType<typeof useUpdateOrderMutation>;
+export type UpdateOrderMutationResult = Apollo.MutationResult<UpdateOrderMutation>;
+export type UpdateOrderMutationOptions = Apollo.BaseMutationOptions<UpdateOrderMutation, UpdateOrderMutationVariables>;
 export const UpdateUserDocument = gql`
     mutation UpdateUser($payload: UserUpdatePayload) {
         updateUser(payload: $payload) {

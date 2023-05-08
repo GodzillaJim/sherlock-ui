@@ -1,29 +1,65 @@
-import React, {useEffect, useState} from "react";
-import {EditorState} from "draft-js";
+import React, {useEffect, useMemo, useState} from "react";
+import {convertFromRaw, convertToRaw, EditorState} from "draft-js";
 import useUploadAttachments from "../../../../helpers/orders/useUploadAttachments";
-import {GetOrderDocument, Order, OrderInput, Type, WritingStyle} from "../../../../generated";
+import {
+    Attachment,
+    AttachmentInput,
+    GetOrderDocument,
+    Order,
+    OrderInput,
+    Type,
+    useGetOrderQuery,
+    useUpdateOrderMutation,
+    WritingStyle
+} from "../../../../generated";
 import {addDays} from "date-fns";
 import {date, number, object, string} from "yup";
 import {useFormik} from "formik";
 import Dropdown, {DropdownOption} from "../../../../components/Dropdown";
 import {getEnumAsArray} from "../../../../helpers/HelperFunctions";
-import {Box, Button, Card, CardContent, Grid, Paper, TextField,} from "@mui/material";
+import {Box, Button, Card, CardContent, Grid, List, ListItem, ListItemText, Paper, TextField,} from "@mui/material";
 import CustomEditor from "../../../../components/CustomEditor";
 import FileUploader from "../../../../components/FileUploader";
 import DateTimePicker from "../../../../components/DateTimePicker";
 import MainLayout from "../../../../layout/MainLayout";
-import {GetServerSidePropsContext} from "next";
-import nextCookies from "next-cookies";
-import {createApolloClient} from "../../../../Apollo";
+import dayjs from "dayjs";
+import {useRouter} from "next/router";
+import {v4} from "uuid";
+import Link from "next/link";
 
-const EditOrder = (props: { order: Order }) => {
+const EditOrder = () => {
     const isServerSide = typeof window === "undefined";
-    const [editorState, setEditorState] = useState<EditorState>();
+    const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
     const [files, setFiles] = useState<File[]>([]);
 
+    const router = useRouter()
+    const {id} = router.query
+    const {uploadAttachments, error, loading: uploading} = useUploadAttachments();
+    const {data, loading: gettingOrder} = useGetOrderQuery({variables: {orderId: id as string}})
+    const [updateOrder, {
+        data: updated,
+        error: updateError,
+        loading: updating
+    }] = useUpdateOrderMutation({refetchQueries: [GetOrderDocument]})
+
+    const existingAttachments = useMemo(() => {
+        if (data && data.getOrder && data.getOrder.attachments) return data.getOrder.attachments as Attachment[]
+        return []
+    }, [data])
+
     useEffect(() => {
-        console.log('Props: ', props)
-    })
+        if (updateError && !updating) {
+            alert(updateError.message)
+            console.log(updateError)
+        }
+        if (!updating && !updateError && updated) {
+            alert('Success')
+        }
+    }, [updated, updateError, updating])
+
+    const loading = useMemo(() => {
+        return updating || gettingOrder || uploading
+    }, [updating, gettingOrder, uploading])
 
     useEffect(() => {
         if (isServerSide) {
@@ -32,8 +68,6 @@ const EditOrder = (props: { order: Order }) => {
         setEditorState(() => EditorState.createEmpty());
     }, [isServerSide]);
 
-    const {uploadAttachments, error} = useUploadAttachments();
-
     useEffect(() => {
         if (error) {
             console.log("UploadAttachmentsError: ", error);
@@ -41,15 +75,53 @@ const EditOrder = (props: { order: Order }) => {
         }
     }, [error]);
 
-    const initialValues: OrderInput = {
-        deadline: addDays(new Date(), 1),
-        numberOfPages: 1,
-        title: "",
-        type: Type.Article,
-        writingStyle: WritingStyle.Apa7,
-        description: "",
-        attachments: [],
-    };
+    const fromEditorState = (editorState: EditorState) => {
+        const contentState = editorState.getCurrentContent();
+        const rawContentState = convertToRaw(contentState);
+        return JSON.stringify(rawContentState);
+    }
+    const toEditorState = (contentString: string) => {
+        const rawContentState = JSON.parse(contentString);
+        if (!rawContentState) return EditorState.createEmpty()
+        const contentState = convertFromRaw(rawContentState);
+        return EditorState.createWithContent(contentState);
+    }
+
+    useEffect(() => {
+        if (data && data.getOrder && data.getOrder.description && data.getOrder.description !== "") {
+            setEditorState(toEditorState(data.getOrder.description))
+        }
+    }, [data?.getOrder])
+
+    const initialValues: OrderInput = useMemo(() => {
+        const temp = {
+            deadline: addDays(new Date(), 1),
+            numberOfPages: 1,
+            title: "",
+            type: Type.Article,
+            writingStyle: WritingStyle.Apa7,
+            description: '',
+            attachments: [],
+        }
+
+        if (!data || !data.getOrder) {
+            return temp
+        }
+        const order = data.getOrder as Order
+        const savedAttachments = order.attachments as Attachment[]
+
+        return {
+            ...temp, ...order,
+            attachments: savedAttachments.map(({key, name, location, mimeType}) => ({
+                name: name as string,
+                key: key as string,
+                location: location as string,
+                mimeType: mimeType || ""
+            })),
+            deadline: dayjs(order.deadline).toDate(),
+        }
+    }, [data]);
+
 
     const requiredMessage = "This field is required!";
 
@@ -62,10 +134,48 @@ const EditOrder = (props: { order: Order }) => {
         description: string(),
     });
 
-    const onSubmit = async (vals: OrderInput) => {
+    const onSubmit = async ({
+                                writingStyle,
+                                wordsPerPage,
+                                type,
+                                title,
+                                numberOfPages,
+                                description,
+                                deadline,
+                                attachments
+                            }: OrderInput) => {
         try {
-            const attachments = await uploadAttachments(files);
-            console.log({...vals, attachments});
+            const orderInput = {
+                writingStyle,
+                wordsPerPage,
+                type,
+                title,
+                numberOfPages,
+                description,
+                deadline,
+                attachments
+            }
+            if (files.length) {
+                const newAttachments = await uploadAttachments(files);
+                const verifyAttachments = newAttachments?.map(({key, name, location, mimeType}) => ({
+                    key,
+                    name: name || key,
+                    location,
+                    mimeType: mimeType || "image/*"
+                })) || []
+                const oldAttachments = attachments as AttachmentInput[]
+                const verifyOldAttachments = oldAttachments.map(({key, name, mimeType, location}) => ({
+                    key,
+                    name: name || key,
+                    location,
+                    mimeType: mimeType || "image/*"
+                }))
+                orderInput.attachments = [...verifyAttachments, ...verifyOldAttachments]
+            }
+
+            setFiles([])
+            await updateOrder({variables: {orderId: id as string || data?.getOrder?.orderId, orderInput}})
+
         } catch (e: any) {
             console.log("Upload attachments error: ", e);
             alert("Failed to upload: " + e.message);
@@ -76,7 +186,12 @@ const EditOrder = (props: { order: Order }) => {
             initialValues,
             onSubmit,
             validationSchema,
+            enableReinitialize: true
         });
+
+    useEffect(() => {
+        setFieldValue('description', fromEditorState(editorState))
+    }, [editorState])
 
     const getOrderTypeOptions = (): DropdownOption[] => {
         return getEnumAsArray(Type);
@@ -85,6 +200,11 @@ const EditOrder = (props: { order: Order }) => {
     const getWritingStyleOptions = (): DropdownOption[] => {
         return getEnumAsArray(WritingStyle);
     };
+
+
+    const handleEditorChange = (content: EditorState) => {
+        setEditorState(content)
+    }
 
     if (isServerSide) return <div/>;
     return (
@@ -105,6 +225,7 @@ const EditOrder = (props: { order: Order }) => {
                                         }
                                         error={Boolean(touched.title && errors.title)}
                                         helperText={touched.title ? errors.title : undefined}
+                                        disabled={loading}
                                     />
                                 </CardContent>
                             </Card>
@@ -113,29 +234,44 @@ const EditOrder = (props: { order: Order }) => {
                             <Paper sx={{p: 3}}>
                                 <CustomEditor
                                     value={editorState}
-                                    onChange={(content: EditorState) => setEditorState(content)}
+                                    onChange={handleEditorChange}
                                     readView={false}/>
+                                orderId={id}
                             </Paper>
                         </Grid>
                         <Grid item>
                             <Paper sx={{p: 3}}>
                                 <FileUploader onChange={(files: File[]) => setFiles(files)}/>
+                                <Grid container spacing={1} direction={'column'}>
+                                    <List>
+                                        {existingAttachments.length && existingAttachments.map((value, index) => {
+                                            return <ListItem key={`existing-attachment-${v4()}`}>
+                                                <ListItemText
+                                                    primary={`${index + 1}. ${value.name || 'Attachment ' + (index + 1)}`}
+                                                    secondary={
+                                                        value.location && <Link href={value.location}>Download</Link>
+                                                    }/>
+                                            </ListItem>
+                                        })}
+                                    </List>
+                                </Grid>
                             </Paper>
                         </Grid>
                         <Grid item>
                             <Grid container spacing={3} justifyContent={"end"}>
                                 <Grid item>
-                                    <Button variant={"contained"} color={"error"}>
+                                    <Button disabled={loading} variant={"contained"} color={"error"}>
                                         Cancel
                                     </Button>
                                 </Grid>
                                 <Grid item>
                                     <Button
+                                        disabled={loading}
                                         onClick={() => handleSubmit()}
                                         variant={"contained"}
                                         color={"success"}
                                     >
-                                        Create Order
+                                        Save
                                     </Button>
                                 </Grid>
                             </Grid>
@@ -162,6 +298,7 @@ const EditOrder = (props: { order: Order }) => {
                                     error={Boolean(touched.numberOfPages && errors.numberOfPages)}
                                     helperText={touched.numberOfPages && errors.numberOfPages}
                                     size="small"
+                                    disabled={loading}
                                 />
                                 <DateTimePicker
                                     label="Deadline"
@@ -169,6 +306,7 @@ const EditOrder = (props: { order: Order }) => {
                                     onChange={(date) => setFieldValue("deadline", date)}
                                     disablePast
                                     setValue={(date) => setFieldValue("deadline", date)}
+                                    disabled={loading}
                                 />
                                 <Dropdown
                                     label="Type of Work"
@@ -180,6 +318,7 @@ const EditOrder = (props: { order: Order }) => {
                                     helperText={
                                         touched.type && errors.type ? errors.type : undefined
                                     }
+                                    disabled={loading}
                                 />
                                 <Dropdown
                                     label="Writing Style"
@@ -193,6 +332,7 @@ const EditOrder = (props: { order: Order }) => {
                                             ? errors.writingStyle
                                             : undefined
                                     }
+                                    disabled={loading}
                                 />
                             </Box>
                         </CardContent>
@@ -207,23 +347,23 @@ EditOrder.getLayout = function (page: React.ReactNode) {
     return <MainLayout>{page}</MainLayout>;
 };
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-    try {
-        const id = context?.params?.id
-        const authToken = nextCookies(context).authToken
-        if (!id || !authToken) return
-        const client = createApolloClient(authToken)
-        const {data} = await client.query({
-            context,
-            query: GetOrderDocument,
-            fetchPolicy: 'no-cache',
-            variables: {orderId: id}
-        })
-
-        return {props: {order: data.getOrder}}
-    } catch (e: any) {
-        return {props: {errorCode: 500, error: JSON.stringify(e)}}
-    }
-}
+// export async function getServerSideProps(context: GetServerSidePropsContext) {
+//     try {
+//         const id = context?.params?.id
+//         const authToken = nextCookies(context).authToken
+//         if (!id || !authToken) return
+//         const client = createApolloClient(authToken)
+//         const {data} = await client.query({
+//             context,
+//             query: GetOrderDocument,
+//             fetchPolicy: 'no-cache',
+//             variables: {orderId: id}
+//         })
+//
+//         return {props: {order: data.getOrder}}
+//     } catch (e: any) {
+//         return {props: {errorCode: 500, error: JSON.stringify(e)}}
+//     }
+// }
 
 export default EditOrder;
