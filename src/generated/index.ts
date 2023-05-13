@@ -360,6 +360,14 @@ export type CreateOrderFromTitleMutationVariables = Exact<{
 
 export type CreateOrderFromTitleMutation = { __typename?: 'Mutation', createOrderFromTitle?: { __typename?: 'CreateOrderResponse', status?: number | null, success?: boolean | null, data?: string | null } | null };
 
+export type DeleteAttachmentMutationVariables = Exact<{
+    orderId?: InputMaybe<Scalars['String']>;
+    attachmentKey?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type DeleteAttachmentMutation = { __typename?: 'Mutation', deleteAttachment?: { __typename?: 'Response', success?: boolean | null, status?: number | null, message?: string | null } | null };
+
 export type GetMyOrdersQueryVariables = Exact<{
     pagination?: InputMaybe<Pagination>;
 }>;
@@ -486,6 +494,43 @@ export function useCreateOrderFromTitleMutation(baseOptions?: Apollo.MutationHoo
 export type CreateOrderFromTitleMutationHookResult = ReturnType<typeof useCreateOrderFromTitleMutation>;
 export type CreateOrderFromTitleMutationResult = Apollo.MutationResult<CreateOrderFromTitleMutation>;
 export type CreateOrderFromTitleMutationOptions = Apollo.BaseMutationOptions<CreateOrderFromTitleMutation, CreateOrderFromTitleMutationVariables>;
+export const DeleteAttachmentDocument = gql`
+    mutation DeleteAttachment($orderId: String, $attachmentKey: String) {
+        deleteAttachment(orderId: $orderId, attachmentKey: $attachmentKey) {
+            success
+            status
+            message
+        }
+    }
+`;
+export type DeleteAttachmentMutationFn = Apollo.MutationFunction<DeleteAttachmentMutation, DeleteAttachmentMutationVariables>;
+
+/**
+ * __useDeleteAttachmentMutation__
+ *
+ * To run a mutation, you first call `useDeleteAttachmentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteAttachmentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteAttachmentMutation, { data, loading, error }] = useDeleteAttachmentMutation({
+ *   variables: {
+ *      orderId: // value for 'orderId'
+ *      attachmentKey: // value for 'attachmentKey'
+ *   },
+ * });
+ */
+export function useDeleteAttachmentMutation(baseOptions?: Apollo.MutationHookOptions<DeleteAttachmentMutation, DeleteAttachmentMutationVariables>) {
+    const options = {...defaultOptions, ...baseOptions}
+    return Apollo.useMutation<DeleteAttachmentMutation, DeleteAttachmentMutationVariables>(DeleteAttachmentDocument, options);
+}
+
+export type DeleteAttachmentMutationHookResult = ReturnType<typeof useDeleteAttachmentMutation>;
+export type DeleteAttachmentMutationResult = Apollo.MutationResult<DeleteAttachmentMutation>;
+export type DeleteAttachmentMutationOptions = Apollo.BaseMutationOptions<DeleteAttachmentMutation, DeleteAttachmentMutationVariables>;
 export const GetMyOrdersDocument = gql`
     query GetMyOrders($pagination: Pagination) {
         getMyOrders(pagination: $pagination) {

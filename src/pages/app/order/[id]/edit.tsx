@@ -17,15 +17,14 @@ import {date, number, object, string} from "yup";
 import {useFormik} from "formik";
 import Dropdown, {DropdownOption} from "../../../../components/Dropdown";
 import {getEnumAsArray} from "../../../../helpers/HelperFunctions";
-import {Box, Button, Card, CardContent, Grid, List, ListItem, ListItemText, Paper, TextField,} from "@mui/material";
+import {Box, Button, Card, CardContent, Grid, Paper, TextField,} from "@mui/material";
 import CustomEditor from "../../../../components/CustomEditor";
 import FileUploader from "../../../../components/FileUploader";
 import DateTimePicker from "../../../../components/DateTimePicker";
 import MainLayout from "../../../../layout/MainLayout";
 import dayjs from "dayjs";
 import {useRouter} from "next/router";
-import {v4} from "uuid";
-import Link from "next/link";
+import AttachmentList from "../../../../components/edit/AttachmentList";
 
 const EditOrder = () => {
     const isServerSide = typeof window === "undefined";
@@ -161,21 +160,21 @@ const EditOrder = () => {
                     key,
                     name: name || key,
                     location,
-                    mimeType: mimeType || "image/*"
+                    mimeType
                 })) || []
                 const oldAttachments = attachments as AttachmentInput[]
                 const verifyOldAttachments = oldAttachments.map(({key, name, mimeType, location}) => ({
                     key,
                     name: name || key,
                     location,
-                    mimeType: mimeType || "image/*"
+                    mimeType
                 }))
                 orderInput.attachments = [...verifyAttachments, ...verifyOldAttachments]
             }
 
             setFiles([])
             await updateOrder({variables: {orderId: id as string || data?.getOrder?.orderId, orderInput}})
-
+// eslint-disable-next-line
         } catch (e: any) {
             console.log("Upload attachments error: ", e);
             alert("Failed to upload: " + e.message);
@@ -209,8 +208,8 @@ const EditOrder = () => {
     if (isServerSide) return <div/>;
     return (
         <form noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={2}>
-                <Grid item xs={12} sm={12} md={8}>
+            <Grid container spacing={2} columns={12}>
+                <Grid item xs={12} sm={12} md={8} id={"main-content"}>
                     <Grid container direction={"column"} spacing={2}>
                         <Grid item>
                             <Card>
@@ -240,22 +239,13 @@ const EditOrder = () => {
                             </Paper>
                         </Grid>
                         <Grid item>
-                            <Paper sx={{p: 3}}>
-                                <FileUploader onChange={(files: File[]) => setFiles(files)}/>
-                                <Grid container spacing={1} direction={'column'}>
-                                    <List>
-                                        {existingAttachments.length && existingAttachments.map((value, index) => {
-                                            return <ListItem key={`existing-attachment-${v4()}`}>
-                                                <ListItemText
-                                                    primary={`${index + 1}. ${value.name || 'Attachment ' + (index + 1)}`}
-                                                    secondary={
-                                                        value.location && <Link href={value.location}>Download</Link>
-                                                    }/>
-                                            </ListItem>
-                                        })}
-                                    </List>
+                            <Card sx={{p: 3}}>
+                                <FileUploader files={files} onChange={(files: File[]) => setFiles(files)}/>
+                                <Grid container spacing={1} direction={'column'} sx={{overflow: 'auto'}}>
+                                    {existingAttachments.length &&
+                                        <AttachmentList attachments={existingAttachments}/>}
                                 </Grid>
-                            </Paper>
+                            </Card>
                         </Grid>
                         <Grid item>
                             <Grid container spacing={3} justifyContent={"end"}>
@@ -278,7 +268,7 @@ const EditOrder = () => {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={12} sm={12} md={4}>
+                <Grid item xs={12} sm={12} md={4} id={"side-content"}>
                     <Card>
                         <CardContent>
                             <Box

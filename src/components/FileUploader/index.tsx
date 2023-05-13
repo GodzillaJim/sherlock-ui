@@ -32,28 +32,19 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 type FileUploaderProps = {
     onChange: (files: File[]) => void
+    files: Array<File>
 }
-const FileUploader = ({onChange}: FileUploaderProps) => {
-    const [files, setFiles] = useState<Map<string, File>>(new Map());
+const FileUploader = ({onChange, files}: FileUploaderProps) => {
     const [showModal, setShowModal] = useState(false);
     const classes = useStyles();
 
     const removeFile = (file: File) => {
-        const map = new Map<string, File>();
-        files.forEach((f) => map.set(f.name, f));
-        map.delete(file.name);
-        setFiles(map);
+        const newFiles = files.filter(({name}) => file.name !== name)
+        onChange(newFiles)
     };
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
-        const map = new Map<string, File>();
-
-        files.forEach((f) => map.set(f.name, f));
-
-        acceptedFiles.forEach((f) => map.set(f.name, f));
-
-        setFiles(map);
-        onChange(Array.from(map.values()))
+        onChange([...files, ...acceptedFiles])
     }, []);
 
     const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop});
@@ -66,7 +57,7 @@ const FileUploader = ({onChange}: FileUploaderProps) => {
                     startIcon={<AttachmentSharp/>}
                     onClick={() => setShowModal(!showModal)}
                 >
-                    <Typography variant="h5">Add Attachments: {files.size}</Typography>
+                    <Typography variant="h5">Add Attachments: {files.length}</Typography>
                 </Button>
                 <Divider/>
                 <Modal
@@ -119,7 +110,7 @@ const FileUploader = ({onChange}: FileUploaderProps) => {
                                             color="info"
                                             sx={{pointerEvents: "none"}}
                                         >
-                                            Files: {files.size}
+                                            Files: {files.length}
                                         </Button>
                                     </div>
                                     <div>
@@ -135,7 +126,7 @@ const FileUploader = ({onChange}: FileUploaderProps) => {
             </Grid>
             <Grid item>
                 <List>
-                    {Array.from(files, (key) => key[1]).map((file, index) => {
+                    {files.map((file, index) => {
                         return (
                             <ListItem
                                 key={`item-${v4()}-${file.name}-${index + 1}`}
