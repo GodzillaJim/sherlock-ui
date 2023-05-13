@@ -25,12 +25,22 @@ export const client = new ApolloClient({
         Authorization: `Bearer ${token}` || "",
     },
 });
-const ApolloClientProvider = ({children}: ApolloClientProps) => {
 
+export const createApolloClient = (token: string) => {
+    return new ApolloClient({
+        cache: new InMemoryCache(),
+        link: authLink.concat(httpLink),
+        headers: {
+            Authorization: `Bearer ${token}` || "",
+        },
+    });
+}
+const ApolloClientProvider = ({children}: ApolloClientProps) => {
     if (typeof window === undefined) {
         return <div/>;
     }
 
     return <ApolloProvider client={client}>{children}</ApolloProvider>;
 };
+
 export default ApolloClientProvider;
