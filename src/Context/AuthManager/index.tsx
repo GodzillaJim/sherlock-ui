@@ -1,9 +1,11 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
 import {useRouter} from "next/router";
-import {getAuth, GoogleAuthProvider, onIdTokenChanged, signInWithPopup, User,} from "@firebase/auth";
+import {useRouter as useNavigation} from "next/navigation"
+import {getAuth, GoogleAuthProvider, onIdTokenChanged, signInWithPopup, signOut as logOut, User} from "@firebase/auth";
 import {User as LocalUser} from "../../generated/index";
 import {clearAuthToken, firebaseClient, setAuthToken,} from "../../helpers/Auth";
 import {client} from "../../Apollo";
+import Cookies from "js-cookie";
 
 type AuthContextType = {
     user?: User;
@@ -25,11 +27,11 @@ const AuthManager = ({children}: AuthManagerType) => {
     );
     const [loading, setLoading] = useState<boolean>(false);
     const router = useRouter();
-    const {next} = router.query;
+    const navigate = useNavigation()
 
     const handleRouteChange = async (url: string) => {
         setLoading(true);
-        await router.push(url);
+        navigate.push(url)
         setLoading(false);
     };
 
@@ -39,7 +41,12 @@ const AuthManager = ({children}: AuthManagerType) => {
             setAuthToken(authToken);
             setUser(newUser);
             setLoading(false);
-            handleRouteChange(next as string || '/app').then()
+            if (router.query.next) {
+                await handleRouteChange(decodeURIComponent(router.query.next as string))
+                return
+            }
+
+            await handleRouteChange('/app')
             return true;
         }
         setUser(undefined);
@@ -49,23 +56,18 @@ const AuthManager = ({children}: AuthManagerType) => {
     };
 
     useEffect(() => {
-        if (user && next && next !== "/") {
-            const redirect = Array.isArray(next) ? next[0] : next;
-            handleRouteChange(redirect).then();
-            return;
-        }
-        if (!user) {
-            if (router.pathname !== "/auth/login")
-                handleRouteChange("/auth/login?next=" + router.pathname).then();
-            handleRouteChange("/auth/login").then();
-            return;
-        }
-    }, [user]);
-
-    useEffect(() => {
         const auth = getAuth(firebaseClient);
-        const unsubscribe = onIdTokenChanged(auth, (user) => handleUser(user));
-        return () => unsubscribe();
+        return onIdTokenChanged(auth, async (user) => {
+            if (!user) {
+                setUser(undefined)
+                setLoading(false)
+                if (router.pathname === '/auth/login') return
+                await handleRouteChange(`/auth/login?next=${encodeURIComponent(router.pathname)}`)
+                return
+            }
+
+            await handleUser(user)
+        });
     }, []);
 
     const signInWithGoogle = () => {
@@ -81,14 +83,17 @@ const AuthManager = ({children}: AuthManagerType) => {
     };
 
     const signOut = async () => {
+        const auth = getAuth();
         setLoading(true);
+        await logOut(auth)
         await handleUser(null);
-        await handleRouteChange("/auth/login?/next=/");
+        await handleRouteChange("/auth/login?/next=/app");
         clearAuthToken();
         sessionStorage.clear();
         await client.clearStore();
         await client.resetStore();
         setLoading(false);
+        console.log('Cookies: ', Cookies.get('authToken'))
     };
 
     return (

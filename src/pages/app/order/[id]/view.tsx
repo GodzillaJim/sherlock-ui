@@ -1,33 +1,28 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import MainLayout from "../../../../layout/MainLayout";
-import {useRouter} from "next/router";
+import {useRouter} from "next/navigation";
 import {GetServerSidePropsContext} from "next";
-import nextCookies from "next-cookies";
 import {createApolloClient} from "../../../../Apollo";
 import {Attachment, GetOrderDocument, Order} from "../../../../generated";
 import {Box, Button, Card, CardContent, Grid, ListItem, ListItemText, Paper,} from "@mui/material";
 import CustomEditor from "../../../../components/CustomEditor";
 import {EditorState} from "draft-js";
-import {v4} from "uuid";
 import dayjs from "dayjs";
+import AttachmentList from "../../../../components/edit/AttachmentList";
+import {toEditorState} from "../../../../helpers/editor";
 
-const OrderDetails = (props: { order: Order }) => {
-    const isServerSide = typeof window === "undefined";
+const OrderDetails = ({order}: { order: Order }) => {
     const router = useRouter();
 
-    const order = props.order as Order;
-
-    const [editor, setEditor] = useState<EditorState>();
-
-    useEffect(() => {
-        if (isServerSide) {
-            return;
+    const [editor, setEditor] = useState<EditorState>(() => {
+        if (order && order.description) {
+            return toEditorState(order.description)
         }
-        setEditor(() => EditorState.createEmpty());
-    }, [isServerSide]);
+        return EditorState.createEmpty()
+    });
 
     const handleEdit = () => {
-        router.push(`/app/order/${order.orderId}/edit`).then()
+        router.push(`/app/order/${order.orderId}/edit`)
     }
 
     return (
@@ -55,16 +50,8 @@ const OrderDetails = (props: { order: Order }) => {
                         </Grid>
                         {order.attachments && order.attachments.length ? <Grid item>
                             <Paper sx={{p: 3}}>
-                                {order.attachments?.map((value, index) => {
-                                    const attachment = value as Attachment;
-                                    return (
-                                        <Button
-                                            href={attachment.location as string}
-                                            key={`key-${v4()}`}
-                                            variant={"text"}
-                                        >{`Attachment ${index + 1}`}</Button>
-                                    );
-                                })}
+                                <AttachmentList
+                                    attachments={order.attachments.length ? order.attachments as Attachment[] : []}/>
                             </Paper>
                         </Grid> : ''}
                         <Grid item>
@@ -121,21 +108,24 @@ OrderDetails.getLayout = function (page: React.ReactNode) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
     try {
-        const id = context?.params?.id;
-        const authToken = nextCookies(context).authToken;
-        if (!id || !authToken) return;
-        const client = createApolloClient(authToken);
-        const {data} = await client.query({
-            context,
-            query: GetOrderDocument,
-            fetchPolicy: "no-cache",
-            variables: {orderId: id},
-        });
+        const authToken = context.req.cookies.authToken
+        if (!authToken) {
+            return {props: {error: {message: 'Login to continue'}}}
+        }
+        const client = createApolloClient(authToken)
 
-        return {props: {order: data.getOrder}};
-        // eslint-disable-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
-        return {props: {errorCode: 500, error: JSON.stringify(e)}};
+        const orderId = context?.params?.id;
+        if (!orderId) return;
+
+        const {data, error} = await client.query({query: GetOrderDocument, variables: {orderId}})
+        if (error) {
+            return {props: {error}}
+        }
+
+        return {props: {order: data.getOrder}}
+    } catch (error: any) {
+        console.log('Error: ', error)
+        return {props: {error: {message: error?.message || "Something went wrong"}}}
     }
 }
 

@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {convertFromRaw, convertToRaw, EditorState} from "draft-js";
+import {EditorState} from "draft-js";
 import useUploadAttachments from "../../../../helpers/orders/useUploadAttachments";
 import {
     Attachment,
@@ -25,8 +25,10 @@ import MainLayout from "../../../../layout/MainLayout";
 import dayjs from "dayjs";
 import {useRouter} from "next/router";
 import AttachmentList from "../../../../components/edit/AttachmentList";
+import {fromEditorState, toEditorState} from "../../../../helpers/editor";
+import {getServerSideProps as getServerSidePropsCopy} from "./view";
 
-const EditOrder = () => {
+const EditOrder = ({order}: { order: Order }) => {
     const isServerSide = typeof window === "undefined";
     const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
     const [files, setFiles] = useState<File[]>([]);
@@ -42,7 +44,7 @@ const EditOrder = () => {
     }] = useUpdateOrderMutation({refetchQueries: [GetOrderDocument]})
 
     const existingAttachments = useMemo(() => {
-        if (data && data.getOrder && data.getOrder.attachments) return data.getOrder.attachments as Attachment[]
+        if (order && order.attachments) return order.attachments as Attachment[]
         return []
     }, [data])
 
@@ -73,18 +75,6 @@ const EditOrder = () => {
             alert(error)
         }
     }, [error]);
-
-    const fromEditorState = (editorState: EditorState) => {
-        const contentState = editorState.getCurrentContent();
-        const rawContentState = convertToRaw(contentState);
-        return JSON.stringify(rawContentState);
-    }
-    const toEditorState = (contentString: string) => {
-        const rawContentState = JSON.parse(contentString);
-        if (!rawContentState) return EditorState.createEmpty()
-        const contentState = convertFromRaw(rawContentState);
-        return EditorState.createWithContent(contentState);
-    }
 
     useEffect(() => {
         if (data && data.getOrder && data.getOrder.description && data.getOrder.description !== "") {
@@ -209,7 +199,7 @@ const EditOrder = () => {
     return (
         <form noValidate onSubmit={handleSubmit}>
             <Grid container spacing={2} columns={12}>
-                <Grid item xs={12} sm={12} md={8} id={"main-content"}>
+                <Grid item xs={12} sm={12} md={8} lg={9} id={"main-content"}>
                     <Grid container direction={"column"} spacing={2}>
                         <Grid item>
                             <Card>
@@ -235,7 +225,6 @@ const EditOrder = () => {
                                     value={editorState}
                                     onChange={handleEditorChange}
                                     readView={false}/>
-                                orderId={id}
                             </Paper>
                         </Grid>
                         <Grid item>
@@ -268,7 +257,7 @@ const EditOrder = () => {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={12} sm={12} md={4} id={"side-content"}>
+                <Grid item xs={12} sm={12} md={4} lg={3} id={"side-content"}>
                     <Card>
                         <CardContent>
                             <Box
@@ -337,23 +326,5 @@ EditOrder.getLayout = function (page: React.ReactNode) {
     return <MainLayout>{page}</MainLayout>;
 };
 
-// export async function getServerSideProps(context: GetServerSidePropsContext) {
-//     try {
-//         const id = context?.params?.id
-//         const authToken = nextCookies(context).authToken
-//         if (!id || !authToken) return
-//         const client = createApolloClient(authToken)
-//         const {data} = await client.query({
-//             context,
-//             query: GetOrderDocument,
-//             fetchPolicy: 'no-cache',
-//             variables: {orderId: id}
-//         })
-//
-//         return {props: {order: data.getOrder}}
-//     } catch (e: any) {
-//         return {props: {errorCode: 500, error: JSON.stringify(e)}}
-//     }
-// }
-
+export const getServerSideProps = getServerSidePropsCopy
 export default EditOrder;

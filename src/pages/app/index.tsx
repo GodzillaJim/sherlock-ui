@@ -1,28 +1,34 @@
 import React, {useMemo} from "react";
 import MainLayout from "../../layout/MainLayout";
-import {Order, useGetMyOrdersQuery} from "../../generated";
+import {GetMyOrdersDocument, Order, OrderPage} from "../../generated";
 import {Divider, Grid, Typography} from "@mui/material";
 import {v4} from "uuid";
 import SummaryCard from "../../components/SummaryCard";
+import {GetServerSidePropsContext} from "next";
+import {createApolloClient} from "../../Apollo";
+import {ApolloError} from "@apollo/client";
 
-const Dashboard = (): JSX.Element => {
-    const {data} = useGetMyOrdersQuery();
+type DashboardProps = {
+    error?: ApolloError | { message: string }
+    myOrders: OrderPage
+}
 
+const Dashboard = ({myOrders}: DashboardProps): JSX.Element => {
     const drafts = useMemo(() => {
-        if (data && data.getMyOrders && data.getMyOrders.docs) {
-            const orders = data.getMyOrders.docs as Order[];
+        if (myOrders && myOrders.docs?.length) {
+            const orders = myOrders.docs as Order[];
             return orders.filter((order) => !order?.published);
         }
         return [];
-    }, [data]);
+    }, [myOrders]);
 
     const published = useMemo(() => {
-        if (data && data.getMyOrders && data.getMyOrders.docs) {
-            const orders = data.getMyOrders.docs as Order[];
+        if (myOrders && myOrders.docs?.length) {
+            const orders = myOrders.docs as Order[];
             return orders.filter((order) => Boolean(order?.published));
         }
         return [];
-    }, [data]);
+    }, [myOrders]);
 
     return (
         <Grid container padding={2} spacing={5} direction={'column'}>
@@ -75,5 +81,25 @@ const Dashboard = (): JSX.Element => {
 Dashboard.getLayout = function (page: React.ReactNode) {
     return <MainLayout>{page}</MainLayout>;
 };
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+    try {
+        const authToken = context.req.cookies.authToken
+        if (!authToken) {
+            return {props: {error: {message: 'Login to continue'}}}
+        }
+        const client = createApolloClient(authToken)
+
+        const {data, error} = await client.query({query: GetMyOrdersDocument})
+        if (error) {
+            return {props: {error}}
+        }
+
+        return {props: {myOrders: data.getMyOrders}}
+    } catch (error: any) {
+        console.log('Error: ', error)
+        return {props: {error: {message: error?.message || "Something went wrong"}}}
+    }
+}
 
 export default Dashboard;

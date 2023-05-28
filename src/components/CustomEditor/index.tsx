@@ -35,6 +35,10 @@ const CustomEditor = ({onChange, value, orderId, readView,}: CustomEditorProps) 
     }, [value])
 
     useEffect(() => {
+        console.log('View: ', view, value)
+    })
+
+    useEffect(() => {
         if (orderId) {
             const intervalId = setInterval(() => {
                 const description = value ? convertToRaw(value?.getCurrentContent()) : ''
