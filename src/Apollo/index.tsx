@@ -9,7 +9,7 @@ interface ApolloClientProps {
 const token = Cookies.get("authToken");
 const uri = "http://localhost:4000/graphql";
 const httpLink = new HttpLink({uri});
-const authLink = new ApolloLink((operation: Operation, forward: NextLink) => {
+const authLink = (token: string) => new ApolloLink((operation: Operation, forward: NextLink) => {
     operation.setContext({
         headers: {
             Authorization: `Bearer ${token}` || "",
@@ -20,18 +20,18 @@ const authLink = new ApolloLink((operation: Operation, forward: NextLink) => {
 
 export const client = new ApolloClient({
     cache: new InMemoryCache(),
-    link: authLink.concat(httpLink),
+    link: authLink(token || "").concat(httpLink),
     headers: {
         Authorization: `Bearer ${token}` || "",
     },
 });
 
-export const createApolloClient = (token: string) => {
+export const createApolloClient = (authToken: string) => {
     return new ApolloClient({
         cache: new InMemoryCache(),
-        link: authLink.concat(httpLink),
+        link: authLink(authToken).concat(httpLink),
         headers: {
-            Authorization: `Bearer ${token}` || "",
+            Authorization: `Bearer ${token}`,
         },
     });
 }

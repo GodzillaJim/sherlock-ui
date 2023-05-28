@@ -57,7 +57,7 @@ const FileUploader = ({onChange, files}: FileUploaderProps) => {
                     startIcon={<AttachmentSharp/>}
                     onClick={() => setShowModal(!showModal)}
                 >
-                    <Typography variant="h5">Add Attachments: {files.length}</Typography>
+                    <Typography variant="h5">Add Attachments</Typography>
                 </Button>
                 <Divider/>
                 <Modal
