@@ -1,20 +1,32 @@
 import React from "react";
-import { useMediaQuery, useTheme } from "@mui/material";
-import Search from "./Search";
+import { Grid, useMediaQuery, useTheme } from "@mui/material";
 import Notification from "./Notification";
 import Profile from "./Profile";
 import MobileSection from "./MobileSection";
+import { useAuth } from "../../../../Context/AuthManager";
 
 const HeaderContent = () => {
   const theme = useTheme();
+  const { user } = useAuth();
   const matchesXS = useMediaQuery(theme.breakpoints.down("md"));
   return (
-    <>
-      {!matchesXS && <Search />}
-      <Notification />
-      {!matchesXS && <Profile />}
-      {matchesXS && <MobileSection />}
-    </>
+    <Grid container>
+      {user && (
+        <Grid item>
+          <Notification />
+        </Grid>
+      )}
+      {!matchesXS && user && (
+        <Grid item>
+          <Profile />
+        </Grid>
+      )}
+      {matchesXS && user && (
+        <Grid item>
+          <MobileSection />
+        </Grid>
+      )}
+    </Grid>
   );
 };
 

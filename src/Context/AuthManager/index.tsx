@@ -46,7 +46,7 @@ const AuthManager = ({children}: AuthManagerType) => {
                 return
             }
 
-            await handleRouteChange('/app')
+            // await handleRouteChange('/app')
             return true;
         }
         setUser(undefined);

@@ -1,5 +1,3 @@
-// noinspection GraphQLUnresolvedReference
-
 import * as Apollo from '@apollo/client';
 import {gql} from '@apollo/client';
 
@@ -59,9 +57,15 @@ export type CreateOrderResponse = IResponse & {
     success?: Maybe<Scalars['Boolean']>;
 };
 
+export type Filter = {
+    __typename?: 'Filter';
+    limits?: Maybe<Scalars['Float']>;
+};
+
 export type FilterOrders = {
     createdAfter?: InputMaybe<Scalars['Date']>;
     createdBefore?: InputMaybe<Scalars['Date']>;
+    limit?: InputMaybe<Scalars['Float']>;
     title?: InputMaybe<Scalars['String']>;
 };
 
@@ -165,6 +169,10 @@ export type Order = {
     writingStyle: WritingStyle;
 };
 
+// Title -> caption
+// description -> body
+// Footer -> Type, style, deadline
+
 export type OrderInput = {
     attachments: Array<InputMaybe<AttachmentInput>>;
     deadline: Scalars['Date'];
@@ -214,6 +222,7 @@ export type Query = {
     __typename?: 'Query';
     getMyOrders?: Maybe<OrderPage>;
     getOrder?: Maybe<Order>;
+    getPublicOrders?: Maybe<OrderPage>;
     getUserOrders?: Maybe<Array<Maybe<Order>>>;
     health?: Maybe<Scalars['String']>;
     me?: Maybe<User>;
@@ -227,6 +236,12 @@ export type QueryGetMyOrdersArgs = {
 
 export type QueryGetOrderArgs = {
     orderId: Scalars['String'];
+};
+
+
+export type QueryGetPublicOrdersArgs = {
+    filter?: InputMaybe<FilterOrders>;
+    pagination?: InputMaybe<Pagination>;
 };
 
 
@@ -381,6 +396,14 @@ export type GetOrderQueryVariables = Exact<{
 
 
 export type GetOrderQuery = { __typename?: 'Query', getOrder?: { __typename?: 'Order', title: string, description?: string | null, writingStyle: WritingStyle, type: Type, numberOfPages: number, wordsPerPage?: number | null, deadline: any, createdAt?: any | null, orderId: string, published?: boolean | null, attachments: Array<{ __typename?: 'Attachment', name?: string | null, location?: string | null, key?: string | null, mimeType?: string | null } | null>, responses?: Array<{ __typename?: 'OrderResponse', answer?: string | null, attachments?: Array<string | null> | null, comments?: string | null, date?: any | null } | null> | null } | null };
+
+export type GetPublicOrdersQueryVariables = Exact<{
+    pagination?: InputMaybe<Pagination>;
+    filter?: InputMaybe<FilterOrders>;
+}>;
+
+
+export type GetPublicOrdersQuery = { __typename?: 'Query', getPublicOrders?: { __typename?: 'OrderPage', totalDocs?: number | null, totalPages?: number | null, limit?: number | null, hasPrevPage?: boolean | null, hasNextPage?: boolean | null, page?: number | null, offset?: number | null, prevPage?: number | null, nextPage?: number | null, pagingCounter?: number | null, docs?: Array<{ __typename?: 'Order', title: string, orderId: string, description?: string | null, writingStyle: WritingStyle, type: Type, numberOfPages: number, wordsPerPage?: number | null, deadline: any, createdAt?: any | null, published?: boolean | null, attachments: Array<{ __typename?: 'Attachment', name?: string | null, location?: string | null, key?: string | null, mimeType?: string | null } | null>, responses?: Array<{ __typename?: 'OrderResponse', date?: any | null, attachments?: Array<string | null> | null, comments?: string | null, answer?: string | null, type?: ResponseType | null } | null> | null } | null> | null } | null };
 
 export type SaveOrderDescriptionMutationVariables = Exact<{
     description: Scalars['JSON'];
@@ -659,6 +682,78 @@ export function useGetOrderLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetOrderQueryHookResult = ReturnType<typeof useGetOrderQuery>;
 export type GetOrderLazyQueryHookResult = ReturnType<typeof useGetOrderLazyQuery>;
 export type GetOrderQueryResult = Apollo.QueryResult<GetOrderQuery, GetOrderQueryVariables>;
+export const GetPublicOrdersDocument = gql`
+    query GetPublicOrders($pagination: Pagination, $filter: FilterOrders) {
+        getPublicOrders(pagination: $pagination, filter: $filter) {
+            totalDocs
+            totalPages
+            docs {
+                title
+                orderId
+                description
+                attachments {
+                    name
+                    location
+                    key
+                    mimeType
+                }
+                writingStyle
+                type
+                numberOfPages
+                wordsPerPage
+                deadline
+                responses {
+                    date
+                    attachments
+                    comments
+                    answer
+                    type
+                }
+                createdAt
+                published
+            }
+            limit
+            hasPrevPage
+            hasNextPage
+            page
+            offset
+            prevPage
+            nextPage
+            pagingCounter
+        }
+    }
+`;
+
+/**
+ * __useGetPublicOrdersQuery__
+ *
+ * To run a query within a React component, call `useGetPublicOrdersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPublicOrdersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPublicOrdersQuery({
+ *   variables: {
+ *      pagination: // value for 'pagination'
+ *      filter: // value for 'filter'
+ *   },
+ * });
+ */
+export function useGetPublicOrdersQuery(baseOptions?: Apollo.QueryHookOptions<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>) {
+    const options = {...defaultOptions, ...baseOptions}
+    return Apollo.useQuery<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>(GetPublicOrdersDocument, options);
+}
+
+export function useGetPublicOrdersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>) {
+    const options = {...defaultOptions, ...baseOptions}
+    return Apollo.useLazyQuery<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>(GetPublicOrdersDocument, options);
+}
+
+export type GetPublicOrdersQueryHookResult = ReturnType<typeof useGetPublicOrdersQuery>;
+export type GetPublicOrdersLazyQueryHookResult = ReturnType<typeof useGetPublicOrdersLazyQuery>;
+export type GetPublicOrdersQueryResult = Apollo.QueryResult<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>;
 export const SaveOrderDescriptionDocument = gql`
     mutation SaveOrderDescription($description: JSON!, $orderId: String) {
         saveOrderDescription(description: $description, orderId: $orderId) {

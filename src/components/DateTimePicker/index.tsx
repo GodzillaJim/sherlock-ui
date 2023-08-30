@@ -1,7 +1,7 @@
 import * as React from "react";
 import {DateTimePicker as MuiDateTimePicker, DateTimePickerProps,} from "@mui/x-date-pickers/DateTimePicker";
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
-import {Chip, FormHelperText, Grid} from "@mui/material";
+import {Chip, FormHelperText, Grid, TextFieldProps} from "@mui/material";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {Box} from "@mui/system";
 import {addDays, addHours, addMonths, addWeeks, differenceInHours,} from "date-fns";
@@ -12,6 +12,8 @@ type Props = DateTimePickerProps<Date> & {
     error?: string | undefined;
     touched?: boolean | undefined;
     setValue: (value: Date) => void;
+    hideSuggestions?: boolean
+    textFieldProps?: TextFieldProps
 };
 
 const DateTimePicker = (props: Props) => {
@@ -49,6 +51,9 @@ const DateTimePicker = (props: Props) => {
                             {...props}
                             ampm={false}
                             sx={{width: "100%"}}
+                            slotProps={{
+                                textField: props.textFieldProps
+                            }}
                         />
                     </LocalizationProvider>
                     <FormHelperText
@@ -60,7 +65,7 @@ const DateTimePicker = (props: Props) => {
                     </FormHelperText>
                 </Box>
             </Grid>
-            <Grid item>
+            {!props.hideSuggestions && <Grid item>
                 <Grid container direction={"row"} spacing={1}>
                     {suggestions.map(({label, date}) => {
                         return (
@@ -77,7 +82,7 @@ const DateTimePicker = (props: Props) => {
                         );
                     })}
                 </Grid>
-            </Grid>
+            </Grid>}
         </Grid>
     );
 };

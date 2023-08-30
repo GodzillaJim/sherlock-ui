@@ -5,7 +5,7 @@ import {convertToRaw, EditorState} from "draft-js";
 import dynamic from "next/dynamic";
 import {useSaveOrderDescriptionMutation} from "../../generated";
 import {clearInterval} from "timers";
-import draftToHtml from "draftjs-to-html"
+import {editorStateToHtml} from "../../helpers/editor";
 
 const Editor = dynamic(
     () => import("react-draft-wysiwyg").then((mod) => mod.Editor),
@@ -28,15 +28,8 @@ const CustomEditor = ({onChange, value, orderId, readView,}: CustomEditorProps) 
     const [saveDescription] = useSaveOrderDescriptionMutation()
 
     const view = useMemo(() => {
-        const contentState = value?.getCurrentContent()
-        if (!contentState) return <div>Nothing here!</div>
-        const rawContent = convertToRaw(contentState)
-        return draftToHtml(rawContent)
+        return value ? editorStateToHtml(value) : ''
     }, [value])
-
-    useEffect(() => {
-        console.log('View: ', view, value)
-    })
 
     useEffect(() => {
         if (orderId) {
