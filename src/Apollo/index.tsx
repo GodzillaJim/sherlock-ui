@@ -7,7 +7,7 @@ interface ApolloClientProps {
 }
 
 const token = Cookies.get("authToken");
-const uri = "http://localhost:4000/graphql";
+const uri = "http://localhost:5000/graphql";
 const httpLink = new HttpLink({uri});
 const authLink = (token: string) => new ApolloLink((operation: Operation, forward: NextLink) => {
     operation.setContext({

@@ -1,9 +1,12 @@
-import { Checkbox, FormControlLabel, Grid } from "@mui/material";
+import {Checkbox, FormControlLabel, Grid} from "@mui/material";
 import * as React from "react";
-import Dropdown, { DropdownOption } from "../../Dropdown";
-import { getEnumAsArray } from "../../../helpers/HelperFunctions";
-import { Type, WritingStyle } from "../../../generated";
+import Dropdown, {DropdownOption} from "../../Dropdown";
+import {getEnumAsArray} from "../../../helpers/HelperFunctions";
+import {Type, WritingStyle} from "../../../generated";
 import DateTimePicker from "../../DateTimePicker";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../../../store";
+import {setFilters} from "../../../store/filters";
 
 /*
  * 1. BeforeDate
@@ -13,12 +16,18 @@ import DateTimePicker from "../../DateTimePicker";
  * 5. Reference style
  * */
 const Filters = () => {
+    const filters = useSelector((state: RootState) => state.filters);
+    const dispatch = useDispatch();
+
+    const handleChange = (field: string, value: Date | null | boolean | string | number) => {
+        dispatch(setFilters({...filters, [field]: value}))
+    }
   const getOrderTypeOptions = (): DropdownOption[] => {
-    return getEnumAsArray(Type);
+    return [...getEnumAsArray(Type),  { label:"All", value: "all" }];
   };
 
   const getWritingStyleOptions = (): DropdownOption[] => {
-    return getEnumAsArray(WritingStyle);
+    return [...getEnumAsArray(WritingStyle), { label:"All", value: "all" }];
   };
 
   return (
@@ -26,9 +35,9 @@ const Filters = () => {
       <Grid item>
         <DateTimePicker
           label={"Created Before"}
-          setValue={() => {
-            //TODO: Fill function
-          }}
+          setValue={(value) => handleChange("createdBefore", value)}
+          onChange={(value) => handleChange("createdBefore", value)}
+          value={filters.createdBefore}
           textFieldProps={{ size: "small" }}
           hideSuggestions
         />
@@ -36,34 +45,29 @@ const Filters = () => {
       <Grid item>
         <DateTimePicker
           label={"Created After"}
-          setValue={() => {
-            // TODO: Fill this in
-          }}
+          setValue={(value) => handleChange("createdAfter", value) }
+          onChange={(value) => handleChange("createdAfter", value)}
           textFieldProps={{ size: "small" }}
           hideSuggestions
         />
       </Grid>
       <Grid item>
-        <FormControlLabel control={<Checkbox />} label={"Has response"} />
+        <FormControlLabel control={<Checkbox />} label={"Has response"} checked={filters.hasResponse} onChange={() => handleChange("hasResponse", !filters.hasResponse)} />
       </Grid>
       <Grid item>
         <Dropdown
           label="Type of Work"
           options={getOrderTypeOptions()}
-          onChange={() => {
-            //TODO: Fill this up
-          }}
-          value={getOrderTypeOptions()[0].value}
+          onChange={value => handleChange("typeOfWork", value)}
+          value={filters.typeOfWork}
         />
       </Grid>
       <Grid item>
         <Dropdown
           label="Writing Style"
           options={getWritingStyleOptions()}
-          value={getWritingStyleOptions()[0].value}
-          onChange={() => {
-            // TODO: Fill this up
-          }}
+          value={filters.writingStyle}
+          onChange={value => handleChange("writingStyle", value)}
         />
       </Grid>
     </Grid>

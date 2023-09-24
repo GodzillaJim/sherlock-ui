@@ -22,10 +22,10 @@ const useUploadAttachments = () => {
                     Authorization: `Bearer ${token}`
                 }
             }
-            const {data: {data}} = await axios.post('http://localhost:4000/upload', formData, config)
+            const {data: {data}} = await axios.post('http://localhost:5000/upload', formData, config)
             setAttachmentList(data)
             results = data as AttachmentInput[]
-        } catch (e: any) {
+        } catch (e: any/*tslint:disable-line:no-explicit-any*/) {
             setError(e.message)
             console.log('Attachment upload error: ', e)
             results = null

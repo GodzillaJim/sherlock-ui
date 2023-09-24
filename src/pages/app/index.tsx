@@ -96,7 +96,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
         }
 
         return {props: {myOrders: data.getMyOrders}}
-    } catch (error: any) {
+    } catch (error: any/*tslint:disable-line:no-explicit-any*/) {
         console.log('Error: ', error)
         return {props: {error: {message: error?.message || "Something went wrong"}}}
     }

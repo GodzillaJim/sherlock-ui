@@ -1,13 +1,13 @@
-import React, { ReactNode, useEffect } from "react";
+import React, {ReactNode, useEffect} from "react";
 import PublicLayout from "../../../layout/PublicLayout";
-import { Box, Divider, Grid, Typography } from "@mui/material";
+import {Box, Divider, Grid, Typography} from "@mui/material";
 import TopSearchBar from "../../../layout/PublicLayout/Header";
 import Filters from "../../../components/listing/Filters";
 import OrderList from "../../../components/listing/OrderList";
-import { GetServerSidePropsContext } from "next";
-import { createApolloClient } from "../../../Apollo";
+import {GetServerSidePropsContext} from "next";
+import {createApolloClient} from "../../../Apollo";
 import GetPublicOrders from "../../../Apollo/schema/GetPublicOrders";
-import { OrderPage } from "../../../generated";
+import {OrderPage} from "../../../generated";
 
 type ListingProps = {
   orderPage: OrderPage;
@@ -40,7 +40,7 @@ const Listing = ({ orderPage }: ListingProps) => {
               <Filters />
             </Box>
           </Grid>
-          <Grid item xs={12} sm={12} md={9}>
+          <Grid item xs={12} sm={12} md={9} lg={6}>
             <OrderList orderPage={orderPage} />
           </Grid>
         </Grid>
@@ -70,7 +70,7 @@ export const getServerSideProps = async (
 
     console.log(data);
     return { props: { orderPage: data.getPublicOrders } };
-  } catch (error: any) {
+  } catch (error: any /*tslint:disable-line:no-explicit-any*/) {
     console.log("Error: ", error);
     return {
       props: { error: { message: error?.message || "Something went wrong" } },

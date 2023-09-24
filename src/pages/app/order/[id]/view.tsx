@@ -123,7 +123,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         }
 
         return {props: {order: data.getOrder}}
-    } catch (error: any) {
+    } catch (error: any/*tslint:disable-line:no-explicit-any*/) {
         console.log('Error: ', error)
         return {props: {error: {message: error?.message || "Something went wrong"}}}
     }

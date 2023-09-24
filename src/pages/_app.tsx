@@ -10,6 +10,8 @@ import "../assets/styles/editor.css";
 import {Router} from "next/router";
 import LoadingOverlayWrapper from "react-loading-overlay-ts";
 import "../assets/styles/global.css"
+import {Provider} from "react-redux";
+import store from "../store";
 
 const App = ({Component, pageProps}: NextConfig) => {
     const [loading, setLoading] = useState<boolean>(false);
@@ -28,20 +30,22 @@ const App = ({Component, pageProps}: NextConfig) => {
                     content={"width=device-width, initial-scale=1, maximum-scale=1"}
                 />
             </Head>
-            <LoadingOverlayWrapper
-                styles={{wrapper: {height: "100vh"}}}
-                active={loading}
-            >
-                <AuthManager>
-                    <ApolloClientProvider>
-                        <Context>
-                            <CustomThemeProvider>
-                                {getLayout(<Component {...pageProps} />)}
-                            </CustomThemeProvider>
-                        </Context>
-                    </ApolloClientProvider>
-                </AuthManager>
-            </LoadingOverlayWrapper>
+            <Provider store={store}>
+                <LoadingOverlayWrapper
+                    styles={{wrapper: {height: "100vh"}}}
+                    active={loading}
+                >
+                    <AuthManager>
+                        <ApolloClientProvider>
+                            <Context>
+                                <CustomThemeProvider>
+                                    {getLayout(<Component {...pageProps} />)}
+                                </CustomThemeProvider>
+                            </Context>
+                        </ApolloClientProvider>
+                    </AuthManager>
+                </LoadingOverlayWrapper>
+            </Provider>
         </>
     );
 };
