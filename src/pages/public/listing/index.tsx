@@ -1,18 +1,61 @@
-import React, {ReactNode, useEffect} from "react";
+import React, { ReactNode, useEffect } from "react";
 import PublicLayout from "../../../layout/PublicLayout";
-import {Box, Divider, Grid, Typography} from "@mui/material";
+import { Box, Divider, Grid, Typography } from "@mui/material";
 import TopSearchBar from "../../../layout/PublicLayout/Header";
 import Filters from "../../../components/listing/Filters";
 import OrderList from "../../../components/listing/OrderList";
-import {GetServerSidePropsContext} from "next";
-import {createApolloClient} from "../../../Apollo";
+import { GetServerSidePropsContext } from "next";
+import { createApolloClient } from "../../../Apollo";
 import GetPublicOrders from "../../../Apollo/schema/GetPublicOrders";
-import {OrderPage} from "../../../generated";
+import {
+  GetPublicOrdersQuery,
+  GetPublicOrdersQueryVariables,
+  OrderPage,
+  ResponseStatus,
+  Type,
+  WritingStyle,
+} from "../../../generated";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../store";
+import { setFilters } from "../../../store/filters";
+import { useSearchParams } from "next/navigation";
 
 type ListingProps = {
   orderPage: OrderPage;
+  error: any;
 };
-const Listing = ({ orderPage }: ListingProps) => {
+const Listing = ({ orderPage, error }: ListingProps) => {
+  const filters = useSelector((state: RootState) => state.filters);
+  const query = useSearchParams();
+  const dispatch = useDispatch();
+
+  const getFiltersFromParams = () => {
+    let initialValues = { responseStatus: null };
+    Object.keys(filters).map((field) => {
+      if (query.has(field) && query.get(field)) {
+        initialValues = {
+          ...filters,
+          ...initialValues,
+          [field]: query.get(field),
+        };
+      }
+    });
+
+    if (!initialValues?.responseStatus) {
+      initialValues.responseStatus = null;
+    }
+
+    return initialValues;
+  };
+
+  useEffect(() => {
+    if (orderPage?.page) {
+      dispatch(
+        setFilters({ ...getFiltersFromParams(), currentPage: orderPage.page })
+      );
+    }
+  }, [orderPage]);
+
   useEffect(() => {
     console.log("OrderPage: ", orderPage);
   });
@@ -53,6 +96,8 @@ Listing.getLayout = function (page: ReactNode) {
   return <PublicLayout>{page}</PublicLayout>;
 };
 
+const isEmpty = (str: string) => str?.length === 0 || str === "";
+
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
@@ -63,7 +108,40 @@ export const getServerSideProps = async (
     }
     const client = createApolloClient(authToken);
 
-    const { data, error } = await client.query({ query: GetPublicOrders });
+    const filters = context.query;
+    console.log("Filters: ", filters);
+    const variables: GetPublicOrdersQueryVariables = {
+      filter: {
+        responseStatus: isEmpty(filters?.responseStatus as string)
+          ? null
+          : (filters.responseStatus as ResponseStatus),
+        typeOfWork:
+          isEmpty(filters.typeOfWork as string) || filters.typeOfWork === "all"
+            ? null
+            : (filters.typeOfWork as Type),
+        writingStyle:
+          isEmpty(filters.writingStyle as string) ||
+          filters.writingStyle === "all"
+            ? null
+            : (filters.writingStyle as WritingStyle),
+        createdBefore: filters.createdBefore
+          ? filters.createdBefore
+          : undefined,
+        createdAfter: filters.createdAfter ? filters.createdAfter : undefined,
+        title: filters.title as string,
+      },
+      pagination: {
+        currentPage: parseInt((filters.currentPage as string) || "1") || 1,
+        perPage: 10,
+      },
+    };
+
+    console.log("Filters: ", filters);
+
+    const { data, error } = await client.query<GetPublicOrdersQuery>({
+      query: GetPublicOrders,
+      variables,
+    });
     if (error) {
       return { props: { error } };
     }

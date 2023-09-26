@@ -407,11 +407,47 @@
             "deprecationReason": null
           },
           {
+            "name": "responseStatus",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "ResponseStatus",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "title",
             "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "typeOfWork",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "Type",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "writingStyle",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "WritingStyle",
               "ofType": null
             },
             "defaultValue": null,
@@ -1820,6 +1856,29 @@
         "inputFields": null,
         "interfaces": [],
         "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
+        "name": "ResponseStatus",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "HAS_NO_RESPONSE",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "HAS_RESPONSE",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
         "possibleTypes": null
       },
       {

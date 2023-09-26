@@ -1,6 +1,5 @@
+import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
-import {gql} from '@apollo/client';
-
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -9,420 +8,424 @@ export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Mayb
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-    ID: string;
-    String: string;
-    Boolean: boolean;
-    Int: number;
-    Float: number;
-    Date: any;
-    JSON: any;
-    ObjectId: any;
+  ID: string;
+  String: string;
+  Boolean: boolean;
+  Int: number;
+  Float: number;
+  Date: any;
+  JSON: any;
+  ObjectId: any;
 };
 
 export type Attachment = {
-    __typename?: 'Attachment';
-    key?: Maybe<Scalars['String']>;
-    location?: Maybe<Scalars['String']>;
-    mimeType?: Maybe<Scalars['String']>;
-    name?: Maybe<Scalars['String']>;
+  __typename?: 'Attachment';
+  key?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  mimeType?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type AttachmentInput = {
-    key: Scalars['String'];
-    location: Scalars['String'];
-    mimeType: Scalars['String'];
-    name: Scalars['String'];
+  key: Scalars['String'];
+  location: Scalars['String'];
+  mimeType: Scalars['String'];
+  name: Scalars['String'];
 };
 
 export type AuthResponse = {
-    __typename?: 'AuthResponse';
-    email?: Maybe<Scalars['String']>;
-    firstName?: Maybe<Scalars['String']>;
-    jwtToken?: Maybe<AuthToken>;
-    roles?: Maybe<Array<Maybe<Role>>>;
+  __typename?: 'AuthResponse';
+  email?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  jwtToken?: Maybe<AuthToken>;
+  roles?: Maybe<Array<Maybe<Role>>>;
 };
 
 export type AuthToken = {
-    __typename?: 'AuthToken';
-    expiry?: Maybe<Scalars['String']>;
-    id: Scalars['ID'];
-    jwtToken?: Maybe<Scalars['String']>;
-    type?: Maybe<TokenType>;
+  __typename?: 'AuthToken';
+  expiry?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  jwtToken?: Maybe<Scalars['String']>;
+  type?: Maybe<TokenType>;
 };
 
 export type CreateOrderResponse = IResponse & {
-    __typename?: 'CreateOrderResponse';
-    data?: Maybe<Scalars['String']>;
-    status?: Maybe<Scalars['Float']>;
-    success?: Maybe<Scalars['Boolean']>;
+  __typename?: 'CreateOrderResponse';
+  data?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['Float']>;
+  success?: Maybe<Scalars['Boolean']>;
 };
 
 export type Filter = {
-    __typename?: 'Filter';
-    limits?: Maybe<Scalars['Float']>;
+  __typename?: 'Filter';
+  limits?: Maybe<Scalars['Float']>;
 };
 
 export type FilterOrders = {
-    createdAfter?: InputMaybe<Scalars['Date']>;
-    createdBefore?: InputMaybe<Scalars['Date']>;
-    limit?: InputMaybe<Scalars['Float']>;
-    title?: InputMaybe<Scalars['String']>;
+  createdAfter?: InputMaybe<Scalars['Date']>;
+  createdBefore?: InputMaybe<Scalars['Date']>;
+  limit?: InputMaybe<Scalars['Float']>;
+  responseStatus?: InputMaybe<ResponseStatus>;
+  title?: InputMaybe<Scalars['String']>;
+  typeOfWork?: InputMaybe<Type>;
+  writingStyle?: InputMaybe<WritingStyle>;
 };
 
 export type Firebase = {
-    __typename?: 'Firebase';
-    identities?: Maybe<Identity>;
-    sign_in_provider?: Maybe<Scalars['String']>;
+  __typename?: 'Firebase';
+  identities?: Maybe<Identity>;
+  sign_in_provider?: Maybe<Scalars['String']>;
 };
 
 export type IResponse = {
-    status?: Maybe<Scalars['Float']>;
-    success?: Maybe<Scalars['Boolean']>;
+  status?: Maybe<Scalars['Float']>;
+  success?: Maybe<Scalars['Boolean']>;
 };
 
 export type Identity = {
-    __typename?: 'Identity';
-    email?: Maybe<Array<Maybe<Scalars['String']>>>;
-    googlecom?: Maybe<Array<Maybe<Scalars['String']>>>;
+  __typename?: 'Identity';
+  email?: Maybe<Array<Maybe<Scalars['String']>>>;
+  googlecom?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
 export type LoginPayload = {
-    email?: InputMaybe<Scalars['String']>;
-    password?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
+  password?: InputMaybe<Scalars['String']>;
 };
 
 export type Mutation = {
-    __typename?: 'Mutation';
-    createOrder?: Maybe<Response>;
-    createOrderFromTitle?: Maybe<CreateOrderResponse>;
-    deleteAttachment?: Maybe<Response>;
-    login?: Maybe<AuthResponse>;
-    register?: Maybe<AuthResponse>;
-    saveOrderDescription?: Maybe<Response>;
-    updateHealth?: Maybe<Scalars['String']>;
-    updateOrder?: Maybe<Response>;
-    updatePassword?: Maybe<Response>;
-    updateUser?: Maybe<Response>;
+  __typename?: 'Mutation';
+  createOrder?: Maybe<Response>;
+  createOrderFromTitle?: Maybe<CreateOrderResponse>;
+  deleteAttachment?: Maybe<Response>;
+  login?: Maybe<AuthResponse>;
+  register?: Maybe<AuthResponse>;
+  saveOrderDescription?: Maybe<Response>;
+  updateHealth?: Maybe<Scalars['String']>;
+  updateOrder?: Maybe<Response>;
+  updatePassword?: Maybe<Response>;
+  updateUser?: Maybe<Response>;
 };
 
 
 export type MutationCreateOrderArgs = {
-    orderInput?: InputMaybe<OrderInput>;
+  orderInput?: InputMaybe<OrderInput>;
 };
 
 
 export type MutationCreateOrderFromTitleArgs = {
-    title?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationDeleteAttachmentArgs = {
-    attachmentKey?: InputMaybe<Scalars['String']>;
-    orderId?: InputMaybe<Scalars['String']>;
+  attachmentKey?: InputMaybe<Scalars['String']>;
+  orderId?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationLoginArgs = {
-    payload?: InputMaybe<LoginPayload>;
+  payload?: InputMaybe<LoginPayload>;
 };
 
 
 export type MutationRegisterArgs = {
-    payload?: InputMaybe<RegisterPayload>;
+  payload?: InputMaybe<RegisterPayload>;
 };
 
 
 export type MutationSaveOrderDescriptionArgs = {
-    description: Scalars['JSON'];
-    orderId?: InputMaybe<Scalars['String']>;
+  description: Scalars['JSON'];
+  orderId?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationUpdateOrderArgs = {
-    orderId?: InputMaybe<Scalars['String']>;
-    orderInput?: InputMaybe<OrderInput>;
+  orderId?: InputMaybe<Scalars['String']>;
+  orderInput?: InputMaybe<OrderInput>;
 };
 
 
 export type MutationUpdatePasswordArgs = {
-    payload?: InputMaybe<PasswordChangePayload>;
+  payload?: InputMaybe<PasswordChangePayload>;
 };
 
 
 export type MutationUpdateUserArgs = {
-    payload?: InputMaybe<UserUpdatePayload>;
+  payload?: InputMaybe<UserUpdatePayload>;
 };
 
 export type Order = {
-    __typename?: 'Order';
-    attachments: Array<Maybe<Attachment>>;
-    createdAt?: Maybe<Scalars['Date']>;
-    deadline: Scalars['Date'];
-    description?: Maybe<Scalars['String']>;
-    numberOfPages: Scalars['Float'];
-    orderId: Scalars['String'];
-    published?: Maybe<Scalars['Boolean']>;
-    responses?: Maybe<Array<Maybe<OrderResponse>>>;
-    title: Scalars['String'];
-    type: Type;
-    wordsPerPage?: Maybe<Scalars['Float']>;
-    writingStyle: WritingStyle;
+  __typename?: 'Order';
+  attachments: Array<Maybe<Attachment>>;
+  createdAt?: Maybe<Scalars['Date']>;
+  deadline: Scalars['Date'];
+  description?: Maybe<Scalars['String']>;
+  numberOfPages: Scalars['Float'];
+  orderId: Scalars['String'];
+  published?: Maybe<Scalars['Boolean']>;
+  responses?: Maybe<Array<Maybe<OrderResponse>>>;
+  title: Scalars['String'];
+  type: Type;
+  wordsPerPage?: Maybe<Scalars['Float']>;
+  writingStyle: WritingStyle;
 };
 
-// Title -> caption
-// description -> body
-// Footer -> Type, style, deadline
-
 export type OrderInput = {
-    attachments: Array<InputMaybe<AttachmentInput>>;
-    deadline: Scalars['Date'];
-    description?: InputMaybe<Scalars['String']>;
-    numberOfPages: Scalars['Float'];
-    title: Scalars['String'];
-    type: Type;
-    wordsPerPage?: InputMaybe<Scalars['Float']>;
-    writingStyle: WritingStyle;
+  attachments: Array<InputMaybe<AttachmentInput>>;
+  deadline: Scalars['Date'];
+  description?: InputMaybe<Scalars['String']>;
+  numberOfPages: Scalars['Float'];
+  title: Scalars['String'];
+  type: Type;
+  wordsPerPage?: InputMaybe<Scalars['Float']>;
+  writingStyle: WritingStyle;
 };
 
 export type OrderPage = {
-    __typename?: 'OrderPage';
-    docs?: Maybe<Array<Maybe<Order>>>;
-    hasNextPage?: Maybe<Scalars['Boolean']>;
-    hasPrevPage?: Maybe<Scalars['Boolean']>;
-    limit?: Maybe<Scalars['Float']>;
-    nextPage?: Maybe<Scalars['Float']>;
-    offset?: Maybe<Scalars['Float']>;
-    page?: Maybe<Scalars['Float']>;
-    pagingCounter?: Maybe<Scalars['Float']>;
-    prevPage?: Maybe<Scalars['Float']>;
-    totalDocs?: Maybe<Scalars['Float']>;
-    totalPages?: Maybe<Scalars['Float']>;
+  __typename?: 'OrderPage';
+  docs?: Maybe<Array<Maybe<Order>>>;
+  hasNextPage?: Maybe<Scalars['Boolean']>;
+  hasPrevPage?: Maybe<Scalars['Boolean']>;
+  limit?: Maybe<Scalars['Float']>;
+  nextPage?: Maybe<Scalars['Float']>;
+  offset?: Maybe<Scalars['Float']>;
+  page?: Maybe<Scalars['Float']>;
+  pagingCounter?: Maybe<Scalars['Float']>;
+  prevPage?: Maybe<Scalars['Float']>;
+  totalDocs?: Maybe<Scalars['Float']>;
+  totalPages?: Maybe<Scalars['Float']>;
 };
 
 export type OrderResponse = {
-    __typename?: 'OrderResponse';
-    answer?: Maybe<Scalars['String']>;
-    attachments?: Maybe<Array<Maybe<Scalars['String']>>>;
-    comments?: Maybe<Scalars['String']>;
-    date?: Maybe<Scalars['Date']>;
-    type?: Maybe<ResponseType>;
+  __typename?: 'OrderResponse';
+  answer?: Maybe<Scalars['String']>;
+  attachments?: Maybe<Array<Maybe<Scalars['String']>>>;
+  comments?: Maybe<Scalars['String']>;
+  date?: Maybe<Scalars['Date']>;
+  type?: Maybe<ResponseType>;
 };
 
 export type Pagination = {
-    currentPage?: InputMaybe<Scalars['Float']>;
-    perPage?: InputMaybe<Scalars['Float']>;
+  currentPage?: InputMaybe<Scalars['Float']>;
+  perPage?: InputMaybe<Scalars['Float']>;
 };
 
 export type PasswordChangePayload = {
-    currentPassword?: InputMaybe<Scalars['String']>;
-    newPassword?: InputMaybe<Scalars['String']>;
+  currentPassword?: InputMaybe<Scalars['String']>;
+  newPassword?: InputMaybe<Scalars['String']>;
 };
 
 export type Query = {
-    __typename?: 'Query';
-    getMyOrders?: Maybe<OrderPage>;
-    getOrder?: Maybe<Order>;
-    getPublicOrders?: Maybe<OrderPage>;
-    getUserOrders?: Maybe<Array<Maybe<Order>>>;
-    health?: Maybe<Scalars['String']>;
-    me?: Maybe<User>;
+  __typename?: 'Query';
+  getMyOrders?: Maybe<OrderPage>;
+  getOrder?: Maybe<Order>;
+  getPublicOrders?: Maybe<OrderPage>;
+  getUserOrders?: Maybe<Array<Maybe<Order>>>;
+  health?: Maybe<Scalars['String']>;
+  me?: Maybe<User>;
 };
 
 
 export type QueryGetMyOrdersArgs = {
-    pagination?: InputMaybe<Pagination>;
+  pagination?: InputMaybe<Pagination>;
 };
 
 
 export type QueryGetOrderArgs = {
-    orderId: Scalars['String'];
+  orderId: Scalars['String'];
 };
 
 
 export type QueryGetPublicOrdersArgs = {
-    filter?: InputMaybe<FilterOrders>;
-    pagination?: InputMaybe<Pagination>;
+  filter?: InputMaybe<FilterOrders>;
+  pagination?: InputMaybe<Pagination>;
 };
 
 
 export type QueryGetUserOrdersArgs = {
-    email?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
 };
 
 export type RegisterPayload = {
-    email: Scalars['String'];
-    firstName: Scalars['String'];
-    lastName: Scalars['String'];
-    password: Scalars['String'];
-    username?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  password: Scalars['String'];
+  username?: InputMaybe<Scalars['String']>;
 };
 
 export type Response = {
-    __typename?: 'Response';
-    message?: Maybe<Scalars['String']>;
-    status?: Maybe<Scalars['Int']>;
-    success?: Maybe<Scalars['Boolean']>;
+  __typename?: 'Response';
+  message?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['Int']>;
+  success?: Maybe<Scalars['Boolean']>;
 };
 
+export enum ResponseStatus {
+  HasNoResponse = 'HAS_NO_RESPONSE',
+  HasResponse = 'HAS_RESPONSE'
+}
+
 export enum ResponseType {
-    Attachment = 'attachment',
-    Text = 'text'
+  Attachment = 'attachment',
+  Text = 'text'
 }
 
 export type Role = {
-    __typename?: 'Role';
-    name?: Maybe<RoleType>;
+  __typename?: 'Role';
+  name?: Maybe<RoleType>;
 };
 
 export type RoleInput = {
-    name?: InputMaybe<RoleType>;
+  name?: InputMaybe<RoleType>;
 };
 
 export enum RoleType {
-    Admin = 'ADMIN',
-    Customer = 'CUSTOMER',
-    Editor = 'EDITOR',
-    Writer = 'WRITER'
+  Admin = 'ADMIN',
+  Customer = 'CUSTOMER',
+  Editor = 'EDITOR',
+  Writer = 'WRITER'
 }
 
 export type Timezone = {
-    __typename?: 'Timezone';
-    abbr?: Maybe<Scalars['String']>;
-    isdst?: Maybe<Scalars['Boolean']>;
-    offset?: Maybe<Scalars['Int']>;
-    text?: Maybe<Scalars['String']>;
-    utc?: Maybe<Array<Maybe<Scalars['String']>>>;
-    value?: Maybe<Scalars['String']>;
+  __typename?: 'Timezone';
+  abbr?: Maybe<Scalars['String']>;
+  isdst?: Maybe<Scalars['Boolean']>;
+  offset?: Maybe<Scalars['Int']>;
+  text?: Maybe<Scalars['String']>;
+  utc?: Maybe<Array<Maybe<Scalars['String']>>>;
+  value?: Maybe<Scalars['String']>;
 };
 
 export type TimezoneInput = {
-    abbr?: InputMaybe<Scalars['String']>;
-    isdst?: InputMaybe<Scalars['Boolean']>;
-    offset?: InputMaybe<Scalars['Int']>;
-    text?: InputMaybe<Scalars['String']>;
-    utc?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-    value?: InputMaybe<Scalars['String']>;
+  abbr?: InputMaybe<Scalars['String']>;
+  isdst?: InputMaybe<Scalars['Boolean']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  text?: InputMaybe<Scalars['String']>;
+  utc?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+  value?: InputMaybe<Scalars['String']>;
 };
 
 export enum TokenType {
-    Bearer = 'BEARER'
+  Bearer = 'BEARER'
 }
 
 export enum Type {
-    Article = 'ARTICLE',
-    Bibliography = 'BIBLIOGRAPHY',
-    Essay = 'ESSAY',
-    Prompt = 'PROMPT',
-    Review = 'REVIEW'
+  Article = 'ARTICLE',
+  Bibliography = 'BIBLIOGRAPHY',
+  Essay = 'ESSAY',
+  Prompt = 'PROMPT',
+  Review = 'REVIEW'
 }
 
 export type User = {
-    __typename?: 'User';
-    aud?: Maybe<Scalars['String']>;
-    auth_time?: Maybe<Scalars['Float']>;
-    currency?: Maybe<Scalars['String']>;
-    email: Scalars['String'];
-    email_verified?: Maybe<Scalars['Boolean']>;
-    exp?: Maybe<Scalars['Float']>;
-    firebase?: Maybe<Firebase>;
-    firstName?: Maybe<Scalars['String']>;
-    iat?: Maybe<Scalars['Float']>;
-    id?: Maybe<Scalars['ID']>;
-    iss?: Maybe<Scalars['String']>;
-    language?: Maybe<Scalars['String']>;
-    lastName?: Maybe<Scalars['String']>;
-    orders?: Maybe<Array<Maybe<Scalars['String']>>>;
-    password?: Maybe<Scalars['String']>;
-    picture?: Maybe<Scalars['String']>;
-    responses?: Maybe<Array<Maybe<Scalars['String']>>>;
-    roles?: Maybe<Array<Maybe<Role>>>;
-    sub?: Maybe<Scalars['String']>;
-    timezone?: Maybe<Timezone>;
-    uid?: Maybe<Scalars['String']>;
-    user_id?: Maybe<Scalars['String']>;
-    username?: Maybe<Scalars['String']>;
+  __typename?: 'User';
+  aud?: Maybe<Scalars['String']>;
+  auth_time?: Maybe<Scalars['Float']>;
+  currency?: Maybe<Scalars['String']>;
+  email: Scalars['String'];
+  email_verified?: Maybe<Scalars['Boolean']>;
+  exp?: Maybe<Scalars['Float']>;
+  firebase?: Maybe<Firebase>;
+  firstName?: Maybe<Scalars['String']>;
+  iat?: Maybe<Scalars['Float']>;
+  id?: Maybe<Scalars['ID']>;
+  iss?: Maybe<Scalars['String']>;
+  language?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  orders?: Maybe<Array<Maybe<Scalars['String']>>>;
+  password?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['String']>;
+  responses?: Maybe<Array<Maybe<Scalars['String']>>>;
+  roles?: Maybe<Array<Maybe<Role>>>;
+  sub?: Maybe<Scalars['String']>;
+  timezone?: Maybe<Timezone>;
+  uid?: Maybe<Scalars['String']>;
+  user_id?: Maybe<Scalars['String']>;
+  username?: Maybe<Scalars['String']>;
 };
 
 export type UserUpdatePayload = {
-    currency?: InputMaybe<Scalars['String']>;
-    email: Scalars['String'];
-    firstName: Scalars['String'];
-    id: Scalars['ID'];
-    language?: InputMaybe<Scalars['String']>;
-    lastName: Scalars['String'];
-    timezone?: InputMaybe<TimezoneInput>;
-    username?: InputMaybe<Scalars['String']>;
+  currency?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  firstName: Scalars['String'];
+  id: Scalars['ID'];
+  language?: InputMaybe<Scalars['String']>;
+  lastName: Scalars['String'];
+  timezone?: InputMaybe<TimezoneInput>;
+  username?: InputMaybe<Scalars['String']>;
 };
 
 export enum WritingStyle {
-    Apa6 = 'APA6',
-    Apa7 = 'APA7',
-    Harvard = 'HARVARD',
-    Mla = 'MLA'
+  Apa6 = 'APA6',
+  Apa7 = 'APA7',
+  Harvard = 'HARVARD',
+  Mla = 'MLA'
 }
 
 export type UpdatePasswordMutationVariables = Exact<{
-    payload?: InputMaybe<PasswordChangePayload>;
+  payload?: InputMaybe<PasswordChangePayload>;
 }>;
 
 
 export type UpdatePasswordMutation = { __typename?: 'Mutation', updatePassword?: { __typename?: 'Response', message?: string | null, status?: number | null, success?: boolean | null } | null };
 
 export type CreateOrderFromTitleMutationVariables = Exact<{
-    title?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
 }>;
 
 
 export type CreateOrderFromTitleMutation = { __typename?: 'Mutation', createOrderFromTitle?: { __typename?: 'CreateOrderResponse', status?: number | null, success?: boolean | null, data?: string | null } | null };
 
 export type DeleteAttachmentMutationVariables = Exact<{
-    orderId?: InputMaybe<Scalars['String']>;
-    attachmentKey?: InputMaybe<Scalars['String']>;
+  orderId?: InputMaybe<Scalars['String']>;
+  attachmentKey?: InputMaybe<Scalars['String']>;
 }>;
 
 
 export type DeleteAttachmentMutation = { __typename?: 'Mutation', deleteAttachment?: { __typename?: 'Response', success?: boolean | null, status?: number | null, message?: string | null } | null };
 
 export type GetMyOrdersQueryVariables = Exact<{
-    pagination?: InputMaybe<Pagination>;
+  pagination?: InputMaybe<Pagination>;
 }>;
 
 
 export type GetMyOrdersQuery = { __typename?: 'Query', getMyOrders?: { __typename?: 'OrderPage', totalDocs?: number | null, limit?: number | null, hasPrevPage?: boolean | null, hasNextPage?: boolean | null, page?: number | null, totalPages?: number | null, offset?: number | null, prevPage?: number | null, nextPage?: number | null, pagingCounter?: number | null, docs?: Array<{ __typename?: 'Order', orderId: string, title: string, description?: string | null, writingStyle: WritingStyle, type: Type, numberOfPages: number, wordsPerPage?: number | null, deadline: any, createdAt?: any | null, published?: boolean | null, attachments: Array<{ __typename?: 'Attachment', key?: string | null, location?: string | null } | null>, responses?: Array<{ __typename: 'OrderResponse', answer?: string | null, attachments?: Array<string | null> | null, comments?: string | null, date?: any | null, type?: ResponseType | null } | null> | null } | null> | null } | null };
 
 export type GetOrderQueryVariables = Exact<{
-    orderId: Scalars['String'];
+  orderId: Scalars['String'];
 }>;
 
 
 export type GetOrderQuery = { __typename?: 'Query', getOrder?: { __typename?: 'Order', title: string, description?: string | null, writingStyle: WritingStyle, type: Type, numberOfPages: number, wordsPerPage?: number | null, deadline: any, createdAt?: any | null, orderId: string, published?: boolean | null, attachments: Array<{ __typename?: 'Attachment', name?: string | null, location?: string | null, key?: string | null, mimeType?: string | null } | null>, responses?: Array<{ __typename?: 'OrderResponse', answer?: string | null, attachments?: Array<string | null> | null, comments?: string | null, date?: any | null } | null> | null } | null };
 
 export type GetPublicOrdersQueryVariables = Exact<{
-    pagination?: InputMaybe<Pagination>;
-    filter?: InputMaybe<FilterOrders>;
+  pagination?: InputMaybe<Pagination>;
+  filter?: InputMaybe<FilterOrders>;
 }>;
 
 
 export type GetPublicOrdersQuery = { __typename?: 'Query', getPublicOrders?: { __typename?: 'OrderPage', totalDocs?: number | null, totalPages?: number | null, limit?: number | null, hasPrevPage?: boolean | null, hasNextPage?: boolean | null, page?: number | null, offset?: number | null, prevPage?: number | null, nextPage?: number | null, pagingCounter?: number | null, docs?: Array<{ __typename?: 'Order', title: string, orderId: string, description?: string | null, writingStyle: WritingStyle, type: Type, numberOfPages: number, wordsPerPage?: number | null, deadline: any, createdAt?: any | null, published?: boolean | null, attachments: Array<{ __typename?: 'Attachment', name?: string | null, location?: string | null, key?: string | null, mimeType?: string | null } | null>, responses?: Array<{ __typename?: 'OrderResponse', date?: any | null, attachments?: Array<string | null> | null, comments?: string | null, answer?: string | null, type?: ResponseType | null } | null> | null } | null> | null } | null };
 
 export type SaveOrderDescriptionMutationVariables = Exact<{
-    description: Scalars['JSON'];
-    orderId?: InputMaybe<Scalars['String']>;
+  description: Scalars['JSON'];
+  orderId?: InputMaybe<Scalars['String']>;
 }>;
 
 
 export type SaveOrderDescriptionMutation = { __typename?: 'Mutation', saveOrderDescription?: { __typename?: 'Response', status?: number | null, message?: string | null, success?: boolean | null } | null };
 
 export type UpdateOrderMutationVariables = Exact<{
-    orderId?: InputMaybe<Scalars['String']>;
-    orderInput?: InputMaybe<OrderInput>;
+  orderId?: InputMaybe<Scalars['String']>;
+  orderInput?: InputMaybe<OrderInput>;
 }>;
 
 
 export type UpdateOrderMutation = { __typename?: 'Mutation', updateOrder?: { __typename?: 'Response', status?: number | null, message?: string | null, success?: boolean | null } | null };
 
 export type UpdateUserMutationVariables = Exact<{
-    payload?: InputMaybe<UserUpdatePayload>;
+  payload?: InputMaybe<UserUpdatePayload>;
 }>;
 
 
@@ -431,14 +434,10 @@ export type UpdateUserMutation = { __typename?: 'Mutation', updateUser?: { __typ
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CurrentUserQuery = {
-    __typename?: 'Query', me?: {
-        __typename?: 'User', email: string, id?: string | null, firstName?: string | null, lastName?: string | null, password?: string | null, username?: string | null, currency?: string | null, language?: string | null, orders?: Array<string | null> | null, uid?: string | null, picture?: string | null, iss?: string | null, aud?: string | null, auth_time?: number | null, user_id?: string | null, sub?: string | null, iat?: number | null, exp?: number | null, email_verified?: boolean | null, responses?: Array<string | null> | null, roles?: Array<{ __typename?: 'Role', name?: RoleType | null } | null> | null, timezone?: { __typename?: 'Timezone', value?: string | null, abbr?: string | null, offset?: number | null, isdst?: boolean | null, text?: string | null, utc?: Array<string | null> | null } | null, firebase?: { __typename?: 'Firebase', sign_in_provider?: string | null, identities?: { __typename?: 'Identity', googlecom?: Array<string | null> | null, email?: Array<string | null> | null } | null } | null
-    } | null
-};
+export type CurrentUserQuery = { __typename?: 'Query', me?: { __typename?: 'User', email: string, id?: string | null, firstName?: string | null, lastName?: string | null, password?: string | null, username?: string | null, currency?: string | null, language?: string | null, orders?: Array<string | null> | null, uid?: string | null, picture?: string | null, iss?: string | null, aud?: string | null, auth_time?: number | null, user_id?: string | null, sub?: string | null, iat?: number | null, exp?: number | null, email_verified?: boolean | null, responses?: Array<string | null> | null, roles?: Array<{ __typename?: 'Role', name?: RoleType | null } | null> | null, timezone?: { __typename?: 'Timezone', value?: string | null, abbr?: string | null, offset?: number | null, isdst?: boolean | null, text?: string | null, utc?: Array<string | null> | null } | null, firebase?: { __typename?: 'Firebase', sign_in_provider?: string | null, identities?: { __typename?: 'Identity', googlecom?: Array<string | null> | null, email?: Array<string | null> | null } | null } | null } | null };
 
 export type RegisterMutationVariables = Exact<{
-    payload?: InputMaybe<RegisterPayload>;
+  payload?: InputMaybe<RegisterPayload>;
 }>;
 
 
@@ -447,13 +446,13 @@ export type RegisterMutation = { __typename?: 'Mutation', register?: { __typenam
 
 export const UpdatePasswordDocument = gql`
     mutation UpdatePassword($payload: PasswordChangePayload) {
-        updatePassword(payload: $payload) {
-            message
-            status
-            success
-        }
-    }
-`;
+  updatePassword(payload: $payload) {
+    message
+    status
+    success
+  }
+}
+    `;
 export type UpdatePasswordMutationFn = Apollo.MutationFunction<UpdatePasswordMutation, UpdatePasswordMutationVariables>;
 
 /**
@@ -474,22 +473,21 @@ export type UpdatePasswordMutationFn = Apollo.MutationFunction<UpdatePasswordMut
  * });
  */
 export function useUpdatePasswordMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePasswordMutation, UpdatePasswordMutationVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useMutation<UpdatePasswordMutation, UpdatePasswordMutationVariables>(UpdatePasswordDocument, options);
-}
-
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdatePasswordMutation, UpdatePasswordMutationVariables>(UpdatePasswordDocument, options);
+      }
 export type UpdatePasswordMutationHookResult = ReturnType<typeof useUpdatePasswordMutation>;
 export type UpdatePasswordMutationResult = Apollo.MutationResult<UpdatePasswordMutation>;
 export type UpdatePasswordMutationOptions = Apollo.BaseMutationOptions<UpdatePasswordMutation, UpdatePasswordMutationVariables>;
 export const CreateOrderFromTitleDocument = gql`
     mutation CreateOrderFromTitle($title: String) {
-        createOrderFromTitle(title: $title) {
-            status
-            success
-            data
-        }
-    }
-`;
+  createOrderFromTitle(title: $title) {
+    status
+    success
+    data
+  }
+}
+    `;
 export type CreateOrderFromTitleMutationFn = Apollo.MutationFunction<CreateOrderFromTitleMutation, CreateOrderFromTitleMutationVariables>;
 
 /**
@@ -510,22 +508,21 @@ export type CreateOrderFromTitleMutationFn = Apollo.MutationFunction<CreateOrder
  * });
  */
 export function useCreateOrderFromTitleMutation(baseOptions?: Apollo.MutationHookOptions<CreateOrderFromTitleMutation, CreateOrderFromTitleMutationVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useMutation<CreateOrderFromTitleMutation, CreateOrderFromTitleMutationVariables>(CreateOrderFromTitleDocument, options);
-}
-
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateOrderFromTitleMutation, CreateOrderFromTitleMutationVariables>(CreateOrderFromTitleDocument, options);
+      }
 export type CreateOrderFromTitleMutationHookResult = ReturnType<typeof useCreateOrderFromTitleMutation>;
 export type CreateOrderFromTitleMutationResult = Apollo.MutationResult<CreateOrderFromTitleMutation>;
 export type CreateOrderFromTitleMutationOptions = Apollo.BaseMutationOptions<CreateOrderFromTitleMutation, CreateOrderFromTitleMutationVariables>;
 export const DeleteAttachmentDocument = gql`
     mutation DeleteAttachment($orderId: String, $attachmentKey: String) {
-        deleteAttachment(orderId: $orderId, attachmentKey: $attachmentKey) {
-            success
-            status
-            message
-        }
-    }
-`;
+  deleteAttachment(orderId: $orderId, attachmentKey: $attachmentKey) {
+    success
+    status
+    message
+  }
+}
+    `;
 export type DeleteAttachmentMutationFn = Apollo.MutationFunction<DeleteAttachmentMutation, DeleteAttachmentMutationVariables>;
 
 /**
@@ -547,53 +544,52 @@ export type DeleteAttachmentMutationFn = Apollo.MutationFunction<DeleteAttachmen
  * });
  */
 export function useDeleteAttachmentMutation(baseOptions?: Apollo.MutationHookOptions<DeleteAttachmentMutation, DeleteAttachmentMutationVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useMutation<DeleteAttachmentMutation, DeleteAttachmentMutationVariables>(DeleteAttachmentDocument, options);
-}
-
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteAttachmentMutation, DeleteAttachmentMutationVariables>(DeleteAttachmentDocument, options);
+      }
 export type DeleteAttachmentMutationHookResult = ReturnType<typeof useDeleteAttachmentMutation>;
 export type DeleteAttachmentMutationResult = Apollo.MutationResult<DeleteAttachmentMutation>;
 export type DeleteAttachmentMutationOptions = Apollo.BaseMutationOptions<DeleteAttachmentMutation, DeleteAttachmentMutationVariables>;
 export const GetMyOrdersDocument = gql`
     query GetMyOrders($pagination: Pagination) {
-        getMyOrders(pagination: $pagination) {
-            docs {
-                orderId
-                title
-                description
-                attachments {
-                    key
-                    location
-                }
-                writingStyle
-                type
-                numberOfPages
-                wordsPerPage
-                deadline
-                responses {
-                    answer
-                    attachments
-                    comments
-                    date
-                    type
-                    __typename
-                }
-                createdAt
-                published
-            }
-            totalDocs
-            limit
-            hasPrevPage
-            hasNextPage
-            page
-            totalPages
-            offset
-            prevPage
-            nextPage
-            pagingCounter
-        }
+  getMyOrders(pagination: $pagination) {
+    docs {
+      orderId
+      title
+      description
+      attachments {
+        key
+        location
+      }
+      writingStyle
+      type
+      numberOfPages
+      wordsPerPage
+      deadline
+      responses {
+        answer
+        attachments
+        comments
+        date
+        type
+        __typename
+      }
+      createdAt
+      published
     }
-`;
+    totalDocs
+    limit
+    hasPrevPage
+    hasNextPage
+    page
+    totalPages
+    offset
+    prevPage
+    nextPage
+    pagingCounter
+  }
+}
+    `;
 
 /**
  * __useGetMyOrdersQuery__
@@ -612,46 +608,44 @@ export const GetMyOrdersDocument = gql`
  * });
  */
 export function useGetMyOrdersQuery(baseOptions?: Apollo.QueryHookOptions<GetMyOrdersQuery, GetMyOrdersQueryVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useQuery<GetMyOrdersQuery, GetMyOrdersQueryVariables>(GetMyOrdersDocument, options);
-}
-
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMyOrdersQuery, GetMyOrdersQueryVariables>(GetMyOrdersDocument, options);
+      }
 export function useGetMyOrdersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMyOrdersQuery, GetMyOrdersQueryVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useLazyQuery<GetMyOrdersQuery, GetMyOrdersQueryVariables>(GetMyOrdersDocument, options);
-}
-
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMyOrdersQuery, GetMyOrdersQueryVariables>(GetMyOrdersDocument, options);
+        }
 export type GetMyOrdersQueryHookResult = ReturnType<typeof useGetMyOrdersQuery>;
 export type GetMyOrdersLazyQueryHookResult = ReturnType<typeof useGetMyOrdersLazyQuery>;
 export type GetMyOrdersQueryResult = Apollo.QueryResult<GetMyOrdersQuery, GetMyOrdersQueryVariables>;
 export const GetOrderDocument = gql`
     query GetOrder($orderId: String!) {
-        getOrder(orderId: $orderId) {
-            title
-            description
-            attachments {
-                name
-                location
-                key
-                mimeType
-            }
-            writingStyle
-            type
-            numberOfPages
-            wordsPerPage
-            deadline
-            responses {
-                answer
-                attachments
-                comments
-                date
-            }
-            createdAt
-            orderId
-            published
-        }
+  getOrder(orderId: $orderId) {
+    title
+    description
+    attachments {
+      name
+      location
+      key
+      mimeType
     }
-`;
+    writingStyle
+    type
+    numberOfPages
+    wordsPerPage
+    deadline
+    responses {
+      answer
+      attachments
+      comments
+      date
+    }
+    createdAt
+    orderId
+    published
+  }
+}
+    `;
 
 /**
  * __useGetOrderQuery__
@@ -670,59 +664,57 @@ export const GetOrderDocument = gql`
  * });
  */
 export function useGetOrderQuery(baseOptions: Apollo.QueryHookOptions<GetOrderQuery, GetOrderQueryVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useQuery<GetOrderQuery, GetOrderQueryVariables>(GetOrderDocument, options);
-}
-
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOrderQuery, GetOrderQueryVariables>(GetOrderDocument, options);
+      }
 export function useGetOrderLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOrderQuery, GetOrderQueryVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useLazyQuery<GetOrderQuery, GetOrderQueryVariables>(GetOrderDocument, options);
-}
-
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOrderQuery, GetOrderQueryVariables>(GetOrderDocument, options);
+        }
 export type GetOrderQueryHookResult = ReturnType<typeof useGetOrderQuery>;
 export type GetOrderLazyQueryHookResult = ReturnType<typeof useGetOrderLazyQuery>;
 export type GetOrderQueryResult = Apollo.QueryResult<GetOrderQuery, GetOrderQueryVariables>;
 export const GetPublicOrdersDocument = gql`
     query GetPublicOrders($pagination: Pagination, $filter: FilterOrders) {
-        getPublicOrders(pagination: $pagination, filter: $filter) {
-            totalDocs
-            totalPages
-            docs {
-                title
-                orderId
-                description
-                attachments {
-                    name
-                    location
-                    key
-                    mimeType
-                }
-                writingStyle
-                type
-                numberOfPages
-                wordsPerPage
-                deadline
-                responses {
-                    date
-                    attachments
-                    comments
-                    answer
-                    type
-                }
-                createdAt
-                published
-            }
-            limit
-            hasPrevPage
-            hasNextPage
-            page
-            offset
-            prevPage
-            nextPage
-            pagingCounter
-        }
+  getPublicOrders(pagination: $pagination, filter: $filter) {
+    totalDocs
+    totalPages
+    docs {
+      title
+      orderId
+      description
+      attachments {
+        name
+        location
+        key
+        mimeType
+      }
+      writingStyle
+      type
+      numberOfPages
+      wordsPerPage
+      deadline
+      responses {
+        date
+        attachments
+        comments
+        answer
+        type
+      }
+      createdAt
+      published
     }
-`;
+    limit
+    hasPrevPage
+    hasNextPage
+    page
+    offset
+    prevPage
+    nextPage
+    pagingCounter
+  }
+}
+    `;
 
 /**
  * __useGetPublicOrdersQuery__
@@ -742,27 +734,25 @@ export const GetPublicOrdersDocument = gql`
  * });
  */
 export function useGetPublicOrdersQuery(baseOptions?: Apollo.QueryHookOptions<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useQuery<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>(GetPublicOrdersDocument, options);
-}
-
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>(GetPublicOrdersDocument, options);
+      }
 export function useGetPublicOrdersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useLazyQuery<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>(GetPublicOrdersDocument, options);
-}
-
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>(GetPublicOrdersDocument, options);
+        }
 export type GetPublicOrdersQueryHookResult = ReturnType<typeof useGetPublicOrdersQuery>;
 export type GetPublicOrdersLazyQueryHookResult = ReturnType<typeof useGetPublicOrdersLazyQuery>;
 export type GetPublicOrdersQueryResult = Apollo.QueryResult<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>;
 export const SaveOrderDescriptionDocument = gql`
     mutation SaveOrderDescription($description: JSON!, $orderId: String) {
-        saveOrderDescription(description: $description, orderId: $orderId) {
-            status
-            message
-            success
-        }
-    }
-`;
+  saveOrderDescription(description: $description, orderId: $orderId) {
+    status
+    message
+    success
+  }
+}
+    `;
 export type SaveOrderDescriptionMutationFn = Apollo.MutationFunction<SaveOrderDescriptionMutation, SaveOrderDescriptionMutationVariables>;
 
 /**
@@ -784,22 +774,21 @@ export type SaveOrderDescriptionMutationFn = Apollo.MutationFunction<SaveOrderDe
  * });
  */
 export function useSaveOrderDescriptionMutation(baseOptions?: Apollo.MutationHookOptions<SaveOrderDescriptionMutation, SaveOrderDescriptionMutationVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useMutation<SaveOrderDescriptionMutation, SaveOrderDescriptionMutationVariables>(SaveOrderDescriptionDocument, options);
-}
-
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SaveOrderDescriptionMutation, SaveOrderDescriptionMutationVariables>(SaveOrderDescriptionDocument, options);
+      }
 export type SaveOrderDescriptionMutationHookResult = ReturnType<typeof useSaveOrderDescriptionMutation>;
 export type SaveOrderDescriptionMutationResult = Apollo.MutationResult<SaveOrderDescriptionMutation>;
 export type SaveOrderDescriptionMutationOptions = Apollo.BaseMutationOptions<SaveOrderDescriptionMutation, SaveOrderDescriptionMutationVariables>;
 export const UpdateOrderDocument = gql`
     mutation UpdateOrder($orderId: String, $orderInput: OrderInput) {
-        updateOrder(orderInput: $orderInput, orderId: $orderId) {
-            status
-            message
-            success
-        }
-    }
-`;
+  updateOrder(orderInput: $orderInput, orderId: $orderId) {
+    status
+    message
+    success
+  }
+}
+    `;
 export type UpdateOrderMutationFn = Apollo.MutationFunction<UpdateOrderMutation, UpdateOrderMutationVariables>;
 
 /**
@@ -821,22 +810,21 @@ export type UpdateOrderMutationFn = Apollo.MutationFunction<UpdateOrderMutation,
  * });
  */
 export function useUpdateOrderMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOrderMutation, UpdateOrderMutationVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useMutation<UpdateOrderMutation, UpdateOrderMutationVariables>(UpdateOrderDocument, options);
-}
-
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateOrderMutation, UpdateOrderMutationVariables>(UpdateOrderDocument, options);
+      }
 export type UpdateOrderMutationHookResult = ReturnType<typeof useUpdateOrderMutation>;
 export type UpdateOrderMutationResult = Apollo.MutationResult<UpdateOrderMutation>;
 export type UpdateOrderMutationOptions = Apollo.BaseMutationOptions<UpdateOrderMutation, UpdateOrderMutationVariables>;
 export const UpdateUserDocument = gql`
     mutation UpdateUser($payload: UserUpdatePayload) {
-        updateUser(payload: $payload) {
-            success
-            status
-            message
-        }
-    }
-`;
+  updateUser(payload: $payload) {
+    success
+    status
+    message
+  }
+}
+    `;
 export type UpdateUserMutationFn = Apollo.MutationFunction<UpdateUserMutation, UpdateUserMutationVariables>;
 
 /**
@@ -857,57 +845,56 @@ export type UpdateUserMutationFn = Apollo.MutationFunction<UpdateUserMutation, U
  * });
  */
 export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserMutation, UpdateUserMutationVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument, options);
-}
-
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument, options);
+      }
 export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
 export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
 export const CurrentUserDocument = gql`
     query CurrentUser {
-        me {
-            email
-            id
-            firstName
-            lastName
-            password
-            username
-            currency
-            language
-            orders
-            uid
-            picture
-            iss
-            aud
-            auth_time
-            user_id
-            sub
-            iat
-            exp
-            email_verified
-            roles {
-                name
-            }
-            timezone {
-                value
-                abbr
-                offset
-                isdst
-                text
-                utc
-            }
-            responses
-            firebase {
-                identities {
-                    googlecom
-                    email
-                }
-                sign_in_provider
-            }
-        }
+  me {
+    email
+    id
+    firstName
+    lastName
+    password
+    username
+    currency
+    language
+    orders
+    uid
+    picture
+    iss
+    aud
+    auth_time
+    user_id
+    sub
+    iat
+    exp
+    email_verified
+    roles {
+      name
     }
-`;
+    timezone {
+      value
+      abbr
+      offset
+      isdst
+      text
+      utc
+    }
+    responses
+    firebase {
+      identities {
+        googlecom
+        email
+      }
+      sign_in_provider
+    }
+  }
+}
+    `;
 
 /**
  * __useCurrentUserQuery__
@@ -925,32 +912,30 @@ export const CurrentUserDocument = gql`
  * });
  */
 export function useCurrentUserQuery(baseOptions?: Apollo.QueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
-}
-
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
+      }
 export function useCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useLazyQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
-}
-
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, options);
+        }
 export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
 export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
 export type CurrentUserQueryResult = Apollo.QueryResult<CurrentUserQuery, CurrentUserQueryVariables>;
 export const RegisterDocument = gql`
     mutation Register($payload: RegisterPayload) {
-        register(payload: $payload) {
-            email
-            firstName
-            jwtToken {
-                expiry
-                id
-                jwtToken
-                type
-            }
-        }
+  register(payload: $payload) {
+    email
+    firstName
+    jwtToken {
+      expiry
+      id
+      jwtToken
+      type
     }
-`;
+  }
+}
+    `;
 export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
 
 /**
@@ -971,10 +956,9 @@ export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, Regis
  * });
  */
 export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<RegisterMutation, RegisterMutationVariables>) {
-    const options = {...defaultOptions, ...baseOptions}
-    return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, options);
-}
-
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, options);
+      }
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
