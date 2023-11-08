@@ -22,7 +22,8 @@
     "incremental": true
   },
   "include": [
-    "src"
+    "src",
+    "@graphql/common.d.ts"
   ],
   "exclude": [
     "node_modules"

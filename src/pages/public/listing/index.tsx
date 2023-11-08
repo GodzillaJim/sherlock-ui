@@ -1,13 +1,13 @@
 import React, { ReactNode, useEffect } from "react";
 import PublicLayout from "../../../layout/PublicLayout";
-import { Box, Divider, Grid, Typography } from "@mui/material";
+import { Alert, Box, Divider, Grid, Typography } from "@mui/material";
 import TopSearchBar from "../../../layout/PublicLayout/Header";
 import Filters from "../../../components/listing/Filters";
 import OrderList from "../../../components/listing/OrderList";
 import { GetServerSidePropsContext } from "next";
 import { createApolloClient } from "../../../Apollo";
-import GetPublicOrders from "../../../Apollo/schema/GetPublicOrders";
 import {
+  GetPublicOrdersDocument,
   GetPublicOrdersQuery,
   GetPublicOrdersQueryVariables,
   OrderPage,
@@ -57,8 +57,12 @@ const Listing = ({ orderPage, error }: ListingProps) => {
   }, [orderPage]);
 
   useEffect(() => {
+    if (error) {
+      console.log("Error: ", JSON.parse(error.stack));
+    }
     console.log("OrderPage: ", orderPage);
   });
+
   return (
     <Grid
       container
@@ -73,6 +77,7 @@ const Listing = ({ orderPage, error }: ListingProps) => {
         >
           <TopSearchBar />
         </Box>
+        {error && <Alert color={"error"}>{error?.message}</Alert>}
       </Grid>
       <Grid item>
         <Grid container>
@@ -109,7 +114,6 @@ export const getServerSideProps = async (
     const client = createApolloClient(authToken);
 
     const filters = context.query;
-    console.log("Filters: ", filters);
     const variables: GetPublicOrdersQueryVariables = {
       filter: {
         responseStatus: isEmpty(filters?.responseStatus as string)
@@ -139,19 +143,23 @@ export const getServerSideProps = async (
     console.log("Filters: ", filters);
 
     const { data, error } = await client.query<GetPublicOrdersQuery>({
-      query: GetPublicOrders,
+      query: GetPublicOrdersDocument,
       variables,
     });
     if (error) {
       return { props: { error } };
     }
 
-    console.log(data);
     return { props: { orderPage: data.getPublicOrders } };
   } catch (error: any /*tslint:disable-line:no-explicit-any*/) {
-    console.log("Error: ", error);
+    console.log("Another Error: ", error);
     return {
-      props: { error: { message: error?.message || "Something went wrong" } },
+      props: {
+        error: {
+          message: error?.message || "Something went wrong",
+          stack: JSON.stringify(error, null, 2),
+        },
+      },
     };
   }
 };

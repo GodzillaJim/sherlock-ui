@@ -1,0 +1,7 @@
+mutation AddOrderResponse($orderId: String, $orderResponse: OrderResponseInput) {
+    addOrderResponse(orderId: $orderId, orderResponse: $orderResponse) {
+        data
+        success
+        status
+    }
+}

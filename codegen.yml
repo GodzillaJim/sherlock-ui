@@ -1,0 +1,52 @@
+overwrite: true
+schema:
+  #   - https://api-gateway-flight-dot-travelin-staging-242822.ey.r.appspot.com/graphql:
+  #   - https://api-gateway-dot-travelin-staging-242822.appspot.com/graphql:
+  - http://localhost:5000/graphql:
+      headers:
+        Authorization: SECRET_WEBSCOPE_TOKEN
+documents:
+  - "src/**/*.gql"
+  - "!src/**/**.generated.gql"
+  - "src/**/*.graphql"
+generates:
+  ./@types/GENERATED_API_TYPES.d.ts:
+    plugins:
+      - "typescript"
+    config:
+      noExport: true # global types are not the best idea
+      immutableTypes: false
+      enumsAsTypes: true
+      scalars:
+        Date: string
+        Time: string
+        DateTime: string
+        JSON: "{ [key: string]: any }"
+        Email: string
+        URL: string
+  # same as above but with `noExport: false`
+  ./graphql/common.d.ts:
+    plugins:
+      - "typescript"
+    config:
+      immutableTypes: false
+      enumsAsTypes: true
+      scalars:
+        Date: string
+        Time: string
+        DateTime: string
+        JSON: "{ [key: string]: any }"
+        Email: string
+        URL: string
+  graphql/:
+    preset: near-operation-file
+    presetConfig:
+      baseTypesPath: ./common
+      importTypesNamespace: common
+    plugins:
+      - "typescript-operations"
+      - "typescript-react-apollo"
+    config:
+      withHooks: true
+      withHOC: false
+      withComponent: false

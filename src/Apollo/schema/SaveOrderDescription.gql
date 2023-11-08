@@ -1,0 +1,7 @@
+mutation SaveOrderDescription($orderId: String, $description: String) {
+    saveOrderDescription(orderId: $orderId, description: $description) {
+        status
+        message
+        success
+    }
+}

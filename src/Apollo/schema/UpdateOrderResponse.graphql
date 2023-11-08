@@ -1,0 +1,7 @@
+mutation UpdateOrderResponse($orderId: String, $responseId: String, $orderResponseInput: OrderResponseInput) {
+    updateOrderResponse(orderId: $orderId, responseId: $responseId, orderResponseInput: $orderResponseInput) {
+        data
+        success
+        status
+    }
+}

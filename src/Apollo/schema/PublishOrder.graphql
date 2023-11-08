@@ -1,0 +1,7 @@
+mutation PublishOrder($orderId: String!) {
+    publishOrder(orderId: $orderId) {
+        status
+        message
+        success
+    }
+}

@@ -1,0 +1,80 @@
+query GetMyOrders($pagination: Pagination) {
+    getMyOrders(pagination: $pagination) {
+        docs {
+            orderId
+            title
+            description
+            attachments {
+                name
+                location
+                key
+                mimeType
+            }
+            writingStyle
+            type
+            numberOfPages
+            wordsPerPage
+            deadline
+            responses {
+                id
+                comments
+                answer
+                responseType
+                createdAt
+                updatedAt
+                createdBy {
+                    id
+                    email
+                    firstName
+                    lastName
+                    password
+                    roles {
+                        name
+                    }
+                    username
+                    currency
+                    timezone {
+                        value
+                        abbr
+                        offset
+                        isdst
+                        text
+                        utc
+                    }
+                    language
+                    orders
+                    responses
+                    uid
+                    picture
+                    iss
+                    aud
+                    auth_time
+                    user_id
+                    sub
+                    iat
+                    exp
+                    email_verified
+                    firebase {
+                        identities {
+                            googlecom
+                            email
+                        }
+                        sign_in_provider
+                    }
+                }
+            }
+            createdAt
+            published
+        }
+        totalDocs
+        limit
+        hasPrevPage
+        hasNextPage
+        page
+        totalPages
+        offset
+        prevPage
+        nextPage
+        pagingCounter
+    }
+}

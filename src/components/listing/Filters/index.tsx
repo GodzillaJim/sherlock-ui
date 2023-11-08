@@ -137,14 +137,14 @@ const Filters = () => {
           label="Type of Work"
           options={getOrderTypeOptions()}
           onChange={(value) => handleChange("typeOfWork", value)}
-          value={filters?.typeOfWork || null}
+          value={filters?.typeOfWork || ""}
         />
       </Grid>
       <Grid item>
         <Dropdown
           label="Writing Style"
           options={getWritingStyleOptions()}
-          value={filters?.writingStyle}
+          value={filters?.writingStyle || ""}
           onChange={(value) => handleChange("writingStyle", value)}
         />
       </Grid>

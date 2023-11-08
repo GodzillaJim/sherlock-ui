@@ -18,6 +18,13 @@ export type Scalars = {
   ObjectId: any;
 };
 
+export type AddResponseFeedback = IResponse & {
+  __typename?: 'AddResponseFeedback';
+  data?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['Float']>;
+  success?: Maybe<Scalars['Boolean']>;
+};
+
 export type Attachment = {
   __typename?: 'Attachment';
   key?: Maybe<Scalars['String']>;
@@ -95,16 +102,23 @@ export type LoginPayload = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addOrderResponse?: Maybe<AddResponseFeedback>;
   createOrder?: Maybe<Response>;
   createOrderFromTitle?: Maybe<CreateOrderResponse>;
   deleteAttachment?: Maybe<Response>;
+  deleteOrderResponse?: Maybe<Response>;
   login?: Maybe<AuthResponse>;
   register?: Maybe<AuthResponse>;
-  saveOrderDescription?: Maybe<Response>;
   updateHealth?: Maybe<Scalars['String']>;
   updateOrder?: Maybe<Response>;
   updatePassword?: Maybe<Response>;
   updateUser?: Maybe<Response>;
+};
+
+
+export type MutationAddOrderResponseArgs = {
+  orderId?: InputMaybe<Scalars['String']>;
+  orderResponse?: InputMaybe<OrderResponseInput>;
 };
 
 
@@ -124,6 +138,11 @@ export type MutationDeleteAttachmentArgs = {
 };
 
 
+export type MutationDeleteOrderResponseArgs = {
+  responseId?: InputMaybe<Scalars['String']>;
+};
+
+
 export type MutationLoginArgs = {
   payload?: InputMaybe<LoginPayload>;
 };
@@ -131,12 +150,6 @@ export type MutationLoginArgs = {
 
 export type MutationRegisterArgs = {
   payload?: InputMaybe<RegisterPayload>;
-};
-
-
-export type MutationSaveOrderDescriptionArgs = {
-  description: Scalars['JSON'];
-  orderId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -200,10 +213,20 @@ export type OrderPage = {
 export type OrderResponse = {
   __typename?: 'OrderResponse';
   answer?: Maybe<Scalars['String']>;
-  attachments?: Maybe<Array<Maybe<Scalars['String']>>>;
+  attachments?: Maybe<Array<Maybe<Attachment>>>;
   comments?: Maybe<Scalars['String']>;
-  date?: Maybe<Scalars['Date']>;
-  type?: Maybe<ResponseType>;
+  createdAt?: Maybe<Scalars['Date']>;
+  createdBy?: Maybe<User>;
+  id?: Maybe<Scalars['ID']>;
+  responseType?: Maybe<ResponseType>;
+  updatedAt?: Maybe<Scalars['Date']>;
+};
+
+export type OrderResponseInput = {
+  answer?: InputMaybe<Scalars['String']>;
+  attachments?: InputMaybe<Array<InputMaybe<AttachmentInput>>>;
+  comments?: InputMaybe<Scalars['String']>;
+  responseType?: InputMaybe<ResponseType>;
 };
 
 export type Pagination = {
@@ -386,36 +409,6 @@ export type DeleteAttachmentMutationVariables = Exact<{
 
 export type DeleteAttachmentMutation = { __typename?: 'Mutation', deleteAttachment?: { __typename?: 'Response', success?: boolean | null, status?: number | null, message?: string | null } | null };
 
-export type GetMyOrdersQueryVariables = Exact<{
-  pagination?: InputMaybe<Pagination>;
-}>;
-
-
-export type GetMyOrdersQuery = { __typename?: 'Query', getMyOrders?: { __typename?: 'OrderPage', totalDocs?: number | null, limit?: number | null, hasPrevPage?: boolean | null, hasNextPage?: boolean | null, page?: number | null, totalPages?: number | null, offset?: number | null, prevPage?: number | null, nextPage?: number | null, pagingCounter?: number | null, docs?: Array<{ __typename?: 'Order', orderId: string, title: string, description?: string | null, writingStyle: WritingStyle, type: Type, numberOfPages: number, wordsPerPage?: number | null, deadline: any, createdAt?: any | null, published?: boolean | null, attachments: Array<{ __typename?: 'Attachment', key?: string | null, location?: string | null } | null>, responses?: Array<{ __typename: 'OrderResponse', answer?: string | null, attachments?: Array<string | null> | null, comments?: string | null, date?: any | null, type?: ResponseType | null } | null> | null } | null> | null } | null };
-
-export type GetOrderQueryVariables = Exact<{
-  orderId: Scalars['String'];
-}>;
-
-
-export type GetOrderQuery = { __typename?: 'Query', getOrder?: { __typename?: 'Order', title: string, description?: string | null, writingStyle: WritingStyle, type: Type, numberOfPages: number, wordsPerPage?: number | null, deadline: any, createdAt?: any | null, orderId: string, published?: boolean | null, attachments: Array<{ __typename?: 'Attachment', name?: string | null, location?: string | null, key?: string | null, mimeType?: string | null } | null>, responses?: Array<{ __typename?: 'OrderResponse', answer?: string | null, attachments?: Array<string | null> | null, comments?: string | null, date?: any | null } | null> | null } | null };
-
-export type GetPublicOrdersQueryVariables = Exact<{
-  pagination?: InputMaybe<Pagination>;
-  filter?: InputMaybe<FilterOrders>;
-}>;
-
-
-export type GetPublicOrdersQuery = { __typename?: 'Query', getPublicOrders?: { __typename?: 'OrderPage', totalDocs?: number | null, totalPages?: number | null, limit?: number | null, hasPrevPage?: boolean | null, hasNextPage?: boolean | null, page?: number | null, offset?: number | null, prevPage?: number | null, nextPage?: number | null, pagingCounter?: number | null, docs?: Array<{ __typename?: 'Order', title: string, orderId: string, description?: string | null, writingStyle: WritingStyle, type: Type, numberOfPages: number, wordsPerPage?: number | null, deadline: any, createdAt?: any | null, published?: boolean | null, attachments: Array<{ __typename?: 'Attachment', name?: string | null, location?: string | null, key?: string | null, mimeType?: string | null } | null>, responses?: Array<{ __typename?: 'OrderResponse', date?: any | null, attachments?: Array<string | null> | null, comments?: string | null, answer?: string | null, type?: ResponseType | null } | null> | null } | null> | null } | null };
-
-export type SaveOrderDescriptionMutationVariables = Exact<{
-  description: Scalars['JSON'];
-  orderId?: InputMaybe<Scalars['String']>;
-}>;
-
-
-export type SaveOrderDescriptionMutation = { __typename?: 'Mutation', saveOrderDescription?: { __typename?: 'Response', status?: number | null, message?: string | null, success?: boolean | null } | null };
-
 export type UpdateOrderMutationVariables = Exact<{
   orderId?: InputMaybe<Scalars['String']>;
   orderInput?: InputMaybe<OrderInput>;
@@ -435,6 +428,14 @@ export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type CurrentUserQuery = { __typename?: 'Query', me?: { __typename?: 'User', email: string, id?: string | null, firstName?: string | null, lastName?: string | null, password?: string | null, username?: string | null, currency?: string | null, language?: string | null, orders?: Array<string | null> | null, uid?: string | null, picture?: string | null, iss?: string | null, aud?: string | null, auth_time?: number | null, user_id?: string | null, sub?: string | null, iat?: number | null, exp?: number | null, email_verified?: boolean | null, responses?: Array<string | null> | null, roles?: Array<{ __typename?: 'Role', name?: RoleType | null } | null> | null, timezone?: { __typename?: 'Timezone', value?: string | null, abbr?: string | null, offset?: number | null, isdst?: boolean | null, text?: string | null, utc?: Array<string | null> | null } | null, firebase?: { __typename?: 'Firebase', sign_in_provider?: string | null, identities?: { __typename?: 'Identity', googlecom?: Array<string | null> | null, email?: Array<string | null> | null } | null } | null } | null };
+
+export type GetPublicOrdersQueryVariables = Exact<{
+  pagination?: InputMaybe<Pagination>;
+  filter?: InputMaybe<FilterOrders>;
+}>;
+
+
+export type GetPublicOrdersQuery = { __typename?: 'Query', getPublicOrders?: { __typename?: 'OrderPage', totalDocs?: number | null, limit?: number | null, hasPrevPage?: boolean | null, hasNextPage?: boolean | null, page?: number | null, totalPages?: number | null, offset?: number | null, prevPage?: number | null, nextPage?: number | null, pagingCounter?: number | null, docs?: Array<{ __typename?: 'Order', orderId: string, title: string, description?: string | null, writingStyle: WritingStyle, type: Type, numberOfPages: number, wordsPerPage?: number | null, deadline: any, createdAt?: any | null, published?: boolean | null, responses?: Array<{ __typename?: 'OrderResponse', id?: string | null, comments?: string | null, answer?: string | null, responseType?: ResponseType | null, createdAt?: any | null, updatedAt?: any | null, createdBy?: { __typename?: 'User', id?: string | null, email: string, firstName?: string | null, lastName?: string | null, password?: string | null, username?: string | null, currency?: string | null, language?: string | null, orders?: Array<string | null> | null, uid?: string | null, picture?: string | null, iss?: string | null, aud?: string | null, auth_time?: number | null, user_id?: string | null, sub?: string | null, iat?: number | null, exp?: number | null, email_verified?: boolean | null, roles?: Array<{ __typename?: 'Role', name?: RoleType | null } | null> | null, timezone?: { __typename?: 'Timezone', value?: string | null, abbr?: string | null, offset?: number | null, isdst?: boolean | null, text?: string | null, utc?: Array<string | null> | null } | null, firebase?: { __typename?: 'Firebase', sign_in_provider?: string | null, identities?: { __typename?: 'Identity', googlecom?: Array<string | null> | null, email?: Array<string | null> | null } | null } | null } | null } | null> | null } | null> | null } | null };
 
 export type RegisterMutationVariables = Exact<{
   payload?: InputMaybe<RegisterPayload>;
@@ -550,236 +551,6 @@ export function useDeleteAttachmentMutation(baseOptions?: Apollo.MutationHookOpt
 export type DeleteAttachmentMutationHookResult = ReturnType<typeof useDeleteAttachmentMutation>;
 export type DeleteAttachmentMutationResult = Apollo.MutationResult<DeleteAttachmentMutation>;
 export type DeleteAttachmentMutationOptions = Apollo.BaseMutationOptions<DeleteAttachmentMutation, DeleteAttachmentMutationVariables>;
-export const GetMyOrdersDocument = gql`
-    query GetMyOrders($pagination: Pagination) {
-  getMyOrders(pagination: $pagination) {
-    docs {
-      orderId
-      title
-      description
-      attachments {
-        key
-        location
-      }
-      writingStyle
-      type
-      numberOfPages
-      wordsPerPage
-      deadline
-      responses {
-        answer
-        attachments
-        comments
-        date
-        type
-        __typename
-      }
-      createdAt
-      published
-    }
-    totalDocs
-    limit
-    hasPrevPage
-    hasNextPage
-    page
-    totalPages
-    offset
-    prevPage
-    nextPage
-    pagingCounter
-  }
-}
-    `;
-
-/**
- * __useGetMyOrdersQuery__
- *
- * To run a query within a React component, call `useGetMyOrdersQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetMyOrdersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetMyOrdersQuery({
- *   variables: {
- *      pagination: // value for 'pagination'
- *   },
- * });
- */
-export function useGetMyOrdersQuery(baseOptions?: Apollo.QueryHookOptions<GetMyOrdersQuery, GetMyOrdersQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetMyOrdersQuery, GetMyOrdersQueryVariables>(GetMyOrdersDocument, options);
-      }
-export function useGetMyOrdersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMyOrdersQuery, GetMyOrdersQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetMyOrdersQuery, GetMyOrdersQueryVariables>(GetMyOrdersDocument, options);
-        }
-export type GetMyOrdersQueryHookResult = ReturnType<typeof useGetMyOrdersQuery>;
-export type GetMyOrdersLazyQueryHookResult = ReturnType<typeof useGetMyOrdersLazyQuery>;
-export type GetMyOrdersQueryResult = Apollo.QueryResult<GetMyOrdersQuery, GetMyOrdersQueryVariables>;
-export const GetOrderDocument = gql`
-    query GetOrder($orderId: String!) {
-  getOrder(orderId: $orderId) {
-    title
-    description
-    attachments {
-      name
-      location
-      key
-      mimeType
-    }
-    writingStyle
-    type
-    numberOfPages
-    wordsPerPage
-    deadline
-    responses {
-      answer
-      attachments
-      comments
-      date
-    }
-    createdAt
-    orderId
-    published
-  }
-}
-    `;
-
-/**
- * __useGetOrderQuery__
- *
- * To run a query within a React component, call `useGetOrderQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetOrderQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetOrderQuery({
- *   variables: {
- *      orderId: // value for 'orderId'
- *   },
- * });
- */
-export function useGetOrderQuery(baseOptions: Apollo.QueryHookOptions<GetOrderQuery, GetOrderQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetOrderQuery, GetOrderQueryVariables>(GetOrderDocument, options);
-      }
-export function useGetOrderLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOrderQuery, GetOrderQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetOrderQuery, GetOrderQueryVariables>(GetOrderDocument, options);
-        }
-export type GetOrderQueryHookResult = ReturnType<typeof useGetOrderQuery>;
-export type GetOrderLazyQueryHookResult = ReturnType<typeof useGetOrderLazyQuery>;
-export type GetOrderQueryResult = Apollo.QueryResult<GetOrderQuery, GetOrderQueryVariables>;
-export const GetPublicOrdersDocument = gql`
-    query GetPublicOrders($pagination: Pagination, $filter: FilterOrders) {
-  getPublicOrders(pagination: $pagination, filter: $filter) {
-    totalDocs
-    totalPages
-    docs {
-      title
-      orderId
-      description
-      attachments {
-        name
-        location
-        key
-        mimeType
-      }
-      writingStyle
-      type
-      numberOfPages
-      wordsPerPage
-      deadline
-      responses {
-        date
-        attachments
-        comments
-        answer
-        type
-      }
-      createdAt
-      published
-    }
-    limit
-    hasPrevPage
-    hasNextPage
-    page
-    offset
-    prevPage
-    nextPage
-    pagingCounter
-  }
-}
-    `;
-
-/**
- * __useGetPublicOrdersQuery__
- *
- * To run a query within a React component, call `useGetPublicOrdersQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetPublicOrdersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetPublicOrdersQuery({
- *   variables: {
- *      pagination: // value for 'pagination'
- *      filter: // value for 'filter'
- *   },
- * });
- */
-export function useGetPublicOrdersQuery(baseOptions?: Apollo.QueryHookOptions<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>(GetPublicOrdersDocument, options);
-      }
-export function useGetPublicOrdersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>(GetPublicOrdersDocument, options);
-        }
-export type GetPublicOrdersQueryHookResult = ReturnType<typeof useGetPublicOrdersQuery>;
-export type GetPublicOrdersLazyQueryHookResult = ReturnType<typeof useGetPublicOrdersLazyQuery>;
-export type GetPublicOrdersQueryResult = Apollo.QueryResult<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>;
-export const SaveOrderDescriptionDocument = gql`
-    mutation SaveOrderDescription($description: JSON!, $orderId: String) {
-  saveOrderDescription(description: $description, orderId: $orderId) {
-    status
-    message
-    success
-  }
-}
-    `;
-export type SaveOrderDescriptionMutationFn = Apollo.MutationFunction<SaveOrderDescriptionMutation, SaveOrderDescriptionMutationVariables>;
-
-/**
- * __useSaveOrderDescriptionMutation__
- *
- * To run a mutation, you first call `useSaveOrderDescriptionMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSaveOrderDescriptionMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [saveOrderDescriptionMutation, { data, loading, error }] = useSaveOrderDescriptionMutation({
- *   variables: {
- *      description: // value for 'description'
- *      orderId: // value for 'orderId'
- *   },
- * });
- */
-export function useSaveOrderDescriptionMutation(baseOptions?: Apollo.MutationHookOptions<SaveOrderDescriptionMutation, SaveOrderDescriptionMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SaveOrderDescriptionMutation, SaveOrderDescriptionMutationVariables>(SaveOrderDescriptionDocument, options);
-      }
-export type SaveOrderDescriptionMutationHookResult = ReturnType<typeof useSaveOrderDescriptionMutation>;
-export type SaveOrderDescriptionMutationResult = Apollo.MutationResult<SaveOrderDescriptionMutation>;
-export type SaveOrderDescriptionMutationOptions = Apollo.BaseMutationOptions<SaveOrderDescriptionMutation, SaveOrderDescriptionMutationVariables>;
 export const UpdateOrderDocument = gql`
     mutation UpdateOrder($orderId: String, $orderInput: OrderInput) {
   updateOrder(orderInput: $orderInput, orderId: $orderId) {
@@ -922,6 +693,110 @@ export function useCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
 export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
 export type CurrentUserQueryResult = Apollo.QueryResult<CurrentUserQuery, CurrentUserQueryVariables>;
+export const GetPublicOrdersDocument = gql`
+    query GetPublicOrders($pagination: Pagination, $filter: FilterOrders) {
+  getPublicOrders(pagination: $pagination, filter: $filter) {
+    docs {
+      orderId
+      title
+      description
+      writingStyle
+      type
+      numberOfPages
+      wordsPerPage
+      deadline
+      createdAt
+      published
+      responses {
+        id
+        comments
+        answer
+        responseType
+        createdAt
+        updatedAt
+        createdBy {
+          id
+          email
+          firstName
+          lastName
+          password
+          roles {
+            name
+          }
+          username
+          currency
+          timezone {
+            value
+            abbr
+            offset
+            isdst
+            text
+            utc
+          }
+          language
+          orders
+          uid
+          picture
+          iss
+          aud
+          auth_time
+          user_id
+          sub
+          iat
+          exp
+          email_verified
+          firebase {
+            identities {
+              googlecom
+              email
+            }
+            sign_in_provider
+          }
+        }
+      }
+    }
+    totalDocs
+    limit
+    hasPrevPage
+    hasNextPage
+    page
+    totalPages
+    offset
+    prevPage
+    nextPage
+    pagingCounter
+  }
+}
+    `;
+
+/**
+ * __useGetPublicOrdersQuery__
+ *
+ * To run a query within a React component, call `useGetPublicOrdersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPublicOrdersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPublicOrdersQuery({
+ *   variables: {
+ *      pagination: // value for 'pagination'
+ *      filter: // value for 'filter'
+ *   },
+ * });
+ */
+export function useGetPublicOrdersQuery(baseOptions?: Apollo.QueryHookOptions<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>(GetPublicOrdersDocument, options);
+      }
+export function useGetPublicOrdersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>(GetPublicOrdersDocument, options);
+        }
+export type GetPublicOrdersQueryHookResult = ReturnType<typeof useGetPublicOrdersQuery>;
+export type GetPublicOrdersLazyQueryHookResult = ReturnType<typeof useGetPublicOrdersLazyQuery>;
+export type GetPublicOrdersQueryResult = Apollo.QueryResult<GetPublicOrdersQuery, GetPublicOrdersQueryVariables>;
 export const RegisterDocument = gql`
     mutation Register($payload: RegisterPayload) {
   register(payload: $payload) {

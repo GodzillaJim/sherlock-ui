@@ -1,0 +1,53 @@
+query MyResponses {
+    getMyResponses {
+        id
+        comments
+        answer
+        responseType
+        createdAt
+        updatedAt
+        question {
+            title
+        }
+        createdBy {
+            id
+            email
+            firstName
+            lastName
+            password
+            roles {
+                name
+            }
+            username
+            currency
+            timezone {
+                value
+                abbr
+                offset
+                isdst
+                text
+                utc
+            }
+            language
+            orders
+            responses
+            uid
+            picture
+            iss
+            aud
+            auth_time
+            user_id
+            sub
+            iat
+            exp
+            email_verified
+            firebase {
+                identities {
+                    googlecom
+                    email
+                }
+                sign_in_provider
+            }
+        }
+    }
+}
