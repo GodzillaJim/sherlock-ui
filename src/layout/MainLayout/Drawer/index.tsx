@@ -1,5 +1,5 @@
 import React from "react";
-import { Person3 } from "@mui/icons-material";
+import { Check, Drafts, NoteAddOutlined, NoteOutlined, Person3, QuestionAnswer } from "@mui/icons-material";
 import {
   Divider,
   Drawer,
@@ -13,11 +13,44 @@ import {
 import DrawerHeader from "./DrawerHeader";
 import { HomeFilled } from "@ant-design/icons";
 import { useRouter } from "next/router";
+import NavGroup from "./MenuItems/NavGroup";
+import { NavItemProps } from "./MenuItems/NavItem";
 
 type CustomDrawerProps = {
   open: boolean;
   handleDrawerToggle: () => void;
 };
+
+const navItems: NavItemProps["item"][] = [{
+  id: 1,
+  title: "Projects",
+  type: "group",
+  icon: <NoteOutlined/>,
+  url: "/app",
+  children: [
+    {
+      id: 1.1,
+      title: "Drafts",
+      type:"item",
+      icon: <Drafts/>,
+      url: "/app/drafts"
+    },
+    {
+      id: 1.2,
+      title: "Active",
+      type:"item",
+      icon: <Check/>,
+      url: "/app/published"
+    },
+    {
+      id: 2,
+      title: "Responses",
+      type:"item",
+      url: "/app/responses",
+      icon: <QuestionAnswer/>
+    }
+  ] 
+}]
 
 const CustomDrawer = ({ open, handleDrawerToggle }: CustomDrawerProps) => {
   const drawerWidth = open ? 250 : 0;
@@ -49,54 +82,10 @@ const CustomDrawer = ({ open, handleDrawerToggle }: CustomDrawerProps) => {
       open={open}
       onClose={handleDrawerToggle}
     >
-      <DrawerHeader />
       <Divider />
       <List>
-        {[
-          {
-            id: 1,
-            title: "Home",
-            type: "item",
-            icon: <HomeFilled />,
-            url: "/app",
-          },
-          {
-            id: 2,
-            title: "My Profile",
-            type: "item",
-            icon: <Person3 />,
-            url: "/app/profile",
-          },
-        ].map((item) => (
-          <ListItem
-            key={item.title}
-            disablePadding
-            onClick={() => {
-              if (item.url) {
-                handleNavigation(item.url);
-              }
-            }}
-          >
-            <ListItemButton
-              sx={{
-                color: isActive(item.url)
-                  ? theme.palette.primary.dark
-                  : "inherit",
-                bgcolor: isActive(item.url) ? theme.palette.divider : "inherit",
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  color: isActive(item.url)
-                    ? theme.palette.primary.dark
-                    : "inherit",
-                }}
-              >
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText primary={item.title} />
-            </ListItemButton>
-          </ListItem>
+        {navItems.map((item) => (
+          <NavGroup item={item} key={`nav-item-${item.id}`} />
         ))}
       </List>
     </Drawer>

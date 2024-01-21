@@ -1,6 +1,6 @@
 import { Attachment } from "../../generated";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { EditorState } from "draft-js";
 import { toEditorState } from "../../helpers/editor";
 import {
@@ -33,6 +33,8 @@ import { usePublishOrderMutation } from "../../Apollo/schema/PublishOrder.genera
 import { useUnPublishOrderMutation } from "../../Apollo/schema/UnPublishOrder.generated";
 import { GetOrderDocument } from "../../Apollo/schema/GetOrder.generated";
 import { GetMyOrdersDocument } from "../../Apollo/schema/GetMyOrders.generated";
+import { useAuth } from "../../Context/AuthManager";
+import { isAdmin, isWriter } from "../../helpers/User";
 
 type OrderDetailsComponentProps = {
   order: Order;
@@ -43,6 +45,19 @@ const OrderDetailsComponent = ({
   hideEditButton = false,
 }: OrderDetailsComponentProps) => {
   const router = useRouter();
+  const auth = useAuth();
+
+  const canRespond = useMemo(() => {
+    if (!auth.localUser) return false;
+    if (isAdmin(auth?.localUser)) return true;
+    return !!isWriter(auth.localUser);
+  }, [auth]);
+
+  const isOwner = useMemo(() => {
+    return auth?.localUser?.orders?.some(
+      (orderId) => orderId === order?.orderId
+    );
+  }, [auth, order]);
 
   const [publishOrder, { loading: publishing, error: publishError }] =
     usePublishOrderMutation({
@@ -99,28 +114,30 @@ const OrderDetailsComponent = ({
             gap={3}
             flexDirection={"row"}
           >
-            <Grid item>
-              {!order.published && (
-                <Button
-                  variant={"outlined"}
-                  startIcon={<Publish />}
-                  onClick={handlePublishOrder}
-                  disabled={publishing}
-                >
-                  Publish
-                </Button>
-              )}
-              {order.published && (
-                <Button
-                  variant={"outlined"}
-                  startIcon={<Unpublished />}
-                  onClick={handleUnPublishOrder}
-                  disabled={unPublishing}
-                >
-                  UnPublish
-                </Button>
-              )}
-            </Grid>
+            {isOwner && (
+              <Grid item>
+                {!order.published && (
+                  <Button
+                    variant={"outlined"}
+                    startIcon={<Publish />}
+                    onClick={handlePublishOrder}
+                    disabled={publishing}
+                  >
+                    Publish
+                  </Button>
+                )}
+                {order.published && (
+                  <Button
+                    variant={"outlined"}
+                    startIcon={<Unpublished />}
+                    onClick={handleUnPublishOrder}
+                    disabled={unPublishing}
+                  >
+                    UnPublish
+                  </Button>
+                )}
+              </Grid>
+            )}
             <Grid item>
               {!hideEditButton && (
                 <Button
@@ -132,15 +149,17 @@ const OrderDetailsComponent = ({
                 </Button>
               )}
             </Grid>
-            <Grid item>
-              <Button
-                variant={"outlined"}
-                startIcon={<QuestionAnswerOutlined />}
-                onClick={handleRespond}
-              >
-                Respond
-              </Button>
-            </Grid>
+            {canRespond && (
+              <Grid item>
+                <Button
+                  variant={"outlined"}
+                  startIcon={<QuestionAnswerOutlined />}
+                  onClick={handleRespond}
+                >
+                  Respond
+                </Button>
+              </Grid>
+            )}
           </Grid>
         </Grid>
         <Grid item xs={12} sm={12} md={12}>

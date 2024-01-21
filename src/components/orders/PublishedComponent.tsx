@@ -7,7 +7,7 @@ import { Order } from "../../generated";
 type PublishedComponentProps = {
   orders: Order[];
 };
-const DraftsComponent = ({ orders }: PublishedComponentProps) => {
+const PublishedComponent = ({ orders }: PublishedComponentProps) => {
   return (
     <>
       {orders.length && (
@@ -34,4 +34,4 @@ const DraftsComponent = ({ orders }: PublishedComponentProps) => {
   );
 };
 
-export default DraftsComponent;
+export default PublishedComponent;

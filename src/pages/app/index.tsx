@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import MainLayout from "../../layout/MainLayout";
 import { Order, OrderPage } from "../../generated";
-import { Grid } from "@mui/material";
+import { Button, Divider, Grid, Typography } from "@mui/material";
 import { GetServerSidePropsContext } from "next";
 import { createApolloClient } from "../../Apollo";
 import { ApolloError } from "@apollo/client";
@@ -10,6 +10,9 @@ import DraftsComponent from "../../components/orders/DraftsComponent";
 import PublishedComponent from "../../components/orders/PublishedComponent";
 import { TabGroup } from "../../components/common/TabPanel";
 import ResponsesComponent from "../../components/orders/ResponsesComponent";
+import { getSharedServerSideProps } from "../../helpers/orders/sharedProps";
+import { Add } from "@mui/icons-material";
+import NextLink from "next/link";
 
 type DashboardProps = {
   error?: ApolloError | { message: string };
@@ -59,28 +62,6 @@ Dashboard.getLayout = function (page: React.ReactNode) {
   return <MainLayout>{page}</MainLayout>;
 };
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
-  try {
-    const authToken = context.req.cookies.authToken;
-    if (!authToken) {
-      return { props: { error: { message: "Login to continue" } } };
-    }
-    const client = createApolloClient(authToken);
-
-    const { data, error } = await client.query({ query: GetMyOrdersDocument });
-    if (error) {
-      return { props: { error } };
-    }
-
-    return { props: { myOrders: data.getMyOrders } };
-  } catch (error: any /*tslint:disable-line:no-explicit-any*/) {
-    console.log("Error: ", error);
-    return {
-      props: { error: { message: error?.message || "Something went wrong" } },
-    };
-  }
-};
+export const getServerSideProps = getSharedServerSideProps;
 
 export default Dashboard;

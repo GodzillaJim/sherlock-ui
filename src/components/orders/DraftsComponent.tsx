@@ -10,7 +10,7 @@ type DraftsComponentProps = {
 const DraftsComponent = ({ drafts }: DraftsComponentProps) => {
   return (
     <>
-      {drafts.length && (
+      {drafts.length ? (
         <Grid item>
           <Grid container direction={"column"} spacing={2}>
             <Grid item>
@@ -29,7 +29,7 @@ const DraftsComponent = ({ drafts }: DraftsComponentProps) => {
             </Grid>
           </Grid>
         </Grid>
-      )}
+      ) : ""}
     </>
   );
 };

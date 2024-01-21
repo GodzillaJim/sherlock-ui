@@ -45,7 +45,7 @@ const NavItem = ({item, level}: NavItemProps) => {
     }, [mainContext]);
 
     const drawerOpen = mainContext ? mainContext.layout.drawerIsOpen : false;
-    const textColor = "text.primary";
+    const textColor =  theme.palette.grey[600];
     const iconSelectedColor = "primary.main";
 
     return (

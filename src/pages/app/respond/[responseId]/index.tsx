@@ -35,10 +35,17 @@ import { useAuth } from "../../../../Context/AuthManager";
 import { useCurrentUserQuery } from "../../../../Apollo/schema/CurrentUserQuery.generated";
 import { isAdmin } from "../../../../helpers/User";
 import CustomLoader from "../../../../components/CustomLoader";
-import { DescriptionOutlined, Publish, Unpublished } from "@mui/icons-material";
+import {
+  DeleteOutlined,
+  DescriptionOutlined,
+  Publish,
+  Unpublished,
+} from "@mui/icons-material";
 import { usePublishResponseMutation } from "../../../../Apollo/schema/PublishResponse.generated";
 import { useUnPublishResponseMutation } from "../../../../Apollo/schema/UnPublishResponse.generated";
 import AttachmentList from "../../../../components/edit/AttachmentList";
+import { useDeleteOrderResponseMutation } from "../../../../Apollo/schema/DeleteOrderResponse.generated";
+import { useRouter } from "next/router";
 
 const ResponseDetails = () => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -46,6 +53,7 @@ const ResponseDetails = () => {
   const [openOrderDetails, setOpenOrderDetails] = useState(false);
 
   const params = useSearchParams();
+  const router = useRouter();
   const auth = useAuth();
   const { data: userData } = useCurrentUserQuery();
 
@@ -84,11 +92,24 @@ const ResponseDetails = () => {
     refetchQueries: [GetOrderResponseDocument],
   });
 
+  const [
+    deleteOrderResponse,
+    { loading: deletingResponse, error: deletingResponseError },
+  ] = useDeleteOrderResponseMutation();
+
   const response = useMemo(() => {
     if (responseData?.getOrderResponse)
       return responseData.getOrderResponse.data;
     return null;
   }, [responseData]);
+
+  const handleDelete = async () => {
+    if (response?.id) {
+      await deleteOrderResponse({ variables: { responsesId: response.id } });
+      alert("Operation successfull");
+      await router.back();
+    }
+  };
 
   useEffect(() => {
     if (data) {
@@ -190,6 +211,7 @@ const ResponseDetails = () => {
     if (updateError) return updateError.message;
     if (fileUploadError) return fileUploadError;
     if (publishingResponseError) return publishingResponseError.message;
+    if (deletingResponseError) return deletingResponseError.message;
 
     return null;
   }, [
@@ -213,6 +235,12 @@ const ResponseDetails = () => {
     }
   };
 
+  const canDelete = useMemo(() => {
+    if (!auth.localUser) return false;
+    if (isAdmin(auth?.localUser)) return true;
+    return response?.createdBy?.id === auth.localUser.id;
+  }, [auth]);
+
   return (
     <form noValidate onSubmit={handleSubmit}>
       <Grid container flexDirection={"column"} gap={2}>
@@ -227,7 +255,7 @@ const ResponseDetails = () => {
         {response && (
           <>
             <Grid item>
-              <Grid container justifyContent={"right"}>
+              <Grid container justifyContent={"right"} gap={2}>
                 {response && !readOnly && (
                   <Grid item>
                     {!response.published && (
@@ -250,6 +278,18 @@ const ResponseDetails = () => {
                         UnPublish
                       </Button>
                     )}
+                  </Grid>
+                )}
+                {canDelete && (
+                  <Grid item>
+                    <Button
+                      variant={"outlined"}
+                      color={"error"}
+                      startIcon={<DeleteOutlined />}
+                      onClick={handleDelete}
+                    >
+                      Delete
+                    </Button>
                   </Grid>
                 )}
               </Grid>

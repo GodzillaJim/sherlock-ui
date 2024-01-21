@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { GetServerSidePropsContext } from "next";
 import NextLink from "next/link";
 import { createApolloClient } from "../../../../Apollo";
@@ -11,6 +11,8 @@ import {
 } from "../../../../Apollo/schema/GetOrder.generated";
 import NotFound from "../../../../components/common/NotFound";
 import OrderDetailsComponent from "../../../../components/orders/OrderDetailsComponent";
+import { isAdmin, isWriter } from "../../../../helpers/User";
+import { useAuth } from "../../../../Context/AuthManager";
 
 type PublicOrderDetailsProps = {
   order: Order;
@@ -26,16 +28,25 @@ const Container = styled("div")(({ theme }) => ({
 }));
 
 const PublicOrderDetails = ({ order }: PublicOrderDetailsProps) => {
-  useEffect(() => {
-    console.log("Public Orders: ", order);
-  });
+  const auth = useAuth();
+
+  const canRespond = useMemo(() => {
+    console.log("CanResponse: ", {
+      user: auth.localUser,
+      isAdmin: auth.localUser ? isAdmin(auth?.localUser) : false,
+      isWriter: auth.localUser ? isWriter(auth?.localUser) : false,
+    });
+    if (!auth.localUser) return false;
+    if (isAdmin(auth?.localUser)) return true;
+    return !!isWriter(auth.localUser);
+  }, [auth]);
 
   return (
     <Container>
       <GoBackComponent />
       {!order && <NotFound message={"This order does not exist."} />}
       {order && <OrderDetailsComponent order={order} hideEditButton={true} />}
-      {order && (
+      {order && canRespond && (
         <Grid container p={3}>
           <Grid item>
             <NextLink href={`/app/order/${order.orderId}/respond`}>
