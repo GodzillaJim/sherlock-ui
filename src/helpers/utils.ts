@@ -49,3 +49,5 @@ export default class StringUtility {
     return upperFirst(lowerCase(str));
   }
 }
+
+

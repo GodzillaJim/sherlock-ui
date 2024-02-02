@@ -1,0 +1,53 @@
+query GetResponsesToQuestionsByUser {
+  getResponsesToQuestionsByUser {
+    id
+    attachments {
+      name
+      location
+      key
+      mimeType
+    }
+    comments
+    answer
+    responseType
+    createdAt
+    updatedAt
+    createdBy {
+      id
+      email
+      firstName
+      lastName
+      password
+      roles {
+        name
+      }
+      username
+      currency
+      language
+      uid
+      picture
+    }
+    question {
+      orderId
+      title
+      description
+      writingStyle
+      type
+      numberOfPages
+      wordsPerPage
+      deadline
+      responses {
+        id
+        comments
+        answer
+        responseType
+        createdAt
+        updatedAt
+        published
+      }
+      createdAt
+      published
+    }
+    published
+  }
+}

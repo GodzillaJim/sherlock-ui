@@ -37,6 +37,12 @@ type AuthToken {
     type: TokenType
 }
 
+type ClientSecretResponse implements IResponse {
+    data: String
+    status: Float
+    success: Boolean
+}
+
 type CreateOrderResponse implements IResponse {
     data: String
     status: Float
@@ -70,6 +76,7 @@ type Mutation {
     deleteAttachment(attachmentKey: String, orderId: String): Response
     deleteOrderResponse(responseId: String): Response
     deleteOrderResponseAttachment(attachmentKey: String!, responseId: String!): Response
+    generatePaymentIntent(orderId: String!): ClientSecretResponse
     login(payload: LoginPayload): AuthResponse
     publishOrder(orderId: String!): Response
     publishResponse(responseId: String!): Response
@@ -91,6 +98,7 @@ type Order {
     description: String
     numberOfPages: Float!
     orderId: String!
+    price: Price
     published: Boolean
     responses: [OrderResponse]
     title: String!
@@ -126,12 +134,19 @@ type OrderResponse {
     updatedAt: Date
 }
 
+type Price {
+    amount: Float
+    clientSecret: String
+    currency: String
+}
+
 type Query {
     getMyOrders(pagination: Pagination): OrderPage
     getMyResponses: [OrderResponse]
     getOrder(orderId: String!): Order
     getOrderResponse(responseId: String!): GetOrderResponse
     getPublicOrders(filter: FilterOrders, pagination: Pagination): OrderPage
+    getResponsesToQuestionsByUser: [OrderResponse]
     getUserOrders(email: String): [Order]
     health: String
     me: User
@@ -160,13 +175,13 @@ type User {
     aud: String
     auth_time: Float
     currency: String
-    email: String
+    email: String!
     email_verified: Boolean
     exp: Float
     firebase: Firebase
     firstName: String
     iat: Float
-    id: ID
+    id: ID!
     iss: String
     language: String
     lastName: String

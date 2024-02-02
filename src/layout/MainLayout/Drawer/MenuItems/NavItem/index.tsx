@@ -11,6 +11,7 @@ import {
     useTheme,
 } from "@mui/material";
 import {useRouter} from "next/router";
+import NextLink from "next/link"
 
 export type NavItemProps = {
     item: {
@@ -51,7 +52,7 @@ const NavItem = ({item, level}: NavItemProps) => {
     return (
         <ListItemButton
             disabled={item.disabled}
-            LinkComponent="a"
+            LinkComponent={NextLink}
             href={item.url || "#"}
             onClick={handleItemClick}
             sx={{

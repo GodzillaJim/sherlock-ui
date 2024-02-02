@@ -6,9 +6,16 @@ import React, {
   useState,
 } from "react";
 import { useRouter } from "next/router";
-import { useRouter as useNavigation, useSearchParams } from "next/navigation";
-import { getAuth, GoogleAuthProvider, onIdTokenChanged, signInWithPopup, signOut as logOut, User } from "@firebase/auth"
-import { User as LocalUser } from "../../generated/index";
+import { useSearchParams } from "next/navigation";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  onIdTokenChanged,
+  signInWithPopup,
+  signOut as logOut,
+  User,
+} from "@firebase/auth";
+import { AuthResponse, User as LocalUser } from "../../generated/index";
 import {
   clearAuthToken,
   firebaseClient,
@@ -27,6 +34,7 @@ type AuthContextType = {
   loading?: boolean;
   signInWithGoogle?: () => void;
   signOut?: () => void;
+  setAuthDetails?: (response: AuthResponse) => void;
 };
 
 export const AuthContext = createContext<AuthContextType>({});
@@ -45,7 +53,6 @@ const AuthManager = ({ children }: AuthManagerType) => {
 
   const router = useRouter();
   const params = useSearchParams();
-  const navigate = useNavigation();
 
   const tempClient = useMemo(() => {
     if (authTokenValue) {
@@ -117,12 +124,12 @@ const AuthManager = ({ children }: AuthManagerType) => {
     const auth = getAuth();
     const provider = new GoogleAuthProvider();
 
-    provider.setCustomParameters({  prompt:"select_account" });
+    provider.setCustomParameters({ prompt: "select_account" });
 
     signInWithPopup(auth, provider)
       .then((result) => handleUser(result.user))
       .catch((error) => {
-        console.log('Error: ', error);
+        console.log("Error: ", error);
         // logOut(auth)
       });
   };

@@ -10,6 +10,7 @@ import CustomLoader from "../../../../components/CustomLoader";
 import OrderDetailsComponent from "../../../../components/orders/OrderDetailsComponent";
 import { GetServerSidePropsContext } from "next";
 import { createApolloClient } from "../../../../Apollo";
+import { Order } from "../../../../generated";
 
 const OrderDetails = () => {
   const params = useSearchParams();
@@ -32,7 +33,9 @@ const OrderDetails = () => {
           </Alert>
         )}
         {loading && <CustomLoader />}
-        {data?.getOrder && <OrderDetailsComponent order={data.getOrder} />}
+        {data?.getOrder && (
+          <OrderDetailsComponent order={data.getOrder as Order} />
+        )}
       </Grid>
     </Grid>
   );

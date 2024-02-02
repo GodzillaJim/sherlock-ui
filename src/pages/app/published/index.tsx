@@ -2,13 +2,11 @@ import { ApolloError } from "@apollo/client";
 import React, { useMemo } from "react";
 import { Order, OrderPage } from "../../../generated";
 import { Button, Divider, Grid, Typography } from "@mui/material";
-import NextLink from "next/link"
+import NextLink from "next/link";
 import { Add } from "@mui/icons-material";
-import DraftsComponent from "../../../components/orders/DraftsComponent";
 import MainLayout from "../../../layout/MainLayout";
 import { getSharedServerSideProps } from "../../../helpers/orders/sharedProps";
 import PublishedComponent from "../../../components/orders/PublishedComponent";
-
 
 type DashboardProps = {
   error?: ApolloError | { message: string };
@@ -16,14 +14,6 @@ type DashboardProps = {
 };
 
 const Dashboard = ({ myOrders }: DashboardProps): JSX.Element => {
-  const drafts = useMemo(() => {
-    if (myOrders && myOrders.docs?.length) {
-      const orders = myOrders.docs as Order[];
-      return orders.filter((order) => !order?.published);
-    }
-    return [];
-  }, [myOrders]);
-
   const published = useMemo(() => {
     if (myOrders && myOrders.docs?.length) {
       const orders = myOrders.docs as Order[];
@@ -44,7 +34,7 @@ const Dashboard = ({ myOrders }: DashboardProps): JSX.Element => {
       <Grid item>
         <Divider flexItem />
       </Grid>
-      {drafts.length ? (
+      {published.length ? (
         <PublishedComponent orders={published} />
       ) : (
         <Grid item>

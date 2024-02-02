@@ -18,7 +18,7 @@ import { useFormik } from "formik";
 import { useSearchParams } from "next/navigation";
 import { EditorState } from "draft-js";
 import useUploadAttachments from "../../../../helpers/orders/useUploadAttachments";
-import { ResponseType } from "../../../../generated";
+import { ResponseType, User } from "../../../../generated";
 import { fromEditorState, toEditorState } from "../../../../helpers/editor";
 import CustomEditor from "../../../../components/CustomEditor";
 import FileUploader from "../../../../components/FileUploader";
@@ -85,17 +85,13 @@ const ResponseDetails = () => {
     refetchQueries: [GetOrderResponseDocument],
   });
 
-  const [
-    unPublishResponse,
-    { loading: unPublishingResponse, error: unPublishingResponseError },
-  ] = useUnPublishResponseMutation({
-    refetchQueries: [GetOrderResponseDocument],
-  });
+  const [unPublishResponse, { loading: unPublishingResponse }] =
+    useUnPublishResponseMutation({
+      refetchQueries: [GetOrderResponseDocument],
+    });
 
-  const [
-    deleteOrderResponse,
-    { loading: deletingResponse, error: deletingResponseError },
-  ] = useDeleteOrderResponseMutation();
+  const [deleteOrderResponse, { error: deletingResponseError }] =
+    useDeleteOrderResponseMutation();
 
   const response = useMemo(() => {
     if (responseData?.getOrderResponse)
@@ -119,7 +115,7 @@ const ResponseDetails = () => {
 
   const readOnly = useMemo(() => {
     if (userData?.me) {
-      if (isAdmin(userData.me)) return false;
+      if (isAdmin(userData.me as User)) return false;
       if (userData.me.id === response?.createdBy?.id) return false;
     }
     return true;

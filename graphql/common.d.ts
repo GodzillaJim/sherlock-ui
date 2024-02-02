@@ -53,6 +53,13 @@ export type AuthToken = {
   type?: Maybe<TokenType>;
 };
 
+export type ClientSecretResponse = IResponse & {
+  __typename?: 'ClientSecretResponse';
+  data?: Maybe<Scalars['String']>;
+  status?: Maybe<Scalars['Float']>;
+  success?: Maybe<Scalars['Boolean']>;
+};
+
 export type CreateOrderResponse = IResponse & {
   __typename?: 'CreateOrderResponse';
   data?: Maybe<Scalars['String']>;
@@ -112,6 +119,7 @@ export type Mutation = {
   deleteAttachment?: Maybe<Response>;
   deleteOrderResponse?: Maybe<Response>;
   deleteOrderResponseAttachment?: Maybe<Response>;
+  generatePaymentIntent?: Maybe<ClientSecretResponse>;
   login?: Maybe<AuthResponse>;
   publishOrder?: Maybe<Response>;
   publishResponse?: Maybe<Response>;
@@ -157,6 +165,11 @@ export type MutationDeleteOrderResponseArgs = {
 export type MutationDeleteOrderResponseAttachmentArgs = {
   attachmentKey: Scalars['String'];
   responseId: Scalars['String'];
+};
+
+
+export type MutationGeneratePaymentIntentArgs = {
+  orderId: Scalars['String'];
 };
 
 
@@ -226,6 +239,7 @@ export type Order = {
   description?: Maybe<Scalars['String']>;
   numberOfPages: Scalars['Float'];
   orderId: Scalars['String'];
+  price?: Maybe<Price>;
   published?: Maybe<Scalars['Boolean']>;
   responses?: Maybe<Array<Maybe<OrderResponse>>>;
   title: Scalars['String'];
@@ -291,6 +305,13 @@ export type PasswordChangePayload = {
   newPassword?: InputMaybe<Scalars['String']>;
 };
 
+export type Price = {
+  __typename?: 'Price';
+  amount?: Maybe<Scalars['Float']>;
+  clientSecret?: Maybe<Scalars['String']>;
+  currency?: Maybe<Scalars['String']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   getMyOrders?: Maybe<OrderPage>;
@@ -298,6 +319,7 @@ export type Query = {
   getOrder?: Maybe<Order>;
   getOrderResponse?: Maybe<GetOrderResponse>;
   getPublicOrders?: Maybe<OrderPage>;
+  getResponsesToQuestionsByUser?: Maybe<Array<Maybe<OrderResponse>>>;
   getUserOrders?: Maybe<Array<Maybe<Order>>>;
   health?: Maybe<Scalars['String']>;
   me?: Maybe<User>;
@@ -401,13 +423,13 @@ export type User = {
   aud?: Maybe<Scalars['String']>;
   auth_time?: Maybe<Scalars['Float']>;
   currency?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
+  email: Scalars['String'];
   email_verified?: Maybe<Scalars['Boolean']>;
   exp?: Maybe<Scalars['Float']>;
   firebase?: Maybe<Firebase>;
   firstName?: Maybe<Scalars['String']>;
   iat?: Maybe<Scalars['Float']>;
-  id?: Maybe<Scalars['ID']>;
+  id: Scalars['ID'];
   iss?: Maybe<Scalars['String']>;
   language?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;

@@ -3,6 +3,7 @@ import { Alert, Box, Modal, styled } from "@mui/material";
 import { useGetOrderQuery } from "../Apollo/schema/GetOrder.generated";
 import OrderDetailsComponent from "./orders/OrderDetailsComponent";
 import CustomLoader from "./CustomLoader";
+import { Order } from "../generated";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   position: "absolute",
@@ -39,7 +40,10 @@ const SideModalOrderDetails = ({
       <StyledBox>
         {loading && <CustomLoader />}
         {data?.getOrder && (
-          <OrderDetailsComponent hideEditButton order={data?.getOrder} />
+          <OrderDetailsComponent
+            hideEditButton
+            order={data?.getOrder as Order}
+          />
         )}
         {error && (
           <Alert variant={"filled"} color={"error"}>

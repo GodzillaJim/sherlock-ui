@@ -1,59 +1,87 @@
 import React, { useMemo } from "react";
 import MainLayout from "../../layout/MainLayout";
-import { Order, OrderPage } from "../../generated";
-import { Button, Divider, Grid, Typography } from "@mui/material";
-import { GetServerSidePropsContext } from "next";
-import { createApolloClient } from "../../Apollo";
-import { ApolloError } from "@apollo/client";
-import { GetMyOrdersDocument } from "../../Apollo/schema/GetMyOrders.generated";
-import DraftsComponent from "../../components/orders/DraftsComponent";
-import PublishedComponent from "../../components/orders/PublishedComponent";
-import { TabGroup } from "../../components/common/TabPanel";
-import ResponsesComponent from "../../components/orders/ResponsesComponent";
-import { getSharedServerSideProps } from "../../helpers/orders/sharedProps";
+import { Order } from "../../generated";
+import { Alert, Button, Divider, Grid, Typography } from "@mui/material";
+import { useGetMyOrdersQuery } from "../../Apollo/schema/GetMyOrders.generated";
 import { Add } from "@mui/icons-material";
 import NextLink from "next/link";
+import CustomLoader from "../../components/CustomLoader";
+import dayjs from "dayjs";
+import SummaryCard from "../../components/SummaryCard";
 
-type DashboardProps = {
-  error?: ApolloError | { message: string };
-  myOrders: OrderPage;
-};
+const Dashboard = (): JSX.Element => {
+  const { loading, error, data } = useGetMyOrdersQuery();
 
-const Dashboard = ({ myOrders }: DashboardProps): JSX.Element => {
-  const drafts = useMemo(() => {
-    if (myOrders && myOrders.docs?.length) {
-      const orders = myOrders.docs as Order[];
-      return orders.filter((order) => !order?.published);
+  const orders = useMemo(() => {
+    let temp: Order[] = [];
+
+    if (data?.getMyOrders?.docs?.length) {
+      temp = [...(data.getMyOrders.docs as Order[])];
     }
-    return [];
-  }, [myOrders]);
 
-  const published = useMemo(() => {
-    if (myOrders && myOrders.docs?.length) {
-      const orders = myOrders.docs as Order[];
-      return orders.filter((order) => Boolean(order?.published));
-    }
-    return [];
-  }, [myOrders]);
+    temp = temp.sort((a, b) => {
+      if (dayjs(a.createdAt).isAfter(b.createdAt)) {
+        return 1;
+      }
+
+      if (dayjs(b.createdAt).isAfter(a.createdAt)) {
+        return -1;
+      }
+
+      return 0;
+    });
+
+    return temp;
+  }, [data]);
 
   return (
     <Grid container padding={3} spacing={5} direction={"column"}>
-      <TabGroup
-        items={[
-          {
-            label: "Drafts",
-            contents: <DraftsComponent drafts={drafts} />,
-          },
-          {
-            label: "Published",
-            contents: <PublishedComponent orders={published} />,
-          },
-          {
-            label: "Responses",
-            contents: <ResponsesComponent />,
-          },
-        ]}
-      />
+      <Grid item width={"100%"} textAlign={"end"}>
+        <NextLink href={"/app/create"}>
+          <Button color="secondary" variant="contained" startIcon={<Add />}>
+            Create Order
+          </Button>
+        </NextLink>
+      </Grid>
+      <Grid item>
+        <Divider />
+      </Grid>
+
+      {loading ? (
+        <Grid item>
+          <CustomLoader />
+        </Grid>
+      ) : (
+        ""
+      )}
+
+      {error ? (
+        <Grid item>
+          <Alert color="error" variant="filled">
+            {error?.message || "Something went wrong. "}
+          </Alert>
+        </Grid>
+      ) : (
+        ""
+      )}
+      {orders.length ? (
+        <>
+          <Grid item>
+            <Typography variant="h4">Recent papers</Typography>
+          </Grid>
+          <Grid item>
+            <Grid container gap={2} flexWrap={"wrap"}>
+              {orders.map((order) => (
+                <Grid item key={`order-${order.orderId}`} md={3}>
+                  <SummaryCard order={order} />
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+        </>
+      ) : (
+        ""
+      )}
     </Grid>
   );
 };
@@ -61,7 +89,5 @@ const Dashboard = ({ myOrders }: DashboardProps): JSX.Element => {
 Dashboard.getLayout = function (page: React.ReactNode) {
   return <MainLayout>{page}</MainLayout>;
 };
-
-export const getServerSideProps = getSharedServerSideProps;
 
 export default Dashboard;

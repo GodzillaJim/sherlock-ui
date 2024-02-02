@@ -1,4 +1,4 @@
-import { Attachment } from "../../generated";
+import { Attachment, Order } from "../../generated";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { EditorState } from "draft-js";
@@ -14,16 +14,17 @@ import {
   ListItemIcon,
   ListItemText,
   Paper,
+  styled,
+  Typography,
 } from "@mui/material";
 import CustomEditor from "../CustomEditor";
 import AttachmentList from "../edit/AttachmentList";
 import dayjs from "dayjs";
-import { Order } from "../../../graphql/common";
 import {
   AssignmentOutlined,
   AttachFile,
+  CheckOutlined,
   EditOutlined,
-  Publish,
   QuestionAnswerOutlined,
   Unpublished,
   ViewComfy,
@@ -35,6 +36,14 @@ import { GetOrderDocument } from "../../Apollo/schema/GetOrder.generated";
 import { GetMyOrdersDocument } from "../../Apollo/schema/GetMyOrders.generated";
 import { useAuth } from "../../Context/AuthManager";
 import { isAdmin, isWriter } from "../../helpers/User";
+import { calculateOrderPrice } from "../../helpers/orders/pricing";
+
+const Price = styled(Typography)`
+  font-size: 1.25rem;
+  background-color: ${({ theme }) => theme.palette.primary.light};
+  padding: ${({ theme }) => `${theme.spacing(1)}`};
+  border-radius: ${({ theme }) => theme.shape.borderRadius}px;
+`;
 
 type OrderDetailsComponentProps = {
   order: Order;
@@ -59,7 +68,7 @@ const OrderDetailsComponent = ({
     );
   }, [auth, order]);
 
-  const [publishOrder, { loading: publishing, error: publishError }] =
+  const [_, { loading: publishing, error: publishError }] =
     usePublishOrderMutation({
       refetchQueries: [GetOrderDocument, GetMyOrdersDocument],
     });
@@ -78,11 +87,6 @@ const OrderDetailsComponent = ({
 
   const handleEdit = () => {
     router.push(`/app/order/${order.orderId}/edit`);
-  };
-
-  const handlePublishOrder = async () => {
-    const orderId = order.orderId;
-    await publishOrder({ variables: { orderId } });
   };
 
   const handleUnPublishOrder = async () => {
@@ -104,62 +108,76 @@ const OrderDetailsComponent = ({
     router.push(`/app/order/${order.orderId}/respond`);
   };
 
+  const totalPrice = calculateOrderPrice(order);
+
   return (
     <div>
       <Grid container spacing={2} sx={{ marginBottom: 2 }}>
         <Grid item sx={{ width: "100%" }}>
           <Grid
             container
-            justifyContent={"right"}
+            justifyContent={"space-between"}
             gap={3}
             flexDirection={"row"}
           >
-            {isOwner && (
-              <Grid item>
-                {!order.published && (
-                  <Button
-                    variant={"outlined"}
-                    startIcon={<Publish />}
-                    onClick={handlePublishOrder}
-                    disabled={publishing}
-                  >
-                    Publish
-                  </Button>
-                )}
-                {order.published && (
-                  <Button
-                    variant={"outlined"}
-                    startIcon={<Unpublished />}
-                    onClick={handleUnPublishOrder}
-                    disabled={unPublishing}
-                  >
-                    UnPublish
-                  </Button>
-                )}
-              </Grid>
-            )}
             <Grid item>
-              {!hideEditButton && (
-                <Button
-                  onClick={handleEdit}
-                  variant={"outlined"}
-                  startIcon={<EditOutlined />}
-                >
-                  Edit
-                </Button>
-              )}
+              <Price>Total Price: ${totalPrice}</Price>
             </Grid>
-            {canRespond && (
-              <Grid item>
-                <Button
-                  variant={"outlined"}
-                  startIcon={<QuestionAnswerOutlined />}
-                  onClick={handleRespond}
-                >
-                  Respond
-                </Button>
+            <Grid item>
+              <Grid
+                container
+                justifyContent={"right"}
+                gap={3}
+                flexDirection={"row"}
+              >
+                {isOwner && (
+                  <Grid item>
+                    {!order.published && (
+                      <Button
+                        variant={"contained"}
+                        startIcon={<CheckOutlined />}
+                        // onClick={handlePublishOrder}
+                        disabled={publishing}
+                      >
+                        Checkout
+                      </Button>
+                    )}
+                    {order.published && (
+                      <Button
+                        variant={"outlined"}
+                        startIcon={<Unpublished />}
+                        onClick={handleUnPublishOrder}
+                        disabled={unPublishing}
+                      >
+                        UnPublish
+                      </Button>
+                    )}
+                  </Grid>
+                )}
+                <Grid item>
+                  {!hideEditButton && (
+                    <Button
+                      onClick={handleEdit}
+                      variant={"outlined"}
+                      startIcon={<EditOutlined />}
+                    >
+                      Edit
+                    </Button>
+                  )}
+                </Grid>
+                {canRespond && (
+                  <Grid item>
+                    <Button
+                      variant={"outlined"}
+                      startIcon={<QuestionAnswerOutlined />}
+                      onClick={handleRespond}
+                    >
+                      Respond
+                    </Button>
+                  </Grid>
+                )}
               </Grid>
-            )}
+            </Grid>
           </Grid>
         </Grid>
         <Grid item xs={12} sm={12} md={12}>
@@ -245,7 +263,7 @@ const OrderDetailsComponent = ({
           <Card sx={{ width: "100%" }}>
             <List>
               {order.responses?.map(
-                (response, index) =>
+                (response) =>
                   response?.createdBy?.firstName && (
                     <ListItem
                       sx={{ width: 400 }}

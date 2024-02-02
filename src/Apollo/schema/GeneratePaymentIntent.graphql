@@ -1,0 +1,7 @@
+mutation GeneratePaymentIntent($orderId: String!) {
+    generatePaymentIntent(orderId: $orderId) {
+        data
+        success
+        status
+    }
+}
