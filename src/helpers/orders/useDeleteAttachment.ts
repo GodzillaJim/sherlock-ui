@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useDeleteOrderResponseAttachmentMutation } from "../../Apollo/schema/DeleteOrderResponseAttachment.generated";
 import { GetOrderDocument } from "../../Apollo/schema/GetOrder.generated";
 import { GetOrderResponseDocument } from "../../Apollo/schema/GetOrderResponse.generated";
+import { toast } from "react-toastify";
 
 type DeleteAttachmentProps = {
   id: string;
@@ -32,18 +33,18 @@ export const useDeleteAttachment = (
 
   useEffect(() => {
     if (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
     if (data) {
-      alert(data.deleteAttachment?.message);
+      toast.success(data.deleteAttachment?.message);
     }
 
     if (deleted) {
-      alert(deleted.deleteOrderResponseAttachment?.message);
+      toast.success(deleted.deleteOrderResponseAttachment?.message);
     }
 
     if (deleteError) {
-      alert(deleteError.message);
+      toast.error(deleteError.message);
     }
   }, [error, data, deleted, deleteError]);
 

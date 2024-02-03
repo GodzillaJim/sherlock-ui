@@ -19,6 +19,7 @@ import {
 } from "../../../generated";
 import { object, string } from "yup";
 import { useRouter } from "next/router";
+import { toast } from "react-toastify";
 
 const CreateOrder = () => {
   const [createOrderFromTitle, { loading, data, error }] =
@@ -33,7 +34,7 @@ const CreateOrder = () => {
 
   useEffect(() => {
     if (error) {
-      alert(error.message);
+      toast.error(error.message);
     }
   }, [error]);
 

@@ -60,6 +60,7 @@
     "react-loading-overlay-ts": "^2.0.0",
     "react-modern-calendar-datepicker": "^3.1.6",
     "react-redux": "^8.1.2",
+    "react-toastify": "^10.0.4",
     "react-use-downloader": "^1.2.4",
     "styled-components": "^5.3.6",
     "timezones.json": "^1.6.1",

@@ -46,6 +46,7 @@ import { useUnPublishResponseMutation } from "../../../../Apollo/schema/UnPublis
 import AttachmentList from "../../../../components/edit/AttachmentList";
 import { useDeleteOrderResponseMutation } from "../../../../Apollo/schema/DeleteOrderResponse.generated";
 import { useRouter } from "next/router";
+import { toast } from "react-toastify";
 
 const ResponseDetails = () => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -102,14 +103,14 @@ const ResponseDetails = () => {
   const handleDelete = async () => {
     if (response?.id) {
       await deleteOrderResponse({ variables: { responsesId: response.id } });
-      alert("Operation successfull");
+      toast.success("Operation successfully");
       await router.back();
     }
   };
 
   useEffect(() => {
     if (data) {
-      alert("Operation successful!");
+      toast.success("Operation successful!");
     }
   }, [data]);
 

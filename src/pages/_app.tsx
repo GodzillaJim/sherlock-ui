@@ -12,6 +12,8 @@ import LoadingOverlayWrapper from "react-loading-overlay-ts";
 import "../assets/styles/global.css";
 import { Provider } from "react-redux";
 import store from "../store";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = ({ Component, pageProps }: NextConfig) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -47,6 +49,7 @@ const App = ({ Component, pageProps }: NextConfig) => {
             <ApolloClientProvider>
               <Context>
                 <CustomThemeProvider>
+                  <ToastContainer />
                   {getLayout(<Component {...pageProps} />)}
                 </CustomThemeProvider>
               </Context>

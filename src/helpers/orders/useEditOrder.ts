@@ -20,6 +20,7 @@ import { useFormik } from "formik";
 import { EditorState } from "draft-js";
 import { fromEditorState, toEditorState } from "../editor";
 import { calculateOrderPrice } from "./pricing";
+import { toast } from "react-toastify";
 
 type UseEditOrderProps = {
   orderId: string;
@@ -35,8 +36,18 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
     error,
   } = useGetOrderQuery({ variables: { orderId } });
 
-  const [updateOrder, { error: updateError, loading: updatingOrder }] =
-    useUpdateOrderMutation({ refetchQueries: [GetOrderDocument] });
+  const [
+    updateOrder,
+    { error: updateError, loading: updatingOrder, data: updated },
+  ] = useUpdateOrderMutation({
+    refetchQueries: [GetOrderDocument],
+  });
+
+  useEffect(() => {
+    if (updated) {
+      toast.success(updated.updateOrder?.message || "Operation successful.");
+    }
+  }, [updated]);
 
   const {
     uploadAttachments,
@@ -46,15 +57,15 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
 
   useEffect(() => {
     if (error) {
-      alert(error.message || "Failed to load order");
+      toast.error(error.message || "Failed to load order");
     }
 
     if (updateError) {
-      alert(updateError.message || "Failed to update");
+      toast.error(updateError.message || "Failed to update");
     }
 
     if (attachmentError) {
-      alert(attachmentError || "Failed to upload attachments");
+      toast.error(attachmentError || "Failed to upload attachments");
     }
   }, [error, updateError, attachmentError]);
 
@@ -176,7 +187,7 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
       // eslint-disable-next-line
     } catch (e: any) {
       console.log("Upload attachments error: ", e);
-      alert("Failed to upload: " + e.message);
+      toast.error("Failed to upload: " + e.message);
     }
   };
 

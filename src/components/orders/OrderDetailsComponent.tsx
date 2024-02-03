@@ -37,6 +37,7 @@ import { GetMyOrdersDocument } from "../../Apollo/schema/GetMyOrders.generated";
 import { useAuth } from "../../Context/AuthManager";
 import { isAdmin, isWriter } from "../../helpers/User";
 import { calculateOrderPrice } from "../../helpers/orders/pricing";
+import { toast } from "react-toastify";
 
 const Price = styled(Typography)`
   font-size: 1.25rem;
@@ -96,11 +97,11 @@ const OrderDetailsComponent = ({
 
   useEffect(() => {
     if (publishError) {
-      alert(publishError.message);
+      toast.error(publishError.message);
     }
 
     if (unPublishError) {
-      alert(unPublishError.message);
+      toast.error(unPublishError.message);
     }
   }, [publishError, unPublishError]);
 
