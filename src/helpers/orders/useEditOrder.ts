@@ -21,12 +21,15 @@ import { EditorState } from "draft-js";
 import { fromEditorState, toEditorState } from "../editor";
 import { calculateOrderPrice } from "./pricing";
 import { toast } from "react-toastify";
+import { useGeneratePaymentIntentMutation } from "../../Apollo/schema/GeneratePaymentIntent.generated";
+import { useRouter } from "next/router";
 
 type UseEditOrderProps = {
   orderId: string;
 };
 export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
   const [files, setFiles] = useState<File[]>([]);
+  const router = useRouter();
   const [editorState, setEditorState] = useState<EditorState>(
     EditorState.createEmpty()
   );
@@ -226,10 +229,37 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
     ...formik.values,
   } as Order);
 
-  const loading = useMemo(() => {
-    return uploadingAttachments || gettingOrder || updatingOrder;
-  }, [uploadingAttachments, gettingOrder, updatingOrder]);
+  const [
+    getClientSecret,
+    { loading: gettingClientSecret, error: clientSecretError },
+  ] = useGeneratePaymentIntentMutation();
 
+  useEffect(() => {
+    if (clientSecretError) {
+      toast.error(
+        clientSecretError.message || "Operation failed at this moment."
+      );
+    }
+  }, [clientSecretError]);
+
+  const handleCheckout = async () => {
+    // Save any changes
+    await formik.handleSubmit();
+
+    // Generate client secret
+    await getClientSecret({ variables: { orderId } });
+
+    router.push(`/app/order/${orderId}/checkout`);
+  };
+
+  const loading = useMemo(() => {
+    return (
+      uploadingAttachments ||
+      gettingOrder ||
+      updatingOrder ||
+      gettingClientSecret
+    );
+  }, [uploadingAttachments, gettingOrder, updatingOrder, clientSecretError]);
   return {
     formik,
     totalPrice,
@@ -239,5 +269,6 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
     setFiles,
     loading,
     existingAttachments,
+    handleCheckout,
   };
 };

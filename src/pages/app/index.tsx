@@ -8,6 +8,7 @@ import NextLink from "next/link";
 import CustomLoader from "../../components/CustomLoader";
 import dayjs from "dayjs";
 import SummaryCard from "../../components/SummaryCard";
+import { withRequireAuth } from "../../Context/AuthManager/withRequireAuth";
 
 const Dashboard = (): JSX.Element => {
   const { loading, error, data } = useGetMyOrdersQuery();
@@ -89,5 +90,7 @@ const Dashboard = (): JSX.Element => {
 Dashboard.getLayout = function (page: React.ReactNode) {
   return <MainLayout>{page}</MainLayout>;
 };
+
+export const getServerSideProps = withRequireAuth();
 
 export default Dashboard;

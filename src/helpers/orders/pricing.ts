@@ -33,3 +33,18 @@ export const calculateOrderPrice = (order: Order): number => {
 
   return Math.ceil(price);
 };
+
+type PriceWithCurrencyProps = {
+  currency: string;
+  amount: number;
+};
+export const priceWithCurrency = ({
+  currency,
+  amount,
+}: PriceWithCurrencyProps) => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency,
+    minimumFractionDigits: 2,
+  }).format(amount);
+};

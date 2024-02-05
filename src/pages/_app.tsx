@@ -45,16 +45,16 @@ const App = ({ Component, pageProps }: NextConfig) => {
           }}
           active={loading}
         >
-          <AuthManager>
-            <ApolloClientProvider>
+          <ApolloClientProvider>
+            <AuthManager>
               <Context>
                 <CustomThemeProvider>
                   <ToastContainer />
                   {getLayout(<Component {...pageProps} />)}
                 </CustomThemeProvider>
               </Context>
-            </ApolloClientProvider>
-          </AuthManager>
+            </AuthManager>
+          </ApolloClientProvider>
         </LoadingOverlayWrapper>
       </Provider>
     </>

@@ -37,6 +37,7 @@ const EditOrder = ({ order }: { order: Order }) => {
     setEditorState,
     files,
     setFiles,
+    handleCheckout,
   } = useEditOrder({
     orderId: (id || "") as string,
   });
@@ -219,6 +220,7 @@ const EditOrder = ({ order }: { order: Order }) => {
                       disabled={loading}
                       type="button"
                       startIcon={<CheckOutlined />}
+                      onClick={handleCheckout}
                     >
                       Checkout {totalPrice ? `$ ${totalPrice}` : ""}
                     </Button>

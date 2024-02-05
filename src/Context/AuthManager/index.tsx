@@ -1,14 +1,8 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useSearchParams } from "next/navigation";
 import {
   getAuth,
+  getIdToken,
   GoogleAuthProvider,
   onIdTokenChanged,
   signInWithPopup,
@@ -19,14 +13,11 @@ import { AuthResponse, User as LocalUser } from "../../generated/index";
 import {
   clearAuthToken,
   firebaseClient,
-  setAuthToken,
+  setAuthTokenCookie,
 } from "../../helpers/Auth";
-import { client, createApolloClient } from "../../Apollo";
 import Cookies from "js-cookie";
-import {
-  CurrentUserDocument,
-  CurrentUserQuery,
-} from "../../Apollo/schema/CurrentUserQuery.generated";
+import { useCurrentUserLazyQuery } from "../../Apollo/schema/CurrentUserQuery.generated";
+import { client } from "../../Apollo";
 
 type AuthContextType = {
   user?: User;
@@ -35,67 +26,46 @@ type AuthContextType = {
   signInWithGoogle?: () => void;
   signOut?: () => void;
   setAuthDetails?: (response: AuthResponse) => void;
+  refresh: () => void;
 };
 
-export const AuthContext = createContext<AuthContextType>({});
+export const AuthContext = createContext<AuthContextType>({
+  refresh: () => "",
+});
 
 type AuthManagerType = {
   children: React.ReactNode | JSX.Element;
 };
 
+const auth = getAuth(firebaseClient);
+
 const AuthManager = ({ children }: AuthManagerType) => {
   const [user, setUser] = useState<AuthContextType["user"] | undefined>(
     undefined
   );
-  const [localUser, setLocalUser] = useState<LocalUser | undefined>(undefined);
-  const [authTokenValue, setAuthTokenValue] = useState<string | null>();
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [getCurrentUser, { data }] = useCurrentUserLazyQuery();
+
   const router = useRouter();
-  const params = useSearchParams();
-
-  const tempClient = useMemo(() => {
-    if (authTokenValue) {
-      return createApolloClient(authTokenValue);
-    }
-
-    return null;
-  }, [authTokenValue]);
-
-  useEffect(() => {
-    if (authTokenValue && !localUser) {
-      tempClient
-        ?.query<CurrentUserQuery>({ query: CurrentUserDocument })
-        .then((res) => {
-          if (res.data.me) {
-            setLocalUser(res.data.me as LocalUser);
-          }
-        })
-        .catch(console.log);
-    }
-  }, [authTokenValue]);
+  const { next } = router.query;
 
   const handleRouteChange = async (url: string) => {
     setLoading(true);
-    window.location.href = url;
+    await router.push(url);
     setLoading(false);
   };
 
   const handleUser = async (newUser: User | null) => {
     if (newUser) {
-      const authToken = await newUser.getIdToken();
-      setAuthToken(authToken);
-      setAuthTokenValue(authToken);
+      const authToken = await newUser.getIdTokenResult();
+      setAuthTokenCookie(authToken.token);
 
       setUser(newUser);
-      setLoading(false);
-      console.log("Signin path: ", newUser, params.get("next"));
-      if (router.query.next) {
-        await handleRouteChange(router.query.next as string);
-        return;
-      }
 
-      // await handleRouteChange('/app')
+      // Fetch current user
+      await getCurrentUser();
+      setLoading(false);
       return true;
     }
     setUser(undefined);
@@ -105,23 +75,20 @@ const AuthManager = ({ children }: AuthManagerType) => {
   };
 
   useEffect(() => {
-    const auth = getAuth(firebaseClient);
-    return onIdTokenChanged(auth, async (user) => {
-      if (!user) {
-        setUser(undefined);
-        setLoading(false);
-        if (router.pathname === "/auth/login") return;
-        await handleRouteChange(`/auth/login?next=${router.pathname}`);
-        return;
-      }
+    if (next && user) {
+      handleRouteChange(next as string);
+    }
+  }, [user]);
 
-      await handleUser(user);
-    });
+  useEffect(() => {
+    // Firebase updates cookie every hour. This ensures the token is updated
+    const unsubscribe = onIdTokenChanged(auth, handleUser);
+
+    return () => unsubscribe();
   }, []);
 
   const signInWithGoogle = () => {
     setLoading(true);
-    const auth = getAuth();
     const provider = new GoogleAuthProvider();
 
     provider.setCustomParameters({ prompt: "select_account" });
@@ -135,10 +102,7 @@ const AuthManager = ({ children }: AuthManagerType) => {
   };
 
   const signOut = async () => {
-    const auth = getAuth();
     setLoading(true);
-    setAuthTokenValue(undefined);
-    setLocalUser(undefined);
     await logOut(auth);
     await handleUser(null);
     await handleRouteChange("/auth/login?next=/app");
@@ -150,9 +114,24 @@ const AuthManager = ({ children }: AuthManagerType) => {
     console.log("Cookies: ", Cookies.get("authToken"));
   };
 
+  const refresh = () => {
+    // Reload user, seems to trigger onIdTokenChange.
+    if (auth?.currentUser) {
+      setLoading(true);
+      getIdToken(auth.currentUser, true);
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, localUser, loading, signInWithGoogle, signOut }}
+      value={{
+        user,
+        localUser: data?.me ? (data.me as LocalUser) : undefined,
+        loading,
+        signInWithGoogle,
+        signOut,
+        refresh,
+      }}
     >
       {children}
     </AuthContext.Provider>

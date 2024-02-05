@@ -50,4 +50,4 @@ export default class StringUtility {
   }
 }
 
-
+export const isServerSide = () => typeof window === "undefined";

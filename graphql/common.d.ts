@@ -131,6 +131,7 @@ export type Mutation = {
   updateOrder?: Maybe<Response>;
   updateOrderResponse?: Maybe<AddResponseFeedback>;
   updatePassword?: Maybe<Response>;
+  updatePaymentStatus?: Maybe<ClientSecretResponse>;
   updateUser?: Maybe<Response>;
 };
 
@@ -227,6 +228,11 @@ export type MutationUpdatePasswordArgs = {
 };
 
 
+export type MutationUpdatePaymentStatusArgs = {
+  orderId: Scalars['String'];
+};
+
+
 export type MutationUpdateUserArgs = {
   payload?: InputMaybe<UserUpdatePayload>;
 };
@@ -305,11 +311,16 @@ export type PasswordChangePayload = {
   newPassword?: InputMaybe<Scalars['String']>;
 };
 
+export type PaymentStatus =
+  | 'PAID'
+  | 'UN_PAID';
+
 export type Price = {
   __typename?: 'Price';
   amount?: Maybe<Scalars['Float']>;
   clientSecret?: Maybe<Scalars['String']>;
   currency?: Maybe<Scalars['String']>;
+  paymentStatus?: Maybe<PaymentStatus>;
 };
 
 export type Query = {

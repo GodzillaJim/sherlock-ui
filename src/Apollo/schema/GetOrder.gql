@@ -64,5 +64,11 @@ query GetOrder($orderId: String!) {
         }
         createdAt
         published
+        price {
+            amount
+            clientSecret
+            currency
+            paymentStatus
+        }
     }
 }

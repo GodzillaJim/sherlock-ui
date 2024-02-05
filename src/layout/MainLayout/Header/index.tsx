@@ -1,23 +1,7 @@
 import React from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import {
-  AppBar,
-  Grid,
-  IconButton,
-  styled,
-  Theme,
-  Toolbar,
-} from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { AppBar, Grid, IconButton, styled, Toolbar } from "@mui/material";
 import HeaderContent from "./HeaderContent";
-
-const useStyles = makeStyles((theme: Theme) => ({
-  appBar: {
-    height: 56,
-    borderBottom: "1px",
-    borderColor: theme.palette.divider,
-  },
-}));
 
 const CustomAppBar = styled(AppBar)(({ theme }) => ({
   height: 56,

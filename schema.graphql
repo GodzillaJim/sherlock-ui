@@ -88,6 +88,7 @@ type Mutation {
     updateOrder(orderId: String, orderInput: OrderInput): Response
     updateOrderResponse(orderId: String, orderResponseInput: OrderResponseInput, responseId: String): AddResponseFeedback
     updatePassword(payload: PasswordChangePayload): Response
+    updatePaymentStatus(orderId: String!): ClientSecretResponse
     updateUser(payload: UserUpdatePayload): Response
 }
 
@@ -138,6 +139,7 @@ type Price {
     amount: Float
     clientSecret: String
     currency: String
+    paymentStatus: PaymentStatus
 }
 
 type Query {
@@ -195,6 +197,11 @@ type User {
     uid: String
     user_id: String
     username: String
+}
+
+enum PaymentStatus {
+    PAID
+    UN_PAID
 }
 
 enum ResponseStatus {
