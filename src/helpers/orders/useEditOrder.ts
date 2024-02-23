@@ -2,15 +2,7 @@ import {
   GetOrderDocument,
   useGetOrderQuery,
 } from "../../Apollo/schema/GetOrder.generated";
-import {
-  Attachment,
-  AttachmentInput,
-  Order,
-  OrderInput,
-  Type,
-  useUpdateOrderMutation,
-  WritingStyle,
-} from "../../generated";
+
 import useUploadAttachments from "./useUploadAttachments";
 import { useEffect, useMemo, useState } from "react";
 import { addDays } from "date-fns";
@@ -23,6 +15,8 @@ import { calculateOrderPrice } from "./pricing";
 import { toast } from "react-toastify";
 import { useGeneratePaymentIntentMutation } from "../../Apollo/schema/GeneratePaymentIntent.generated";
 import { useRouter } from "next/router";
+import { paperType, writingStyle } from "../utils";
+import { useUpdateOrderMutation } from "../../Apollo/schema/UpdateOrder.generated";
 
 type UseEditOrderProps = {
   orderId: string;
@@ -91,13 +85,15 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
 
   const initialValues: OrderInput = useMemo(() => {
     const temp = {
-      deadline: addDays(new Date(), 1),
+      deadline: addDays(new Date(), 1).toISOString(),
       numberOfPages: 1,
       title: "",
-      type: Type.Article,
-      writingStyle: WritingStyle.Apa7,
+      type: paperType.article as Type,
+      writingStyle: writingStyle.apaV7 as WritingStyle,
       description: "",
       attachments: [],
+      academicLevel: "NONE" as AcademicLevel,
+      discipline: "",
     };
 
     if (!data || !data.getOrder) {
@@ -109,6 +105,9 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
     return {
       ...temp,
       ...order,
+      academicLevel: (order.academicLevel ||
+        temp.academicLevel) as AcademicLevel,
+      discipline: order.discipline || temp.discipline,
       attachments: savedAttachments.map(
         ({ key, name, location, mimeType }) => ({
           name: name as string,
@@ -117,7 +116,7 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
           mimeType: mimeType || "",
         })
       ),
-      deadline: dayjs(order.deadline).toDate(),
+      deadline: dayjs(order.deadline).toDate().toISOString(),
     };
   }, [data]);
 
@@ -130,6 +129,8 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
     writingStyle: string().required(requiredMessage),
     deadline: date().required(requiredMessage),
     description: string(),
+    discipline: string(),
+    academicLevel: string(),
   });
 
   const onSubmit = async ({
@@ -141,7 +142,9 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
     description,
     deadline,
     attachments,
-  }: OrderInput) => {
+    discipline,
+    academicLevel,
+  }: OrderInput & { discipline: string; academicLevel: AcademicLevel }) => {
     try {
       const orderInput = {
         writingStyle,
@@ -152,6 +155,8 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
         description,
         deadline,
         attachments,
+        discipline,
+        academicLevel,
       };
       if (files.length) {
         const newAttachments = await uploadAttachments(files);
@@ -194,7 +199,9 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
     }
   };
 
-  const formik = useFormik<OrderInput>({
+  const formik = useFormik<
+    OrderInput & { discipline: string; academicLevel: AcademicLevel }
+  >({
     initialValues,
     onSubmit,
     validationSchema,

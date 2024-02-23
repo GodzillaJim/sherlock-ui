@@ -7,17 +7,20 @@ import {
 import { useSearchParams } from "next/navigation";
 import { Alert, Grid } from "@mui/material";
 import CustomLoader from "../../../../components/CustomLoader";
-import OrderDetailsComponent from "../../../../components/orders/OrderDetailsComponent";
 import { GetServerSidePropsContext } from "next";
 import { createApolloClient } from "../../../../Apollo";
-import { Order } from "../../../../generated";
+import { useRouter } from "next/router";
+import OrderDetailsComponent from "../../../../components/orders/OrderDetailsComponent";
+import { Order } from "../../../../../graphql/common";
 
 const OrderDetails = () => {
   const params = useSearchParams();
+  const router = useRouter();
+
   const [getOrder, { loading, error, data }] = useGetOrderLazyQuery();
 
   useEffect(() => {
-    const orderId = params.get("id");
+    const orderId = router.query.id as string;
 
     if (orderId) {
       getOrder({ variables: { orderId } }).then();
@@ -33,8 +36,10 @@ const OrderDetails = () => {
           </Alert>
         )}
         {loading && <CustomLoader />}
-        {data?.getOrder && (
+        {data?.getOrder ? (
           <OrderDetailsComponent order={data.getOrder as Order} />
+        ) : (
+          ""
         )}
       </Grid>
     </Grid>

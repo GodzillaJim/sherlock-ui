@@ -88,6 +88,11 @@ export function useGetResponsesToQuestionsByUserLazyQuery(baseOptions?: Apollo.L
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetResponsesToQuestionsByUserQuery, GetResponsesToQuestionsByUserQueryVariables>(GetResponsesToQuestionsByUserDocument, options);
         }
+export function useGetResponsesToQuestionsByUserSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetResponsesToQuestionsByUserQuery, GetResponsesToQuestionsByUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetResponsesToQuestionsByUserQuery, GetResponsesToQuestionsByUserQueryVariables>(GetResponsesToQuestionsByUserDocument, options);
+        }
 export type GetResponsesToQuestionsByUserQueryHookResult = ReturnType<typeof useGetResponsesToQuestionsByUserQuery>;
 export type GetResponsesToQuestionsByUserLazyQueryHookResult = ReturnType<typeof useGetResponsesToQuestionsByUserLazyQuery>;
+export type GetResponsesToQuestionsByUserSuspenseQueryHookResult = ReturnType<typeof useGetResponsesToQuestionsByUserSuspenseQuery>;
 export type GetResponsesToQuestionsByUserQueryResult = Apollo.QueryResult<GetResponsesToQuestionsByUserQuery, GetResponsesToQuestionsByUserQueryVariables>;

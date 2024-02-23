@@ -2,7 +2,7 @@ import { Divider, Grid } from "@mui/material";
 import { v4 } from "uuid";
 import SummaryCard from "../SummaryCard";
 import React from "react";
-import { Order } from "../../generated";
+import { Order } from "../../../graphql/common";
 
 type PublishedComponentProps = {
   orders: Order[];

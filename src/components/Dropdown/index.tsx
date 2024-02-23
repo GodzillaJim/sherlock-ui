@@ -5,12 +5,13 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import React, { useRef } from "react";
+import React, { ReactNode, useRef } from "react";
 import { v4 } from "uuid";
 
 export type DropdownOption = {
   label: string;
   value: string | number;
+  icon?: ReactNode;
 };
 
 type DropdownProps = {

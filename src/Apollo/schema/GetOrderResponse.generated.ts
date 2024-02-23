@@ -4,7 +4,7 @@ import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type GetOrderResponseQueryVariables = common.Exact<{
-  responseId: common.Scalars['String'];
+  responseId: common.Scalars['String']['input'];
 }>;
 
 
@@ -103,6 +103,11 @@ export function useGetOrderResponseLazyQuery(baseOptions?: Apollo.LazyQueryHookO
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<GetOrderResponseQuery, GetOrderResponseQueryVariables>(GetOrderResponseDocument, options);
         }
+export function useGetOrderResponseSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetOrderResponseQuery, GetOrderResponseQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetOrderResponseQuery, GetOrderResponseQueryVariables>(GetOrderResponseDocument, options);
+        }
 export type GetOrderResponseQueryHookResult = ReturnType<typeof useGetOrderResponseQuery>;
 export type GetOrderResponseLazyQueryHookResult = ReturnType<typeof useGetOrderResponseLazyQuery>;
+export type GetOrderResponseSuspenseQueryHookResult = ReturnType<typeof useGetOrderResponseSuspenseQuery>;
 export type GetOrderResponseQueryResult = Apollo.QueryResult<GetOrderResponseQuery, GetOrderResponseQueryVariables>;

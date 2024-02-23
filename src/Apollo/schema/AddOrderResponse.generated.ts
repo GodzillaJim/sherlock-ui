@@ -4,7 +4,7 @@ import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type AddOrderResponseMutationVariables = common.Exact<{
-  orderId?: common.InputMaybe<common.Scalars['String']>;
+  orderId?: common.InputMaybe<common.Scalars['String']['input']>;
   orderResponse?: common.InputMaybe<common.OrderResponseInput>;
 }>;
 

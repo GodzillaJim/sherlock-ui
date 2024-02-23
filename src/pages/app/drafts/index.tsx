@@ -2,11 +2,12 @@ import React, { useMemo } from "react";
 import { Add } from "@mui/icons-material";
 import NextLink from "next/link";
 import { ApolloError } from "@apollo/client";
-import { Order, OrderPage } from "../../../generated";
 import { Button, Divider, Grid, Typography } from "@mui/material";
 import DraftsComponent from "../../../components/orders/DraftsComponent";
 import MainLayout from "../../../layout/MainLayout";
 import { getSharedServerSideProps } from "../../../helpers/orders/sharedProps";
+import { Order, OrderPage } from "../../../../graphql/common";
+import { orderStatus } from "../../../helpers/utils";
 
 type DashboardProps = {
   error?: ApolloError | { message: string };
@@ -17,7 +18,7 @@ const Dashboard = ({ myOrders }: DashboardProps): JSX.Element => {
   const drafts = useMemo(() => {
     if (myOrders && myOrders.docs?.length) {
       const orders = myOrders.docs as Order[];
-      return orders.filter((order) => !order?.published);
+      return orders.filter((order) => order.status === orderStatus.draft);
     }
     return [];
   }, [myOrders]);

@@ -1,4 +1,3 @@
-import { Attachment, Order } from "../../generated";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { EditorState } from "draft-js";
@@ -23,21 +22,24 @@ import dayjs from "dayjs";
 import {
   AssignmentOutlined,
   AttachFile,
-  CheckOutlined,
+  Cancel,
   EditOutlined,
+  PaymentOutlined,
   QuestionAnswerOutlined,
-  Unpublished,
   ViewComfy,
 } from "@mui/icons-material";
 import NextLink from "next/link";
-import { usePublishOrderMutation } from "../../Apollo/schema/PublishOrder.generated";
-import { useUnPublishOrderMutation } from "../../Apollo/schema/UnPublishOrder.generated";
 import { GetOrderDocument } from "../../Apollo/schema/GetOrder.generated";
 import { GetMyOrdersDocument } from "../../Apollo/schema/GetMyOrders.generated";
 import { useAuth } from "../../Context/AuthManager";
 import { isAdmin, isWriter } from "../../helpers/User";
 import { calculateOrderPrice } from "../../helpers/orders/pricing";
+import { useCancelOrderMutation } from "../../Apollo/schema/CancelOrder.generated";
 import { toast } from "react-toastify";
+import { useStripe } from "@stripe/react-stripe-js";
+import { StripeContext } from "../../Context/Stripe";
+import OrderStatusComponent from "./OrderStatusComponent";
+import { Order } from "../../../graphql/common";
 
 const Price = styled(Typography)`
   font-size: 1.25rem;
@@ -54,8 +56,10 @@ const OrderDetailsComponent = ({
   order,
   hideEditButton = false,
 }: OrderDetailsComponentProps) => {
+  const [isPaid, setIsPaid] = useState(false);
   const router = useRouter();
   const auth = useAuth();
+  const stripe = useStripe();
 
   const canRespond = useMemo(() => {
     if (!auth.localUser) return false;
@@ -69,15 +73,15 @@ const OrderDetailsComponent = ({
     );
   }, [auth, order]);
 
-  const [_, { loading: publishing, error: publishError }] =
-    usePublishOrderMutation({
-      refetchQueries: [GetOrderDocument, GetMyOrdersDocument],
-    });
-
-  const [unPublishOrder, { loading: unPublishing, error: unPublishError }] =
-    useUnPublishOrderMutation({
-      refetchQueries: [GetOrderDocument, GetMyOrdersDocument],
-    });
+  const [cancelOrder, { loading: cancellingOrder }] = useCancelOrderMutation({
+    onCompleted: (data1) => {
+      toast.success(data1.cancelOrder?.message);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    refetchQueries: [GetOrderDocument, GetMyOrdersDocument],
+  });
 
   const [editor, setEditor] = useState<EditorState>(() => {
     if (order && order.description) {
@@ -90,26 +94,41 @@ const OrderDetailsComponent = ({
     router.push(`/app/order/${order.orderId}/edit`);
   };
 
-  const handleUnPublishOrder = async () => {
+  const handleCancelOrder = async () => {
     const orderId = order.orderId;
-    await unPublishOrder({ variables: { orderId } });
+    await cancelOrder({ variables: { orderId } });
   };
 
-  useEffect(() => {
-    if (publishError) {
-      toast.error(publishError.message);
-    }
-
-    if (unPublishError) {
-      toast.error(unPublishError.message);
-    }
-  }, [publishError, unPublishError]);
+  const handleCheckout = () => {
+    router.push(`/app/order/${order.orderId}/checkout`);
+  };
 
   const handleRespond = () => {
     router.push(`/app/order/${order.orderId}/respond`);
   };
 
   const totalPrice = calculateOrderPrice(order);
+
+  const checkPaymentStatus = async () => {
+    const clientSecret = order.price?.clientSecret;
+    if (clientSecret) {
+      const intent = await stripe?.retrievePaymentIntent(clientSecret);
+      console.log("Intent: ", intent, order);
+
+      if (
+        intent?.paymentIntent?.status === "succeeded" ||
+        order.price?.paymentStatus === "PAID"
+      ) {
+        setIsPaid(true);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (order) {
+      checkPaymentStatus();
+    }
+  }, [order]);
 
   return (
     <div>
@@ -122,37 +141,41 @@ const OrderDetailsComponent = ({
             flexDirection={"row"}
           >
             <Grid item>
-              <Price>Total Price: ${totalPrice}</Price>
+              <Grid container my={1}>
+                {!isPaid && (
+                  <Grid item>
+                    <Price>Total Price: ${totalPrice}</Price>
+                  </Grid>
+                )}
+                {isPaid && (
+                  <Grid item>
+                    <OrderStatusComponent status={order.status} />
+                  </Grid>
+                )}
+              </Grid>
             </Grid>
             <Grid item>
               <Grid
                 container
                 justifyContent={"right"}
-                gap={3}
+                gap={{ xs: 1, md: 3 }}
                 flexDirection={"row"}
               >
                 {isOwner && (
                   <Grid item>
-                    {!order.published && (
-                      <Button
-                        variant={"contained"}
-                        startIcon={<CheckOutlined />}
-                        // onClick={handlePublishOrder}
-                        disabled={publishing}
-                      >
-                        Checkout
-                      </Button>
-                    )}
-                    {order.published && (
-                      <Button
-                        variant={"outlined"}
-                        startIcon={<Unpublished />}
-                        onClick={handleUnPublishOrder}
-                        disabled={unPublishing}
-                      >
-                        UnPublish
-                      </Button>
-                    )}
+                    <Button
+                      variant={"contained"}
+                      startIcon={isPaid ? <Cancel /> : <PaymentOutlined />}
+                      onClick={isPaid ? handleCancelOrder : handleCheckout}
+                      disabled={cancellingOrder}
+                      color={isPaid ? "error" : "inherit"}
+                    >
+                      {isPaid
+                        ? order.status === "IN_PROGRESS"
+                          ? "Request to cancel"
+                          : "Cancel Order"
+                        : "Checkout"}
+                    </Button>
                   </Grid>
                 )}
                 <Grid item>
@@ -278,9 +301,10 @@ const OrderDetailsComponent = ({
                       }
                     >
                       <ListItemIcon>
-                        {response.responseType === "attachment" && (
-                          <AttachFile />
-                        )}
+                        {response.responseType &&
+                          response.responseType === "attachment" && (
+                            <AttachFile />
+                          )}
                         {response.responseType === "text" && (
                           <AssignmentOutlined />
                         )}
@@ -302,4 +326,10 @@ const OrderDetailsComponent = ({
   );
 };
 
-export default OrderDetailsComponent;
+const Wrapper = (props: OrderDetailsComponentProps) => (
+  <StripeContext>
+    <OrderDetailsComponent {...props} />
+  </StripeContext>
+);
+
+export default Wrapper;

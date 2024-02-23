@@ -71,6 +71,7 @@ type Identity {
 
 type Mutation {
     addOrderResponse(orderId: String, orderResponse: OrderResponseInput): AddResponseFeedback
+    cancelOrder(orderId: String!): Response
     createOrder(orderInput: OrderInput): Response
     createOrderFromTitle(title: String): CreateOrderResponse
     deleteAttachment(attachmentKey: String, orderId: String): Response
@@ -93,15 +94,18 @@ type Mutation {
 }
 
 type Order {
+    academicLevel: String
     attachments: [Attachment]!
     createdAt: Date
     deadline: Date!
     description: String
+    discipline: String
     numberOfPages: Float!
     orderId: String!
     price: Price
     published: Boolean
     responses: [OrderResponse]
+    status: OrderStatus!
     title: String!
     type: Type!
     wordsPerPage: Float
@@ -199,7 +203,23 @@ type User {
     username: String
 }
 
+enum AcademicLevel {
+    HIGH_SCHOOL
+    NONE
+    POST_GRADUATE
+    UNDERGRADUATE
+}
+
+enum OrderStatus {
+    ACTIVE
+    CANCELED
+    COMPLETED
+    DRAFT
+    IN_PROGRESS
+}
+
 enum PaymentStatus {
+    CANCELED
     PAID
     UN_PAID
 }
@@ -270,9 +290,11 @@ input LoginPayload {
 }
 
 input OrderInput {
+    academicLevel: AcademicLevel!
     attachments: [AttachmentInput]!
     deadline: Date!
     description: String
+    discipline: String!
     numberOfPages: Float!
     title: String!
     type: Type!

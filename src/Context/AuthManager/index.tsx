@@ -27,6 +27,7 @@ type AuthContextType = {
   signOut?: () => void;
   setAuthDetails?: (response: AuthResponse) => void;
   refresh: () => void;
+  error?: string
 };
 
 export const AuthContext = createContext<AuthContextType>({
@@ -40,6 +41,7 @@ type AuthManagerType = {
 const auth = getAuth(firebaseClient);
 
 const AuthManager = ({ children }: AuthManagerType) => {
+  const [error, setError] = useState("");
   const [user, setUser] = useState<AuthContextType["user"] | undefined>(
     undefined
   );
@@ -88,6 +90,7 @@ const AuthManager = ({ children }: AuthManagerType) => {
   }, []);
 
   const signInWithGoogle = () => {
+    setError("")
     setLoading(true);
     const provider = new GoogleAuthProvider();
 
@@ -97,7 +100,8 @@ const AuthManager = ({ children }: AuthManagerType) => {
       .then((result) => handleUser(result.user))
       .catch((error) => {
         console.log("Error: ", error);
-        // logOut(auth)
+        setError(error.message);
+        setLoading(false);
       });
   };
 
@@ -131,6 +135,7 @@ const AuthManager = ({ children }: AuthManagerType) => {
         signInWithGoogle,
         signOut,
         refresh,
+        error
       }}
     >
       {children}

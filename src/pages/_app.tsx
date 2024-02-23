@@ -1,6 +1,4 @@
 import React, { ReactNode, useEffect, useState } from "react";
-import Head from "next/head";
-import { Context } from "../Context/MainContext";
 import CustomThemeProvider from "../components/theme";
 import ApolloClientProvider from "../Apollo";
 import { NextConfig } from "next";
@@ -12,8 +10,10 @@ import LoadingOverlayWrapper from "react-loading-overlay-ts";
 import "../assets/styles/global.css";
 import { Provider } from "react-redux";
 import store from "../store";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Head from "next/head";
+import { Context } from "../Context/MainContext";
+import { ToastContainer } from "react-toastify";
 
 const App = ({ Component, pageProps }: NextConfig) => {
   const [loading, setLoading] = useState<boolean>(false);

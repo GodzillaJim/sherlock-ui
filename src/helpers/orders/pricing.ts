@@ -1,4 +1,4 @@
-import { Order } from "../../generated";
+import { Order } from "../../../graphql/common";
 
 export const calculateOrderPrice = (order: Order): number => {
   if (!order.numberOfPages || order.numberOfPages < 0) return 0;

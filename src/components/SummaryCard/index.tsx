@@ -1,4 +1,3 @@
-import { Order } from "../../generated";
 import {
   Box,
   Button,
@@ -25,6 +24,7 @@ import {
 } from "@mui/icons-material";
 import dayjs from "dayjs";
 import StringUtility from "../../helpers/utils";
+import { Order } from "../../../graphql/common";
 
 type SummaryCardType = {
   order: Order;

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import PublicLayout from "../../../../layout/PublicLayout";
 import {
   Alert,
@@ -7,6 +7,7 @@ import {
   CardContent,
   Divider,
   Grid,
+  IconButton,
   List,
   ListItem,
   ListItemIcon,
@@ -20,8 +21,8 @@ import { useGetOrderLazyQuery } from "../../../../Apollo/schema/GetOrder.generat
 import CustomLoader from "../../../../components/CustomLoader";
 import { StripeContext } from "../../../../Context/Stripe";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
-import { useAuth } from "../../../../Context/AuthManager";
 import {
+  ArrowBackOutlined,
   CalendarMonthOutlined,
   Payment,
   TitleOutlined,
@@ -33,6 +34,7 @@ import { toast } from "react-toastify";
 import { Form, Formik } from "formik";
 import { object, string } from "yup";
 import { useUpdatePaymentStatusMutation } from "../../../../Apollo/schema/UpdatePaymentStatus.generated";
+import ProgressSteppers from "../../../../components/common/ProgressSteppers";
 
 const StyledCard = styled(Card)`
   width: 600px;
@@ -53,6 +55,25 @@ const Checkout = () => {
       getOrder({ variables: { orderId: orderId as string } });
     }
   }, [orderId]);
+  const checkPayment = async () => {
+    if (data?.getOrder?.price?.clientSecret) {
+      const clientSecret = data?.getOrder.price.clientSecret;
+      const intent = await stripe?.retrievePaymentIntent(clientSecret);
+      console.log("Intent: ", { intent, data });
+
+      if (
+        intent?.paymentIntent?.status === "succeeded" ||
+        data?.getOrder.price.paymentStatus === "PAID"
+      ) {
+        // Already paid
+        router.push(`/app/payment/paid?orderId=${orderId}`);
+      }
+    }
+  };
+
+  useEffect(() => {
+    checkPayment();
+  }, [data]);
 
   const handleSubmit = async (values: { name: string }) => {
     if (!stripe || !elements) {
@@ -68,6 +89,16 @@ const Checkout = () => {
     const cardElement = elements.getElement(CardElement);
 
     if (cardElement) {
+      const status = await stripe.retrievePaymentIntent(clientSecret);
+
+      if (status.paymentIntent?.status === "succeeded") {
+        toast.success("Order is already paid");
+        await updatePaymentStatus({
+          variables: { orderId: data?.getOrder.orderId },
+        });
+        return;
+      }
+
       const result = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: cardElement,
@@ -102,6 +133,10 @@ const Checkout = () => {
     return null;
   }, [data]);
 
+  const handleBack = async () => {
+    await router.back();
+  };
+
   return (
     <Formik
       initialValues={{ name: "", card: null }}
@@ -117,8 +152,14 @@ const Checkout = () => {
             px={3}
             justifyContent={"center"}
             alignItems={"center"}
-            sx={{ minHeight: "60vh" }}
+            sx={{ minHeight: "100%" }}
+            flexDirection={"column"}
+            gap={4}
+            mt={5}
           >
+            <Grid item>
+              <ProgressSteppers activeStep={2} />
+            </Grid>
             {loading ? (
               <Grid item>
                 <CustomLoader />
@@ -142,6 +183,11 @@ const Checkout = () => {
                     <Grid container gap={2}>
                       <Grid item xs={12} md={5.5}>
                         <Grid container flexDirection={"column"}>
+                          <Grid item>
+                            <IconButton onClick={handleBack}>
+                              <ArrowBackOutlined />
+                            </IconButton>
+                          </Grid>
                           <Grid item>
                             <List>
                               <ListItem>
@@ -174,7 +220,7 @@ const Checkout = () => {
 
                               <ListItem>
                                 <ListItemIcon sx={{ minWidth: 36 }}>
-                                  <CalendarMonthOutlined />
+                                  <DollarOutlined rev={undefined} />
                                 </ListItemIcon>
                                 <ListItemText
                                   secondary={"Price"}
@@ -186,7 +232,7 @@ const Checkout = () => {
                               </ListItem>
                               <ListItem>
                                 <ListItemIcon sx={{ minWidth: 36 }}>
-                                  <DollarOutlined rev={undefined} />
+                                  <CalendarMonthOutlined />
                                 </ListItemIcon>
                                 <ListItemText
                                   secondary={"Date due"}

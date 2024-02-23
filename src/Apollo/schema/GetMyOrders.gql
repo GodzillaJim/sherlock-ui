@@ -65,6 +65,7 @@ query GetMyOrders($pagination: Pagination) {
             }
             createdAt
             published
+            status
         }
         totalDocs
         limit

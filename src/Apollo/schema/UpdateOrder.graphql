@@ -1,0 +1,7 @@
+mutation UpdateOrder($orderId: String, $orderInput: OrderInput) {
+    updateOrder(orderInput: $orderInput, orderId: $orderId) {
+        status
+        message
+        success
+    }
+}

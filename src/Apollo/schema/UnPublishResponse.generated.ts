@@ -4,7 +4,7 @@ import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type UnPublishResponseMutationVariables = common.Exact<{
-  responseId: common.Scalars['String'];
+  responseId: common.Scalars['String']['input'];
 }>;
 
 

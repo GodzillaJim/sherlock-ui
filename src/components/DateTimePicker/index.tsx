@@ -72,9 +72,9 @@ const DateTimePicker = (props: Props) => {
   return (
     <Grid container direction={"column"} spacing={1}>
       <Grid item>
-        <Box>
-          <Wrapper>
-            <div>
+        <Box display={"flex"} flexDirection={"column"} gap={2}>
+          <Grid container gap={2}>
+            <Grid item>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <MuiDateTimePicker
                   views={["day", "hours"]}
@@ -88,23 +88,25 @@ const DateTimePicker = (props: Props) => {
                   }}
                 />
               </LocalizationProvider>
-            </div>
+            </Grid>
             {props.value && (
-              <div>
+              <Grid item>
                 <IconButton onClick={clearValue}>
                   <CloseIcon />
                 </IconButton>
-              </div>
+              </Grid>
             )}
-          </Wrapper>
+          </Grid>
           {!props.hideSuggestions && (
-            <FormHelperText
-              sx={{ textAlign: "end" }}
-              error={Boolean(props.error && props.touched)}
-              required
-            >
-              {getHelperText()}
-            </FormHelperText>
+            <div>
+              <FormHelperText
+                sx={{ textAlign: "start" }}
+                error={Boolean(props.error && props.touched)}
+                required
+              >
+                {getHelperText()}
+              </FormHelperText>
+            </div>
           )}
         </Box>
       </Grid>

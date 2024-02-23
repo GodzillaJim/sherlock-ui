@@ -70,5 +70,7 @@ query GetOrder($orderId: String!) {
             currency
             paymentStatus
         }
+        status
+        academicLevel
     }
 }

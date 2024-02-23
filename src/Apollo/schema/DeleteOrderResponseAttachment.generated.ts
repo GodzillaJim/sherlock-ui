@@ -4,8 +4,8 @@ import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type DeleteOrderResponseAttachmentMutationVariables = common.Exact<{
-  responseId: common.Scalars['String'];
-  attachmentKey: common.Scalars['String'];
+  responseId: common.Scalars['String']['input'];
+  attachmentKey: common.Scalars['String']['input'];
 }>;
 
 

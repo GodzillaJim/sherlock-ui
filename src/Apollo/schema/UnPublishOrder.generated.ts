@@ -4,7 +4,7 @@ import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type UnPublishOrderMutationVariables = common.Exact<{
-  orderId: common.Scalars['String'];
+  orderId: common.Scalars['String']['input'];
 }>;
 
 

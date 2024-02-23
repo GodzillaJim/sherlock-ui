@@ -88,6 +88,11 @@ export function useMyResponsesLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
           const options = {...defaultOptions, ...baseOptions}
           return Apollo.useLazyQuery<MyResponsesQuery, MyResponsesQueryVariables>(MyResponsesDocument, options);
         }
+export function useMyResponsesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<MyResponsesQuery, MyResponsesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<MyResponsesQuery, MyResponsesQueryVariables>(MyResponsesDocument, options);
+        }
 export type MyResponsesQueryHookResult = ReturnType<typeof useMyResponsesQuery>;
 export type MyResponsesLazyQueryHookResult = ReturnType<typeof useMyResponsesLazyQuery>;
+export type MyResponsesSuspenseQueryHookResult = ReturnType<typeof useMyResponsesSuspenseQuery>;
 export type MyResponsesQueryResult = Apollo.QueryResult<MyResponsesQuery, MyResponsesQueryVariables>;

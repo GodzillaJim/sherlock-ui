@@ -42,17 +42,29 @@ export const createApolloClient = (authToken: string) => {
     };
   });
 
-  const errorLink = onError(({ graphQLErrors, networkError }) => {
-    if (graphQLErrors) {
-      graphQLErrors.forEach(({ message, locations, path }) => {
-        console.log(`GraphQL error: `, { message, path, locations });
-      });
-    }
+  const errorLink = onError(
+    ({ graphQLErrors, networkError, operation, forward }) => {
+      if (graphQLErrors) {
+        graphQLErrors.forEach(({ message, locations, path }) => {
+          console.log(`GraphQL error: `, { message, path, locations });
 
-    if (networkError) {
-      console.log(`Network error: `, { networkError });
+          if (message === "Unauthorized") {
+            getIdToken().then((newToken) => {
+              operation.setContext({
+                headers: { authorization: `Bearer ${newToken}` },
+              });
+            });
+
+            return forward(operation);
+          }
+        });
+      }
+
+      if (networkError) {
+        console.log(`Network error: `, { networkError });
+      }
     }
-  });
+  );
 
   // Retry network errors
   const retryLink = new RetryLink({
@@ -77,10 +89,6 @@ export const createApolloClient = (authToken: string) => {
 
 export const client = createApolloClient("");
 const ApolloClientProvider = ({ children }: ApolloClientProps) => {
-  if (isServerSide()) {
-    return <div />;
-  }
-
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
 };
 

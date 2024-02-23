@@ -1,12 +1,12 @@
 import React from "react";
 import NavItem, { NavItemProps } from "../NavItem";
 import {
-  List,
-  Typography,
+  ButtonBase,
   Grid,
   Icon,
+  List,
+  Typography,
   useTheme,
-  ButtonBase,
 } from "@mui/material";
 import { ChevronRight } from "@mui/icons-material";
 import Transitions from "../../../../../components/Transitions";
@@ -24,7 +24,9 @@ const NavGroup = ({ item }: NavGroupProps) => {
         return <NavItem level={1} item={menuItem} key={`nav-group-${v4()}`} />;
       default:
         return (
-          <Typography key={`nav-group-${v4()}`}>{menuItem.title}</Typography>
+          <Typography variant={"caption"} key={`nav-group-${v4()}`}>
+            {menuItem.title}
+          </Typography>
         );
     }
   });
@@ -54,6 +56,7 @@ const NavGroup = ({ item }: NavGroupProps) => {
               direction="row"
               justifyContent={"flex-start"}
               gap={2}
+              alignItems={"center"}
             >
               {item.icon && (
                 <Icon sx={{ color: theme.palette.grey[500] }}>{item.icon}</Icon>
@@ -61,7 +64,7 @@ const NavGroup = ({ item }: NavGroupProps) => {
               <Grid item>
                 <Typography
                   lineHeight={2}
-                  variant="h5"
+                  variant="body1"
                   color={"GrayText"}
                   sx={{
                     ":hover": {

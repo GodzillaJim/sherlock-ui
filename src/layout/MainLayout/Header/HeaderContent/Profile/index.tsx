@@ -17,16 +17,16 @@ import {
 import React, { useMemo, useRef, useState } from "react";
 import ProfileTab from "./ProfileTab";
 import MainCard from "../../../../../components/MainCard";
-import {
-  LogoutOutlined,
-  SettingOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
 import Transitions from "../../../../../components/Transitions";
 import SettingsTab from "./SettingsTab";
 import { useAuth } from "../../../../../Context/AuthManager";
 import { RoleType } from "../../../../../generated";
 import Image from "next/image";
+import {
+  AccountBoxOutlined,
+  LogoutRounded,
+  SettingsApplications,
+} from "@mui/icons-material";
 
 type TabPanelProps = {
   children: JSX.Element;
@@ -66,10 +66,6 @@ const Profile = () => {
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
-
-  React.useEffect(() => {
-    console.log("Data: ", auth?.localUser);
-  });
 
   const user = useMemo(() => {
     if (auth?.localUser) return auth?.localUser;
@@ -234,7 +230,7 @@ const Profile = () => {
                                       color="secondary"
                                       onClick={handleLogout}
                                     >
-                                      <LogoutOutlined />
+                                      <LogoutRounded />
                                     </IconButton>
                                   </Grid>
                                 </Grid>
@@ -383,7 +379,7 @@ const Profile = () => {
                                       color="secondary"
                                       onClick={handleLogout}
                                     >
-                                      <LogoutOutlined />
+                                      <LogoutRounded />
                                     </IconButton>
                                   </Grid>
                                 </Grid>
@@ -411,7 +407,7 @@ const Profile = () => {
                                           textTransform: "capitalize",
                                         }}
                                         icon={
-                                          <UserOutlined
+                                          <AccountBoxOutlined
                                             style={{
                                               marginBottom: 0,
                                               marginRight: "10px",
@@ -430,7 +426,7 @@ const Profile = () => {
                                           textTransform: "capitalize",
                                         }}
                                         icon={
-                                          <SettingOutlined
+                                          <SettingsApplications
                                             style={{
                                               marginBottom: 0,
                                               marginRight: "10px",

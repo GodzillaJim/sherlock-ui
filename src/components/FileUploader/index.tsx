@@ -10,24 +10,21 @@ import {
   ListItemText,
   Modal,
   Paper,
-  Theme,
+  styled,
   Typography,
 } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { v4 } from "uuid";
 
-const useStyles = makeStyles((theme: Theme) => ({
-  container: {
-    background: theme.palette.divider,
-    height: 300,
-    padding: theme.spacing(2),
-    cursor: "pointer",
-    borderRadius: theme.spacing(0.5),
-    fontFamily: theme.typography.fontFamily || "inherit",
-    transitions: "all .3s",
-  },
+const Container = styled("div")(({ theme }) => ({
+  background: theme.palette.divider,
+  height: 300,
+  padding: theme.spacing(2),
+  cursor: "pointer",
+  borderRadius: theme.spacing(0.5),
+  fontFamily: theme.typography.fontFamily || "inherit",
+  transitions: "all .3s",
 }));
 
 type FileUploaderProps = {
@@ -37,7 +34,6 @@ type FileUploaderProps = {
 };
 const FileUploader = ({ onChange, files, disabled }: FileUploaderProps) => {
   const [showModal, setShowModal] = useState(false);
-  const classes = useStyles();
 
   const removeFile = (file: File) => {
     const newFiles = files.filter(({ name }) => file.name !== name);
@@ -88,14 +84,14 @@ const FileUploader = ({ onChange, files, disabled }: FileUploaderProps) => {
               </Grid>
               <Divider />
               <Grid item>
-                <div {...getRootProps()} className={classes.container}>
+                <Container {...getRootProps()}>
                   <input {...getInputProps()} />
                   {isDragActive ? (
                     <p>Drop the files here ...</p>
                   ) : (
                     <p>Drag & drop some files here, or click to select files</p>
                   )}
-                </div>
+                </Container>
               </Grid>
               <Grid sx={{ width: "100%" }} item>
                 <Divider />

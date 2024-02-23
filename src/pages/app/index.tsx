@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import MainLayout from "../../layout/MainLayout";
-import { Order } from "../../generated";
 import { Alert, Button, Divider, Grid, Typography } from "@mui/material";
 import { useGetMyOrdersQuery } from "../../Apollo/schema/GetMyOrders.generated";
 import { Add } from "@mui/icons-material";
@@ -9,6 +8,7 @@ import CustomLoader from "../../components/CustomLoader";
 import dayjs from "dayjs";
 import SummaryCard from "../../components/SummaryCard";
 import { withRequireAuth } from "../../Context/AuthManager/withRequireAuth";
+import { Order } from "../../../graphql/common";
 
 const Dashboard = (): JSX.Element => {
   const { loading, error, data } = useGetMyOrdersQuery();

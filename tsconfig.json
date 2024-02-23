@@ -23,7 +23,8 @@
   },
   "include": [
     "src",
-    "@graphql/common.d.ts"
+    "@graphql/common.d.ts",
+    "@types/GENERATED_API_TYPES.d.ts"
   ],
   "exclude": [
     "node_modules"

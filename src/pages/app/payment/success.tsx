@@ -32,23 +32,25 @@ const PaymentSuccess = () => {
             updates. You will receive an email confirmation shortly.`}
           </Typography>
           <Box sx={{ display: "flex", gap: 2 }}>
-            <NextLink
-              href={`/app/order/${orderId}/view`}
-              passHref
-              legacyBehavior
-            >
-              <Button variant={"contained"} color={"primary"}>
+            <NextLink href={`/app/order/${orderId}/view`}>
+              <Button
+                variant={"contained"}
+                color={"primary"}
+                sx={{ textTransform: "none" }}
+              >
                 Go to order details
               </Button>
             </NextLink>
-            <Button
-              variant="contained"
-              color="primary"
-              href="/"
-              sx={{ textTransform: "none" }}
-            >
-              Go to Homepage
-            </Button>
+            <NextLink href={`/`}>
+              <Button
+                variant="contained"
+                color="primary"
+                href="/"
+                sx={{ textTransform: "none" }}
+              >
+                Go to Homepage
+              </Button>
+            </NextLink>
           </Box>
         </Box>
       </Grid>

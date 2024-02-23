@@ -4,8 +4,8 @@ import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type SaveOrderDescriptionMutationVariables = common.Exact<{
-  orderId?: common.InputMaybe<common.Scalars['String']>;
-  description?: common.InputMaybe<common.Scalars['String']>;
+  orderId?: common.InputMaybe<common.Scalars['String']['input']>;
+  description?: common.InputMaybe<common.Scalars['String']['input']>;
 }>;
 
 

@@ -3,81 +3,89 @@ type InputMaybe<T> = Maybe<T>;
 type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 /** All built-in and custom scalars, mapped to their actual values */
 type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
-  Date: string;
-  JSON: { [key: string]: any };
-  ObjectId: any;
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  Date: { input: any; output: any; }
+  JSON: { input: any; output: any; }
+  ObjectId: { input: any; output: any; }
 };
+
+type AcademicLevel =
+  | 'HIGH_SCHOOL'
+  | 'NONE'
+  | 'POST_GRADUATE'
+  | 'UNDERGRADUATE';
 
 type AddResponseFeedback = IResponse & {
   __typename?: 'AddResponseFeedback';
-  data?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['Float']>;
-  success?: Maybe<Scalars['Boolean']>;
+  data?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['Float']['output']>;
+  success?: Maybe<Scalars['Boolean']['output']>;
 };
 
 type Attachment = {
   __typename?: 'Attachment';
-  key?: Maybe<Scalars['String']>;
-  location?: Maybe<Scalars['String']>;
-  mimeType?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  key?: Maybe<Scalars['String']['output']>;
+  location?: Maybe<Scalars['String']['output']>;
+  mimeType?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
 };
 
 type AttachmentInput = {
-  key: Scalars['String'];
-  location: Scalars['String'];
-  mimeType: Scalars['String'];
-  name: Scalars['String'];
+  key: Scalars['String']['input'];
+  location: Scalars['String']['input'];
+  mimeType: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 };
 
 type AuthResponse = {
   __typename?: 'AuthResponse';
-  email?: Maybe<Scalars['String']>;
-  firstName?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']['output']>;
+  firstName?: Maybe<Scalars['String']['output']>;
   jwtToken?: Maybe<AuthToken>;
   roles?: Maybe<Array<Maybe<Role>>>;
 };
 
 type AuthToken = {
   __typename?: 'AuthToken';
-  expiry?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
-  jwtToken?: Maybe<Scalars['String']>;
+  expiry?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  jwtToken?: Maybe<Scalars['String']['output']>;
   type?: Maybe<TokenType>;
 };
 
 type ClientSecretResponse = IResponse & {
   __typename?: 'ClientSecretResponse';
-  data?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['Float']>;
-  success?: Maybe<Scalars['Boolean']>;
+  data?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['Float']['output']>;
+  success?: Maybe<Scalars['Boolean']['output']>;
 };
 
 type CreateOrderResponse = IResponse & {
   __typename?: 'CreateOrderResponse';
-  data?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['Float']>;
-  success?: Maybe<Scalars['Boolean']>;
+  data?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['Float']['output']>;
+  success?: Maybe<Scalars['Boolean']['output']>;
 };
 
 type Filter = {
   __typename?: 'Filter';
-  limits?: Maybe<Scalars['Float']>;
+  limits?: Maybe<Scalars['Float']['output']>;
 };
 
 type FilterOrders = {
-  createdAfter?: InputMaybe<Scalars['Date']>;
-  createdBefore?: InputMaybe<Scalars['Date']>;
-  limit?: InputMaybe<Scalars['Float']>;
+  createdAfter?: InputMaybe<Scalars['Date']['input']>;
+  createdBefore?: InputMaybe<Scalars['Date']['input']>;
+  limit?: InputMaybe<Scalars['Float']['input']>;
   responseStatus?: InputMaybe<ResponseStatus>;
-  title?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']['input']>;
   typeOfWork?: InputMaybe<Type>;
   writingStyle?: InputMaybe<WritingStyle>;
 };
@@ -85,35 +93,36 @@ type FilterOrders = {
 type Firebase = {
   __typename?: 'Firebase';
   identities?: Maybe<Identity>;
-  sign_in_provider?: Maybe<Scalars['String']>;
+  sign_in_provider?: Maybe<Scalars['String']['output']>;
 };
 
 type GetOrderResponse = IResponse & {
   __typename?: 'GetOrderResponse';
   data?: Maybe<OrderResponse>;
-  status?: Maybe<Scalars['Float']>;
-  success?: Maybe<Scalars['Boolean']>;
+  status?: Maybe<Scalars['Float']['output']>;
+  success?: Maybe<Scalars['Boolean']['output']>;
 };
 
 type IResponse = {
-  status?: Maybe<Scalars['Float']>;
-  success?: Maybe<Scalars['Boolean']>;
+  status?: Maybe<Scalars['Float']['output']>;
+  success?: Maybe<Scalars['Boolean']['output']>;
 };
 
 type Identity = {
   __typename?: 'Identity';
-  email?: Maybe<Array<Maybe<Scalars['String']>>>;
-  googlecom?: Maybe<Array<Maybe<Scalars['String']>>>;
+  email?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  googlecom?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
 };
 
 type LoginPayload = {
-  email?: InputMaybe<Scalars['String']>;
-  password?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
 };
 
 type Mutation = {
   __typename?: 'Mutation';
   addOrderResponse?: Maybe<AddResponseFeedback>;
+  cancelOrder?: Maybe<Response>;
   createOrder?: Maybe<Response>;
   createOrderFromTitle?: Maybe<CreateOrderResponse>;
   deleteAttachment?: Maybe<Response>;
@@ -127,7 +136,7 @@ type Mutation = {
   saveOrderDescription?: Maybe<Response>;
   unPublishOrder?: Maybe<Response>;
   unPublishResponse?: Maybe<Response>;
-  updateHealth?: Maybe<Scalars['String']>;
+  updateHealth?: Maybe<Scalars['String']['output']>;
   updateOrder?: Maybe<Response>;
   updateOrderResponse?: Maybe<AddResponseFeedback>;
   updatePassword?: Maybe<Response>;
@@ -137,8 +146,13 @@ type Mutation = {
 
 
 type MutationAddOrderResponseArgs = {
-  orderId?: InputMaybe<Scalars['String']>;
+  orderId?: InputMaybe<Scalars['String']['input']>;
   orderResponse?: InputMaybe<OrderResponseInput>;
+};
+
+
+type MutationCancelOrderArgs = {
+  orderId: Scalars['String']['input'];
 };
 
 
@@ -148,29 +162,29 @@ type MutationCreateOrderArgs = {
 
 
 type MutationCreateOrderFromTitleArgs = {
-  title?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 type MutationDeleteAttachmentArgs = {
-  attachmentKey?: InputMaybe<Scalars['String']>;
-  orderId?: InputMaybe<Scalars['String']>;
+  attachmentKey?: InputMaybe<Scalars['String']['input']>;
+  orderId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 type MutationDeleteOrderResponseArgs = {
-  responseId?: InputMaybe<Scalars['String']>;
+  responseId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 type MutationDeleteOrderResponseAttachmentArgs = {
-  attachmentKey: Scalars['String'];
-  responseId: Scalars['String'];
+  attachmentKey: Scalars['String']['input'];
+  responseId: Scalars['String']['input'];
 };
 
 
 type MutationGeneratePaymentIntentArgs = {
-  orderId: Scalars['String'];
+  orderId: Scalars['String']['input'];
 };
 
 
@@ -180,12 +194,12 @@ type MutationLoginArgs = {
 
 
 type MutationPublishOrderArgs = {
-  orderId: Scalars['String'];
+  orderId: Scalars['String']['input'];
 };
 
 
 type MutationPublishResponseArgs = {
-  responseId: Scalars['String'];
+  responseId: Scalars['String']['input'];
 };
 
 
@@ -195,31 +209,31 @@ type MutationRegisterArgs = {
 
 
 type MutationSaveOrderDescriptionArgs = {
-  description?: InputMaybe<Scalars['String']>;
-  orderId?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  orderId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 type MutationUnPublishOrderArgs = {
-  orderId: Scalars['String'];
+  orderId: Scalars['String']['input'];
 };
 
 
 type MutationUnPublishResponseArgs = {
-  responseId: Scalars['String'];
+  responseId: Scalars['String']['input'];
 };
 
 
 type MutationUpdateOrderArgs = {
-  orderId?: InputMaybe<Scalars['String']>;
+  orderId?: InputMaybe<Scalars['String']['input']>;
   orderInput?: InputMaybe<OrderInput>;
 };
 
 
 type MutationUpdateOrderResponseArgs = {
-  orderId?: InputMaybe<Scalars['String']>;
+  orderId?: InputMaybe<Scalars['String']['input']>;
   orderResponseInput?: InputMaybe<OrderResponseInput>;
-  responseId?: InputMaybe<Scalars['String']>;
+  responseId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -229,7 +243,7 @@ type MutationUpdatePasswordArgs = {
 
 
 type MutationUpdatePaymentStatusArgs = {
-  orderId: Scalars['String'];
+  orderId: Scalars['String']['input'];
 };
 
 
@@ -239,87 +253,100 @@ type MutationUpdateUserArgs = {
 
 type Order = {
   __typename?: 'Order';
+  academicLevel?: Maybe<Scalars['String']['output']>;
   attachments: Array<Maybe<Attachment>>;
-  createdAt?: Maybe<Scalars['Date']>;
-  deadline: Scalars['Date'];
-  description?: Maybe<Scalars['String']>;
-  numberOfPages: Scalars['Float'];
-  orderId: Scalars['String'];
+  createdAt?: Maybe<Scalars['Date']['output']>;
+  deadline: Scalars['Date']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  discipline?: Maybe<Scalars['String']['output']>;
+  numberOfPages: Scalars['Float']['output'];
+  orderId: Scalars['String']['output'];
   price?: Maybe<Price>;
-  published?: Maybe<Scalars['Boolean']>;
+  published?: Maybe<Scalars['Boolean']['output']>;
   responses?: Maybe<Array<Maybe<OrderResponse>>>;
-  title: Scalars['String'];
+  status: OrderStatus;
+  title: Scalars['String']['output'];
   type: Type;
-  wordsPerPage?: Maybe<Scalars['Float']>;
+  wordsPerPage?: Maybe<Scalars['Float']['output']>;
   writingStyle: WritingStyle;
 };
 
 type OrderInput = {
+  academicLevel: AcademicLevel;
   attachments: Array<InputMaybe<AttachmentInput>>;
-  deadline: Scalars['Date'];
-  description?: InputMaybe<Scalars['String']>;
-  numberOfPages: Scalars['Float'];
-  title: Scalars['String'];
+  deadline: Scalars['Date']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  discipline: Scalars['String']['input'];
+  numberOfPages: Scalars['Float']['input'];
+  title: Scalars['String']['input'];
   type: Type;
-  wordsPerPage?: InputMaybe<Scalars['Float']>;
+  wordsPerPage?: InputMaybe<Scalars['Float']['input']>;
   writingStyle: WritingStyle;
 };
 
 type OrderPage = {
   __typename?: 'OrderPage';
-  docs?: Maybe<Array<Maybe<Order>>>;
-  hasNextPage?: Maybe<Scalars['Boolean']>;
-  hasPrevPage?: Maybe<Scalars['Boolean']>;
-  limit?: Maybe<Scalars['Float']>;
-  nextPage?: Maybe<Scalars['Float']>;
-  offset?: Maybe<Scalars['Float']>;
-  page?: Maybe<Scalars['Float']>;
-  pagingCounter?: Maybe<Scalars['Float']>;
-  prevPage?: Maybe<Scalars['Float']>;
-  totalDocs?: Maybe<Scalars['Float']>;
-  totalPages?: Maybe<Scalars['Float']>;
+  docs: Array<Order>;
+  hasNextPage?: Maybe<Scalars['Boolean']['output']>;
+  hasPrevPage?: Maybe<Scalars['Boolean']['output']>;
+  limit?: Maybe<Scalars['Float']['output']>;
+  nextPage?: Maybe<Scalars['Float']['output']>;
+  offset?: Maybe<Scalars['Float']['output']>;
+  page?: Maybe<Scalars['Float']['output']>;
+  pagingCounter?: Maybe<Scalars['Float']['output']>;
+  prevPage?: Maybe<Scalars['Float']['output']>;
+  totalDocs?: Maybe<Scalars['Float']['output']>;
+  totalPages?: Maybe<Scalars['Float']['output']>;
 };
 
 type OrderResponse = {
   __typename?: 'OrderResponse';
-  answer?: Maybe<Scalars['String']>;
+  answer?: Maybe<Scalars['String']['output']>;
   attachments?: Maybe<Array<Maybe<Attachment>>>;
-  comments?: Maybe<Scalars['String']>;
-  createdAt?: Maybe<Scalars['Date']>;
+  comments?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['Date']['output']>;
   createdBy?: Maybe<User>;
-  id?: Maybe<Scalars['ID']>;
-  published?: Maybe<Scalars['Boolean']>;
+  id?: Maybe<Scalars['ID']['output']>;
+  published?: Maybe<Scalars['Boolean']['output']>;
   question?: Maybe<Order>;
   responseType?: Maybe<ResponseType>;
-  updatedAt?: Maybe<Scalars['Date']>;
+  updatedAt?: Maybe<Scalars['Date']['output']>;
 };
 
 type OrderResponseInput = {
-  answer?: InputMaybe<Scalars['String']>;
+  answer?: InputMaybe<Scalars['String']['input']>;
   attachments?: InputMaybe<Array<InputMaybe<AttachmentInput>>>;
-  comments?: InputMaybe<Scalars['String']>;
+  comments?: InputMaybe<Scalars['String']['input']>;
   responseType?: InputMaybe<ResponseType>;
 };
 
+type OrderStatus =
+  | 'ACTIVE'
+  | 'CANCELED'
+  | 'COMPLETED'
+  | 'DRAFT'
+  | 'IN_PROGRESS';
+
 type Pagination = {
-  currentPage?: InputMaybe<Scalars['Float']>;
-  perPage?: InputMaybe<Scalars['Float']>;
+  currentPage?: InputMaybe<Scalars['Float']['input']>;
+  perPage?: InputMaybe<Scalars['Float']['input']>;
 };
 
 type PasswordChangePayload = {
-  currentPassword?: InputMaybe<Scalars['String']>;
-  newPassword?: InputMaybe<Scalars['String']>;
+  currentPassword?: InputMaybe<Scalars['String']['input']>;
+  newPassword?: InputMaybe<Scalars['String']['input']>;
 };
 
 type PaymentStatus =
+  | 'CANCELED'
   | 'PAID'
   | 'UN_PAID';
 
 type Price = {
   __typename?: 'Price';
-  amount?: Maybe<Scalars['Float']>;
-  clientSecret?: Maybe<Scalars['String']>;
-  currency?: Maybe<Scalars['String']>;
+  amount?: Maybe<Scalars['Float']['output']>;
+  clientSecret?: Maybe<Scalars['String']['output']>;
+  currency?: Maybe<Scalars['String']['output']>;
   paymentStatus?: Maybe<PaymentStatus>;
 };
 
@@ -332,7 +359,7 @@ type Query = {
   getPublicOrders?: Maybe<OrderPage>;
   getResponsesToQuestionsByUser?: Maybe<Array<Maybe<OrderResponse>>>;
   getUserOrders?: Maybe<Array<Maybe<Order>>>;
-  health?: Maybe<Scalars['String']>;
+  health?: Maybe<Scalars['String']['output']>;
   me?: Maybe<User>;
 };
 
@@ -343,12 +370,12 @@ type QueryGetMyOrdersArgs = {
 
 
 type QueryGetOrderArgs = {
-  orderId: Scalars['String'];
+  orderId: Scalars['String']['input'];
 };
 
 
 type QueryGetOrderResponseArgs = {
-  responseId: Scalars['String'];
+  responseId: Scalars['String']['input'];
 };
 
 
@@ -359,22 +386,22 @@ type QueryGetPublicOrdersArgs = {
 
 
 type QueryGetUserOrdersArgs = {
-  email?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']['input']>;
 };
 
 type RegisterPayload = {
-  email: Scalars['String'];
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
-  password: Scalars['String'];
-  username?: InputMaybe<Scalars['String']>;
+  email: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  username?: InputMaybe<Scalars['String']['input']>;
 };
 
 type Response = {
   __typename?: 'Response';
-  message?: Maybe<Scalars['String']>;
-  status?: Maybe<Scalars['Int']>;
-  success?: Maybe<Scalars['Boolean']>;
+  message?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<Scalars['Int']['output']>;
+  success?: Maybe<Scalars['Boolean']['output']>;
 };
 
 type ResponseStatus =
@@ -402,21 +429,21 @@ type RoleType =
 
 type Timezone = {
   __typename?: 'Timezone';
-  abbr?: Maybe<Scalars['String']>;
-  isdst?: Maybe<Scalars['Boolean']>;
-  offset?: Maybe<Scalars['Int']>;
-  text?: Maybe<Scalars['String']>;
-  utc?: Maybe<Array<Maybe<Scalars['String']>>>;
-  value?: Maybe<Scalars['String']>;
+  abbr?: Maybe<Scalars['String']['output']>;
+  isdst?: Maybe<Scalars['Boolean']['output']>;
+  offset?: Maybe<Scalars['Int']['output']>;
+  text?: Maybe<Scalars['String']['output']>;
+  utc?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  value?: Maybe<Scalars['String']['output']>;
 };
 
 type TimezoneInput = {
-  abbr?: InputMaybe<Scalars['String']>;
-  isdst?: InputMaybe<Scalars['Boolean']>;
-  offset?: InputMaybe<Scalars['Int']>;
-  text?: InputMaybe<Scalars['String']>;
-  utc?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
-  value?: InputMaybe<Scalars['String']>;
+  abbr?: InputMaybe<Scalars['String']['input']>;
+  isdst?: InputMaybe<Scalars['Boolean']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  text?: InputMaybe<Scalars['String']['input']>;
+  utc?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  value?: InputMaybe<Scalars['String']['input']>;
 };
 
 type TokenType =
@@ -431,40 +458,40 @@ type Type =
 
 type User = {
   __typename?: 'User';
-  aud?: Maybe<Scalars['String']>;
-  auth_time?: Maybe<Scalars['Float']>;
-  currency?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
-  email_verified?: Maybe<Scalars['Boolean']>;
-  exp?: Maybe<Scalars['Float']>;
+  aud?: Maybe<Scalars['String']['output']>;
+  auth_time?: Maybe<Scalars['Float']['output']>;
+  currency?: Maybe<Scalars['String']['output']>;
+  email: Scalars['String']['output'];
+  email_verified?: Maybe<Scalars['Boolean']['output']>;
+  exp?: Maybe<Scalars['Float']['output']>;
   firebase?: Maybe<Firebase>;
-  firstName?: Maybe<Scalars['String']>;
-  iat?: Maybe<Scalars['Float']>;
-  id: Scalars['ID'];
-  iss?: Maybe<Scalars['String']>;
-  language?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
-  orders?: Maybe<Array<Maybe<Scalars['String']>>>;
-  password?: Maybe<Scalars['String']>;
-  picture?: Maybe<Scalars['String']>;
-  responses?: Maybe<Array<Maybe<Scalars['String']>>>;
+  firstName?: Maybe<Scalars['String']['output']>;
+  iat?: Maybe<Scalars['Float']['output']>;
+  id: Scalars['ID']['output'];
+  iss?: Maybe<Scalars['String']['output']>;
+  language?: Maybe<Scalars['String']['output']>;
+  lastName?: Maybe<Scalars['String']['output']>;
+  orders?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  password?: Maybe<Scalars['String']['output']>;
+  picture?: Maybe<Scalars['String']['output']>;
+  responses?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   roles?: Maybe<Array<Maybe<Role>>>;
-  sub?: Maybe<Scalars['String']>;
+  sub?: Maybe<Scalars['String']['output']>;
   timezone?: Maybe<Timezone>;
-  uid?: Maybe<Scalars['String']>;
-  user_id?: Maybe<Scalars['String']>;
-  username?: Maybe<Scalars['String']>;
+  uid?: Maybe<Scalars['String']['output']>;
+  user_id?: Maybe<Scalars['String']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
 };
 
 type UserUpdatePayload = {
-  currency?: InputMaybe<Scalars['String']>;
-  email: Scalars['String'];
-  firstName: Scalars['String'];
-  id: Scalars['ID'];
-  language?: InputMaybe<Scalars['String']>;
-  lastName: Scalars['String'];
+  currency?: InputMaybe<Scalars['String']['input']>;
+  email: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+  language?: InputMaybe<Scalars['String']['input']>;
+  lastName: Scalars['String']['input'];
   timezone?: InputMaybe<TimezoneInput>;
-  username?: InputMaybe<Scalars['String']>;
+  username?: InputMaybe<Scalars['String']['input']>;
 };
 
 type WritingStyle =
