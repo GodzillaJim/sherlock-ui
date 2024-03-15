@@ -85,6 +85,7 @@ type FilterOrders = {
   createdBefore?: InputMaybe<Scalars['Date']['input']>;
   limit?: InputMaybe<Scalars['Float']['input']>;
   responseStatus?: InputMaybe<ResponseStatus>;
+  status?: InputMaybe<Array<InputMaybe<OrderStatus>>>;
   title?: InputMaybe<Scalars['String']['input']>;
   typeOfWork?: InputMaybe<Type>;
   writingStyle?: InputMaybe<WritingStyle>;
@@ -365,6 +366,7 @@ type Query = {
 
 
 type QueryGetMyOrdersArgs = {
+  filters?: InputMaybe<FilterOrders>;
   pagination: Pagination;
 };
 

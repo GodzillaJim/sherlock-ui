@@ -5,6 +5,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type GetMyOrdersQueryVariables = common.Exact<{
   pagination: common.Pagination;
+  filters?: common.InputMaybe<common.FilterOrders>;
 }>;
 
 
@@ -12,8 +13,8 @@ export type GetMyOrdersQuery = { __typename?: 'Query', getMyOrders?: { __typenam
 
 
 export const GetMyOrdersDocument = gql`
-    query GetMyOrders($pagination: Pagination!) {
-  getMyOrders(pagination: $pagination) {
+    query GetMyOrders($pagination: Pagination!, $filters: FilterOrders) {
+  getMyOrders(pagination: $pagination, filters: $filters) {
     docs {
       orderId
       title
@@ -108,6 +109,7 @@ export const GetMyOrdersDocument = gql`
  * const { data, loading, error } = useGetMyOrdersQuery({
  *   variables: {
  *      pagination: // value for 'pagination'
+ *      filters: // value for 'filters'
  *   },
  * });
  */

@@ -1,5 +1,5 @@
-query GetMyOrders($pagination: Pagination!) {
-    getMyOrders(pagination: $pagination) {
+query GetMyOrders($pagination: Pagination!, $filters: FilterOrders) {
+    getMyOrders(pagination: $pagination, filters: $filters) {
         docs {
             orderId
             title

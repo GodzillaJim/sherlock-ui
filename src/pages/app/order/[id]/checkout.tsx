@@ -38,6 +38,7 @@ import { Form, Formik } from "formik";
 import { object, string } from "yup";
 import { useUpdatePaymentStatusMutation } from "../../../../Apollo/schema/UpdatePaymentStatus.generated";
 import ProgressSteppers from "../../../../components/common/ProgressSteppers";
+import { GetMyOrdersDocument } from "../../../../Apollo/schema/GetMyOrders.generated";
 
 const StyledCard = styled(Card)`
   width: 600px;
@@ -51,7 +52,9 @@ const Checkout = () => {
   const elements = useElements();
 
   const [getOrder, { loading, error, data }] = useGetOrderLazyQuery();
-  const [updatePaymentStatus] = useUpdatePaymentStatusMutation();
+  const [updatePaymentStatus] = useUpdatePaymentStatusMutation({
+    refetchQueries: [GetOrderDocument, GetMyOrdersDocument],
+  });
 
   useEffect(() => {
     if (orderId) {

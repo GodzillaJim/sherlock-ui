@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import { EditorState } from "draft-js";
-import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import useUploadAttachments from "../../../../helpers/orders/useUploadAttachments";
 import { useAddOrderResponseMutation } from "../../../../Apollo/schema/AddOrderResponse.generated";
@@ -25,6 +24,7 @@ import FileUploader from "../../../../components/FileUploader";
 import MainLayout from "../../../../layout/MainLayout";
 import SideModalOrderDetails from "../../../../components/SideModalOrderDetails";
 import { PostAddOutlined } from "@mui/icons-material";
+import { GetOrderDocument } from "../../../../Apollo/schema/GetOrder.generated";
 
 const Respond = () => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -35,7 +35,7 @@ const Respond = () => {
   const orderId = router.query.id;
 
   const [addOrderResponse, { loading: creating, error: creationError }] =
-    useAddOrderResponseMutation();
+    useAddOrderResponseMutation({ refetchQueries: [GetOrderDocument] });
 
   const prepareResponse = async (
     _orderId: string,

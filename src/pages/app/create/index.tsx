@@ -28,6 +28,7 @@ import {
   ColorlibStepIcon,
 } from "../../../components/common/CustomStepLabel";
 import { withRequireAuth } from "../../../Context/AuthManager/withRequireAuth";
+import { GetMyOrdersDocument } from "../../../Apollo/schema/GetMyOrders.generated";
 
 const CreateOrder = () => {
   const [createOrderFromTitle, { loading, data, error }] =
@@ -35,6 +36,7 @@ const CreateOrder = () => {
       onError: (error1) => {
         console.log("Error: ", { error1 });
       },
+      refetchQueries: [GetMyOrdersDocument],
     });
   const router = useRouter();
 

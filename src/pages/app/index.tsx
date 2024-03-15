@@ -83,21 +83,27 @@ const Dashboard = (): JSX.Element => {
           </Grid>
         </>
       ) : (
-        <Grid item>
-          <Grid container flexDirection={"column"}>
+        <>
+          {!loading ? (
             <Grid item>
-              <Divider />
+              <Grid container flexDirection={"column"}>
+                <Grid item>
+                  <Divider />
+                </Grid>
+                <Grid item>
+                  <Typography variant={"h4"}>Hey... </Typography>
+                </Grid>
+                <Grid item mt={2}>
+                  <Typography variant={"body1"}>
+                    Get a hand written paper as soon as you need it.{" "}
+                  </Typography>
+                </Grid>
+              </Grid>
             </Grid>
-            <Grid item>
-              <Typography variant={"h4"}>Hey... </Typography>
-            </Grid>
-            <Grid item mt={2}>
-              <Typography variant={"body1"}>
-                Get a hand written paper as soon as you need it.{" "}
-              </Typography>
-            </Grid>
-          </Grid>
-        </Grid>
+          ) : (
+            ""
+          )}
+        </>
       )}
     </Grid>
   );

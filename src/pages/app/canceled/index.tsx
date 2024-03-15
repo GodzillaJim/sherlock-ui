@@ -1,27 +1,23 @@
-import { ApolloError } from "@apollo/client";
 import React, { useMemo } from "react";
-import { Button, Divider, Grid, Typography } from "@mui/material";
+import { Button, Divider, Grid } from "@mui/material";
 import NextLink from "next/link";
 import { Add } from "@mui/icons-material";
 import MainLayout from "../../../layout/MainLayout";
-import { getSharedServerSideProps } from "../../../helpers/orders/sharedProps";
-import PublishedComponent from "../../../components/orders/PublishedComponent";
-import { Order, OrderPage } from "../../../../graphql/common";
+import { Order } from "../../../../graphql/common";
 import { orderStatus } from "../../../helpers/utils";
+import OrderList from "../../../components/orders/OrderList";
+import { useGetUserOrders } from "../../../helpers/orders/useGetUserOrders";
 
-type DashboardProps = {
-  error?: ApolloError | { message: string };
-  myOrders: OrderPage;
-};
+const Dashboard = (): JSX.Element => {
+  const { loading, data, error } = useGetUserOrders({ status: ["CANCELED"] });
 
-const Dashboard = ({ myOrders }: DashboardProps): JSX.Element => {
-  const published = useMemo(() => {
-    if (myOrders && myOrders.docs?.length) {
-      const orders = myOrders.docs as Order[];
+  const orders = useMemo(() => {
+    if (data?.getMyOrders?.docs?.length) {
+      const orders = data?.getMyOrders.docs as Order[];
       return orders.filter((order) => order.status === orderStatus.canceled);
     }
     return [];
-  }, [myOrders]);
+  }, [data]);
 
   return (
     <Grid container padding={3} spacing={5} direction={"column"}>
@@ -35,13 +31,7 @@ const Dashboard = ({ myOrders }: DashboardProps): JSX.Element => {
       <Grid item>
         <Divider flexItem />
       </Grid>
-      {published.length ? (
-        <PublishedComponent orders={published} />
-      ) : (
-        <Grid item>
-          <Typography variant="body1">No orders found</Typography>
-        </Grid>
-      )}
+      <OrderList error={error?.message} orders={orders} loading={loading} />
     </Grid>
   );
 };
@@ -49,7 +39,5 @@ const Dashboard = ({ myOrders }: DashboardProps): JSX.Element => {
 Dashboard.getLayout = function (page: React.ReactNode) {
   return <MainLayout>{page}</MainLayout>;
 };
-
-export const getServerSideProps = getSharedServerSideProps;
 
 export default Dashboard;

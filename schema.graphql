@@ -147,7 +147,7 @@ type Price {
 }
 
 type Query {
-    getMyOrders(pagination: Pagination!): OrderPage
+    getMyOrders(filters: FilterOrders, pagination: Pagination!): OrderPage
     getMyResponses: [OrderResponse]
     getOrder(orderId: String!): Order
     getOrderResponse(responseId: String!): GetOrderResponse
@@ -279,6 +279,7 @@ input FilterOrders {
     createdBefore: Date
     limit: Float
     responseStatus: ResponseStatus
+    status: [OrderStatus]
     title: String
     typeOfWork: Type
     writingStyle: WritingStyle

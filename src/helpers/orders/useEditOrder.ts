@@ -18,6 +18,7 @@ import { useRouter } from "next/router";
 import { paperType, writingStyle } from "../utils";
 import { useUpdateOrderMutation } from "../../Apollo/schema/UpdateOrder.generated";
 import { Order } from "../../../graphql/common";
+import { GetMyOrdersDocument } from "../../Apollo/schema/GetMyOrders.generated";
 
 type UseEditOrderProps = {
   orderId: string;
@@ -38,7 +39,7 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
     updateOrder,
     { error: updateError, loading: updatingOrder, data: updated },
   ] = useUpdateOrderMutation({
-    refetchQueries: [GetOrderDocument],
+    refetchQueries: [GetOrderDocument, GetMyOrdersDocument],
   });
 
   useEffect(() => {
