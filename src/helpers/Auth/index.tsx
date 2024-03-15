@@ -1,15 +1,15 @@
 import Cookies from "js-cookie";
-import { initializeApp } from "@firebase/app";
+import { FirebaseOptions, getApps, initializeApp } from "@firebase/app";
 import { getAuth } from "@firebase/auth";
 
-export const config = {
-  appId: process.env.APP_ID || "247175206356:web:d05662cf36df115ba7b241",
-  measurementId: process.env.MEASUREMENT_ID || "G-NKP68JX977",
-  messagingSenderId: process.env.MESSAGING_SENDER_ID || "247175206356",
-  storageBucket: process.env.STORAGE_BUCKERT || "app-users-341801.appspot.com",
-  projectId: process.env.PROJECT_ID || "app-users-341801",
-  apiKey: process.env.API_KEY || "AIzaSyCSZhBUF0JmiiFbzHQgPfC1F-XUwej5KLk",
-  authDomain: process.env.AUTH_DOMAIN || "app-users-341801.firebaseapp.com",
+export const config: FirebaseOptions = {
+  appId: process.env.NEXT_PUBLIC_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_MEASUREMENT_ID,
+  messagingSenderId: process.env.NEXT_PUBLIC_MESSAGING_SENDER_ID,
+  storageBucket: process.env.NEXT_PUBLIC_STORAGE_BUCKERT,
+  projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
+  apiKey: process.env.NEXT_PUBLIC_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_AUTH_DOMAIN,
 };
 
 export const setAuthTokenCookie = (token: string) => {
@@ -24,7 +24,13 @@ export const getAuthTokenCookie = () => {
   return Cookies.get("authToken");
 };
 
-export const firebaseClient = initializeApp(config);
+export const getFirebaseClient = () => {
+  if (getApps().length) return getApps()[0];
+
+  return initializeApp(config);
+};
+
+export const firebaseClient = getFirebaseClient();
 
 const auth = getAuth(firebaseClient);
 
