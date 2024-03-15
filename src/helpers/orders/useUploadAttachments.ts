@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AttachmentInput } from "../../generated";
 import { useAuth } from "../../Context/AuthManager";
 import axios, { AxiosRequestConfig } from "axios";
+import { UPLOAD_API_ROOT } from "../../config/Constants";
 
 const useUploadAttachments = () => {
   const [error, setError] = useState<string | null>(null);
@@ -24,9 +25,10 @@ const useUploadAttachments = () => {
           Authorization: `Bearer ${token}`,
         },
       };
+
       const {
         data: { data },
-      } = await axios.post("http://localhost:5000/upload", formData, config);
+      } = await axios.post(UPLOAD_API_ROOT, formData, config);
 
       results = data as AttachmentInput[];
 
