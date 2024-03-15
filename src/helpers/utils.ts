@@ -57,7 +57,7 @@ export const orderStatus = {
   draft: "DRAFT",
   active: "ACTIVE",
   completed: "COMPLETED",
-  canceled: "COMPLETED",
+  canceled: "CANCELED",
 };
 
 export const essayCategories = [
@@ -121,6 +121,13 @@ export const getWritingStyleOptions = () =>
     label: startCase(key),
     value,
   }));
+
+export const getStatusOptions = () => {
+  return Object.entries(orderStatus).map(([key, value]) => ({
+    label: startCase(key),
+    value,
+  }));
+};
 
 export const academicLevelOptions = {
   none: "NONE",

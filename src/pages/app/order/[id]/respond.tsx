@@ -34,7 +34,7 @@ const Respond = () => {
 
   const params = useSearchParams();
 
-  const orderId = params.get("id");
+  const orderId = router.query.id;
 
   const [addOrderResponse, { loading: creating, error: creationError }] =
     useAddOrderResponseMutation();
@@ -65,7 +65,7 @@ const Respond = () => {
         responseType: ResponseType.Text,
       },
       onSubmit: async (values) => {
-        const orderId = params.get("id");
+        const orderId = router.query.id as string;
 
         if (!orderId) return;
         const input = await prepareResponse(orderId, values);

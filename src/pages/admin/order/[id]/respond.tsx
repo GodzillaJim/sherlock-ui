@@ -56,8 +56,8 @@ const Respond = () => {
     error: fileUploadError,
     loading: uploading,
   } = useUploadAttachments();
-  const { values, setFieldValue, handleSubmit } = useFormik<OrderResponseInput>(
-    {
+  const { values, setFieldValue, handleSubmit, isSubmitting } =
+    useFormik<OrderResponseInput>({
       initialValues: {
         answer: "",
         attachments: [],
@@ -65,7 +65,12 @@ const Respond = () => {
         responseType: ResponseType.Text,
       },
       onSubmit: async (values) => {
-        const orderId = params.get("id");
+        const orderId = router.query.id;
+        console.log("Submitting: ", {
+          orderId,
+          values,
+          params: router.query,
+        });
 
         if (!orderId) return;
         const input = await prepareResponse(orderId, values);
@@ -79,15 +84,14 @@ const Respond = () => {
           router.push(`/app/respond/${data.addOrderResponse?.data}`);
         }
       },
-    }
-  );
+    });
 
   useEffect(() => {
     setFieldValue("answer", fromEditorState(editorState));
   }, [editorState]);
 
   const disableForm = useMemo(
-    () => uploading || creating,
+    () => uploading || creating || isSubmitting,
     [uploading, creating]
   );
 

@@ -45,7 +45,7 @@ const OrderListTable = ({ orderPage }: OrderListTableProps) => {
       headerName: "",
       renderCell: (params) => {
         return (
-          <NextLink href={`/admin/order/${params.value}/respond`}>
+          <NextLink href={`/app/order/${params.value}/view`}>
             <Button startIcon={<Visibility />}>View details</Button>
           </NextLink>
         );

@@ -11,6 +11,12 @@ query GetPublicOrders($pagination: Pagination, $filter: FilterOrders) {
       deadline
       createdAt
       published
+      price {
+        paymentStatus
+        currency
+        clientSecret
+        amount
+      }
       responses {
         id
         comments
@@ -30,5 +36,6 @@ query GetPublicOrders($pagination: Pagination, $filter: FilterOrders) {
     prevPage
     nextPage
     pagingCounter
+
   }
 }

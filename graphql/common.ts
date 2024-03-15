@@ -263,7 +263,7 @@ export type Order = {
   orderId: Scalars['String']['output'];
   price?: Maybe<Price>;
   published?: Maybe<Scalars['Boolean']['output']>;
-  responses?: Maybe<Array<Maybe<OrderResponse>>>;
+  responses: Array<OrderResponse>;
   status: OrderStatus;
   title: Scalars['String']['output'];
   type: Type;
@@ -304,13 +304,13 @@ export type OrderResponse = {
   answer?: Maybe<Scalars['String']['output']>;
   attachments?: Maybe<Array<Maybe<Attachment>>>;
   comments?: Maybe<Scalars['String']['output']>;
-  createdAt?: Maybe<Scalars['Date']['output']>;
-  createdBy?: Maybe<User>;
-  id?: Maybe<Scalars['ID']['output']>;
-  published?: Maybe<Scalars['Boolean']['output']>;
-  question?: Maybe<Order>;
-  responseType?: Maybe<ResponseType>;
-  updatedAt?: Maybe<Scalars['Date']['output']>;
+  createdAt: Scalars['Date']['output'];
+  createdBy: User;
+  id: Scalars['ID']['output'];
+  published: Scalars['Boolean']['output'];
+  question: Order;
+  responseType: ResponseType;
+  updatedAt: Scalars['Date']['output'];
 };
 
 export type OrderResponseInput = {
@@ -365,7 +365,7 @@ export type Query = {
 
 
 export type QueryGetMyOrdersArgs = {
-  pagination?: InputMaybe<Pagination>;
+  pagination: Pagination;
 };
 
 

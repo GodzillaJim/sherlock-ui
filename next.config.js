@@ -10,6 +10,7 @@ const config = {
     remotePatterns: [
       { hostname: "localhost" },
       { hostname: "lh3.googleusercontent.com" },
+      { hostname: "sherlock-staging.s3.us-west-1.amazonaws.com" },
     ],
   },
   rewrites: async () => {

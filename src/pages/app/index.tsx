@@ -11,7 +11,9 @@ import { withRequireAuth } from "../../Context/AuthManager/withRequireAuth";
 import { Order } from "../../../graphql/common";
 
 const Dashboard = (): JSX.Element => {
-  const { loading, error, data } = useGetMyOrdersQuery();
+  const { loading, error, data } = useGetMyOrdersQuery({
+    variables: { pagination: {} },
+  });
 
   const orders = useMemo(() => {
     let temp: Order[] = [];
@@ -81,7 +83,21 @@ const Dashboard = (): JSX.Element => {
           </Grid>
         </>
       ) : (
-        ""
+        <Grid item>
+          <Grid container flexDirection={"column"}>
+            <Grid item>
+              <Divider />
+            </Grid>
+            <Grid item>
+              <Typography variant={"h4"}>Hey... </Typography>
+            </Grid>
+            <Grid item mt={2}>
+              <Typography variant={"body1"}>
+                Get a hand written paper as soon as you need it.{" "}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Grid>
       )}
     </Grid>
   );

@@ -40,6 +40,8 @@ import { useStripe } from "@stripe/react-stripe-js";
 import { StripeContext } from "../../Context/Stripe";
 import OrderStatusComponent from "./OrderStatusComponent";
 import { Order } from "../../../graphql/common";
+import Dropdown from "../Dropdown";
+import { getStatusOptions } from "../../helpers/utils";
 
 const Price = styled(Typography)`
   font-size: 1.25rem;
@@ -57,6 +59,7 @@ const OrderDetailsComponent = ({
   hideEditButton = false,
 }: OrderDetailsComponentProps) => {
   const [isPaid, setIsPaid] = useState(false);
+  const [orderStatus, setOrderStatus] = useState<string | number | null>(null);
   const router = useRouter();
   const auth = useAuth();
   const stripe = useStripe();
@@ -130,6 +133,10 @@ const OrderDetailsComponent = ({
     }
   }, [order]);
 
+  const userIsAdmin = useMemo(() => {
+    return auth.localUser?.roles?.some((role) => role?.name === "ADMIN");
+  }, [auth]);
+
   return (
     <div>
       <Grid container spacing={2} sx={{ marginBottom: 2 }}>
@@ -147,6 +154,7 @@ const OrderDetailsComponent = ({
                     <Price>Total Price: ${totalPrice}</Price>
                   </Grid>
                 )}
+
                 {isPaid && (
                   <Grid item>
                     <OrderStatusComponent status={order.status} />
@@ -204,6 +212,23 @@ const OrderDetailsComponent = ({
             </Grid>
           </Grid>
         </Grid>
+        {userIsAdmin && (
+          <Grid item xs={12}>
+            <Grid container gap={3}>
+              <Grid item xs={3}>
+                <Dropdown
+                  label="Set status"
+                  options={getStatusOptions()}
+                  value={orderStatus}
+                  onChange={(value) => setOrderStatus(value)}
+                />
+              </Grid>
+              <Grid item>
+                <Button>Save order</Button>
+              </Grid>
+            </Grid>
+          </Grid>
+        )}
         <Grid item xs={12} sm={12} md={12}>
           <Grid container direction={"column"} spacing={2}>
             <Grid item>

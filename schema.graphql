@@ -104,7 +104,7 @@ type Order {
     orderId: String!
     price: Price
     published: Boolean
-    responses: [OrderResponse]
+    responses: [OrderResponse!]!
     status: OrderStatus!
     title: String!
     type: Type!
@@ -113,7 +113,7 @@ type Order {
 }
 
 type OrderPage {
-    docs: [Order]
+    docs: [Order!]!
     hasNextPage: Boolean
     hasPrevPage: Boolean
     limit: Float
@@ -130,13 +130,13 @@ type OrderResponse {
     answer: String
     attachments: [Attachment]
     comments: String
-    createdAt: Date
-    createdBy: User
-    id: ID
-    published: Boolean
-    question: Order
-    responseType: ResponseType
-    updatedAt: Date
+    createdAt: Date!
+    createdBy: User!
+    id: ID!
+    published: Boolean!
+    question: Order!
+    responseType: ResponseType!
+    updatedAt: Date!
 }
 
 type Price {
@@ -147,7 +147,7 @@ type Price {
 }
 
 type Query {
-    getMyOrders(pagination: Pagination): OrderPage
+    getMyOrders(pagination: Pagination!): OrderPage
     getMyResponses: [OrderResponse]
     getOrder(orderId: String!): Order
     getOrderResponse(responseId: String!): GetOrderResponse

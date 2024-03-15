@@ -17,7 +17,10 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import { useGetOrderLazyQuery } from "../../../../Apollo/schema/GetOrder.generated";
+import {
+  GetOrderDocument,
+  useGetOrderLazyQuery,
+} from "../../../../Apollo/schema/GetOrder.generated";
 import CustomLoader from "../../../../components/CustomLoader";
 import { StripeContext } from "../../../../Context/Stripe";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
@@ -122,6 +125,7 @@ const Checkout = () => {
     }
     await updatePaymentStatus({
       variables: { orderId: data?.getOrder.orderId },
+      refetchQueries: [GetOrderDocument],
     });
   };
 

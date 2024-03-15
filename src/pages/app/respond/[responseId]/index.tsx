@@ -22,7 +22,6 @@ import { ResponseType, User } from "../../../../generated";
 import { fromEditorState, toEditorState } from "../../../../helpers/editor";
 import CustomEditor from "../../../../components/CustomEditor";
 import FileUploader from "../../../../components/FileUploader";
-import { FileAddOutlined } from "@ant-design/icons";
 import MainLayout from "../../../../layout/MainLayout";
 import {
   GetOrderResponseDocument,
@@ -38,6 +37,7 @@ import CustomLoader from "../../../../components/CustomLoader";
 import {
   DeleteOutlined,
   DescriptionOutlined,
+  Folder,
   Publish,
   Unpublished,
 } from "@mui/icons-material";
@@ -47,6 +47,7 @@ import AttachmentList from "../../../../components/edit/AttachmentList";
 import { useDeleteOrderResponseMutation } from "../../../../Apollo/schema/DeleteOrderResponse.generated";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
+import { GetOrderDocument } from "../../../../Apollo/schema/GetOrder.generated";
 
 const ResponseDetails = () => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -68,7 +69,8 @@ const ResponseDetails = () => {
   ] = useGetOrderResponseLazyQuery();
 
   useEffect(() => {
-    const responseId = params.get("responseId");
+    const responseId = router.query.responseId as string;
+    console.log("ResponseId: ", responseId);
     if (responseId) {
       getResponseOrder({ variables: { responseId } }).then();
     }
@@ -92,7 +94,7 @@ const ResponseDetails = () => {
     });
 
   const [deleteOrderResponse, { error: deletingResponseError }] =
-    useDeleteOrderResponseMutation();
+    useDeleteOrderResponseMutation({ refetchQueries: [GetOrderDocument] });
 
   const response = useMemo(() => {
     if (responseData?.getOrderResponse)
@@ -400,7 +402,7 @@ const ResponseDetails = () => {
                 <Button
                   variant={"contained"}
                   type={"submit"}
-                  startIcon={<FileAddOutlined />}
+                  startIcon={<Folder />}
                   disabled={disableForm}
                 >
                   Save Response

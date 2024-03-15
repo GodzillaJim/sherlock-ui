@@ -14,6 +14,8 @@ import {
   WalletRounded,
 } from "@mui/icons-material";
 import { useRouter } from "next/router";
+import { useAuth } from "../../../../../Context/AuthManager";
+import { isAdmin } from "../../../../../helpers/User";
 
 type ProfileTabProps = {
   handleLogout: () => void;
@@ -33,6 +35,9 @@ const ProfileTab = ({ handleLogout }: ProfileTabProps) => {
   const handlePathChange = (path: string) => {
     router.push(path);
   };
+
+  const auth = useAuth();
+  const userIsAdmin = auth.localUser ? isAdmin(auth.localUser) : false;
 
   return (
     <List
@@ -72,12 +77,14 @@ const ProfileTab = ({ handleLogout }: ProfileTabProps) => {
         </ListItemIcon>
         <ListItemText primary="Billing" />
       </ListItemButton>
-      <ListItemButton onClick={() => handlePathChange("/admin")}>
-        <ListItemIcon>
-          <AdminPanelSettingsOutlined />
-        </ListItemIcon>
-        <ListItemText primary={"Admin"} />
-      </ListItemButton>
+      {userIsAdmin && (
+        <ListItemButton onClick={() => handlePathChange("/admin")}>
+          <ListItemIcon>
+            <AdminPanelSettingsOutlined />
+          </ListItemIcon>
+          <ListItemText primary={"Admin"} />
+        </ListItemButton>
+      )}
       <ListItemButton
         selected={selectedIndex === 4}
         onClick={(event) => {

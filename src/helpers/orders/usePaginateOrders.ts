@@ -47,7 +47,7 @@ const usePaginateOrders = () => {
   const { data, error, loading } = useGetPublicOrdersQuery({
     variables: {
       pagination: { currentPage: page },
-      filter: processFilters(filters),
+      filter: { ...processFilters(filters), limit: 100 },
     },
   });
 

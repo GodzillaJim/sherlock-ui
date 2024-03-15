@@ -1,4 +1,4 @@
-query GetMyOrders($pagination: Pagination) {
+query GetMyOrders($pagination: Pagination!) {
     getMyOrders(pagination: $pagination) {
         docs {
             orderId
