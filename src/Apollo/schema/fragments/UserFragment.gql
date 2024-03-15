@@ -1,0 +1,38 @@
+fragment UserFragment on User {
+    id
+    firstName
+    lastName
+    password
+    roles {
+        name
+    }
+    username
+    currency
+    timezone {
+        value
+        abbr
+        offset
+        isdst
+        text
+        utc
+    }
+    language
+    orders
+    uid
+    picture
+    iss
+    aud
+    auth_time
+    user_id
+    sub
+    iat
+    exp
+    email_verified
+    firebase {
+        identities {
+            googlecom
+            email
+        }
+        sign_in_provider
+    }
+}

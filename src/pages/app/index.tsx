@@ -1,105 +1,112 @@
-import React, {useMemo} from "react";
+import React, { useMemo } from "react";
 import MainLayout from "../../layout/MainLayout";
-import {GetMyOrdersDocument, Order, OrderPage} from "../../generated";
-import {Divider, Grid, Typography} from "@mui/material";
-import {v4} from "uuid";
+import { Alert, Button, Divider, Grid, Typography } from "@mui/material";
+import { useGetMyOrdersQuery } from "../../Apollo/schema/GetMyOrders.generated";
+import { Add } from "@mui/icons-material";
+import NextLink from "next/link";
+import CustomLoader from "../../components/CustomLoader";
+import dayjs from "dayjs";
 import SummaryCard from "../../components/SummaryCard";
-import {GetServerSidePropsContext} from "next";
-import {createApolloClient} from "../../Apollo";
-import {ApolloError} from "@apollo/client";
+import { withRequireAuth } from "../../Context/AuthManager/withRequireAuth";
+import { Order } from "../../../graphql/common";
 
-type DashboardProps = {
-    error?: ApolloError | { message: string }
-    myOrders: OrderPage
-}
+const Dashboard = (): JSX.Element => {
+  const { loading, error, data } = useGetMyOrdersQuery({
+    variables: { pagination: {} },
+  });
 
-const Dashboard = ({myOrders}: DashboardProps): JSX.Element => {
-    const drafts = useMemo(() => {
-        if (myOrders && myOrders.docs?.length) {
-            const orders = myOrders.docs as Order[];
-            return orders.filter((order) => !order?.published);
-        }
-        return [];
-    }, [myOrders]);
+  const orders = useMemo(() => {
+    let temp: Order[] = [];
 
-    const published = useMemo(() => {
-        if (myOrders && myOrders.docs?.length) {
-            const orders = myOrders.docs as Order[];
-            return orders.filter((order) => Boolean(order?.published));
-        }
-        return [];
-    }, [myOrders]);
+    if (data?.getMyOrders?.docs?.length) {
+      temp = [...(data.getMyOrders.docs as Order[])];
+    }
 
-    return (
-        <Grid container padding={2} spacing={5} direction={'column'}>
-            {drafts.length && <Grid item>
-                <Grid container direction={"column"} spacing={2}>
-                    <Grid item>
-                        <Typography variant={"h5"}>Drafts</Typography>
-                    </Grid>
-                    <Grid item>
-                        <Divider variant={"fullWidth"}/>
-                    </Grid>
-                    <Grid item>
-                        <Grid container spacing={1}>
-                            {drafts.map((order) => {
-                                return (
-                                    <Grid key={`key-${v4()}-${order.orderId}`} item>
-                                        <SummaryCard order={order}/>
-                                    </Grid>
-                                );
-                            })}
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </Grid>}
-            {published.length ? <Grid item>
-                <Grid container direction={"column"} spacing={2}>
-                    <Grid item>
-                        <Typography variant={"h5"}>Published</Typography>
-                    </Grid>
-                    <Grid item>
-                        <Divider variant={"fullWidth"}/>
-                    </Grid>
-                    <Grid item>
-                        <Grid container spacing={1}>
-                            {published.map((order) => {
-                                return (
-                                    <Grid key={`key-${v4()}-${order.orderId}`} item>
-                                        <SummaryCard order={order}/>
-                                    </Grid>
-                                );
-                            })}
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </Grid> : ''}
+    temp = temp.sort((a, b) => {
+      if (dayjs(a.createdAt).isAfter(b.createdAt)) {
+        return 1;
+      }
+
+      if (dayjs(b.createdAt).isAfter(a.createdAt)) {
+        return -1;
+      }
+
+      return 0;
+    });
+
+    return temp;
+  }, [data]);
+
+  return (
+    <Grid container padding={3} spacing={5} direction={"column"}>
+      <Grid item width={"100%"} textAlign={"end"}>
+        <NextLink href={"/app/create"}>
+          <Button color="secondary" variant="contained" startIcon={<Add />}>
+            Create Order
+          </Button>
+        </NextLink>
+      </Grid>
+      <Grid item>
+        <Divider />
+      </Grid>
+
+      {loading ? (
+        <Grid item>
+          <CustomLoader />
         </Grid>
-    );
+      ) : (
+        ""
+      )}
+
+      {error ? (
+        <Grid item>
+          <Alert color="error" variant="filled">
+            {error?.message || "Something went wrong. "}
+          </Alert>
+        </Grid>
+      ) : (
+        ""
+      )}
+      {orders.length ? (
+        <>
+          <Grid item>
+            <Typography variant="h4">Recent papers</Typography>
+          </Grid>
+          <Grid item>
+            <Grid container gap={2} flexWrap={"wrap"}>
+              {orders.map((order) => (
+                <Grid item key={`order-${order.orderId}`} md={3}>
+                  <SummaryCard order={order} />
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+        </>
+      ) : (
+        <Grid item>
+          <Grid container flexDirection={"column"}>
+            <Grid item>
+              <Divider />
+            </Grid>
+            <Grid item>
+              <Typography variant={"h4"}>Hey... </Typography>
+            </Grid>
+            <Grid item mt={2}>
+              <Typography variant={"body1"}>
+                Get a hand written paper as soon as you need it.{" "}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Grid>
+      )}
+    </Grid>
+  );
 };
 
 Dashboard.getLayout = function (page: React.ReactNode) {
-    return <MainLayout>{page}</MainLayout>;
+  return <MainLayout>{page}</MainLayout>;
 };
 
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-    try {
-        const authToken = context.req.cookies.authToken
-        if (!authToken) {
-            return {props: {error: {message: 'Login to continue'}}}
-        }
-        const client = createApolloClient(authToken)
-
-        const {data, error} = await client.query({query: GetMyOrdersDocument})
-        if (error) {
-            return {props: {error}}
-        }
-
-        return {props: {myOrders: data.getMyOrders}}
-    } catch (error: any) {
-        console.log('Error: ', error)
-        return {props: {error: {message: error?.message || "Something went wrong"}}}
-    }
-}
+export const getServerSideProps = withRequireAuth();
 
 export default Dashboard;

@@ -1,0 +1,7 @@
+mutation DeleteOrderResponseAttachment($responseId: String!, $attachmentKey: String!) {
+    deleteOrderResponseAttachment(responseId: $responseId, attachmentKey: $attachmentKey) {
+        status
+        message
+        success
+    }
+}

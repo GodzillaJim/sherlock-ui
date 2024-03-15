@@ -1,0 +1,41 @@
+query GetPublicOrders($pagination: Pagination, $filter: FilterOrders) {
+  getPublicOrders(pagination: $pagination, filter: $filter) {
+    docs {
+      orderId
+      title
+      description
+      writingStyle
+      type
+      numberOfPages
+      wordsPerPage
+      deadline
+      createdAt
+      published
+      price {
+        paymentStatus
+        currency
+        clientSecret
+        amount
+      }
+      responses {
+        id
+        comments
+        answer
+        responseType
+        createdAt
+        updatedAt
+      }
+    }
+    totalDocs
+    limit
+    hasPrevPage
+    hasNextPage
+    page
+    totalPages
+    offset
+    prevPage
+    nextPage
+    pagingCounter
+
+  }
+}

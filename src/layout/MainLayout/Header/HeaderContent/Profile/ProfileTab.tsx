@@ -6,13 +6,16 @@ import {
   ListItemText,
   useTheme,
 } from "@mui/material";
-
 import {
-  EditOutlined,
-  LogoutOutlined,
-  UserOutlined,
-  WalletOutlined,
-} from "@ant-design/icons";
+  AdminPanelSettingsOutlined,
+  Logout,
+  ModeEditOutline,
+  PersonOutline,
+  WalletRounded,
+} from "@mui/icons-material";
+import { useRouter } from "next/router";
+import { useAuth } from "../../../../../Context/AuthManager";
+import { isAdmin } from "../../../../../helpers/User";
 
 type ProfileTabProps = {
   handleLogout: () => void;
@@ -20,6 +23,7 @@ type ProfileTabProps = {
 
 const ProfileTab = ({ handleLogout }: ProfileTabProps) => {
   const theme = useTheme();
+  const router = useRouter();
   const [selectedIndex, setSelectedIndex] = React.useState(0);
   const handleListItemClick = (
     _event: React.MouseEvent<HTMLDivElement>,
@@ -27,6 +31,14 @@ const ProfileTab = ({ handleLogout }: ProfileTabProps) => {
   ) => {
     setSelectedIndex(index);
   };
+
+  const handlePathChange = (path: string) => {
+    router.push(path);
+  };
+
+  const auth = useAuth();
+  const userIsAdmin = auth.localUser ? isAdmin(auth.localUser) : false;
+
   return (
     <List
       component={"nav"}
@@ -43,7 +55,7 @@ const ProfileTab = ({ handleLogout }: ProfileTabProps) => {
         onClick={(event) => handleListItemClick(event, 0)}
       >
         <ListItemIcon>
-          <EditOutlined />
+          <ModeEditOutline />
         </ListItemIcon>
         <ListItemText primary="Edit Profile" />
       </ListItemButton>
@@ -52,7 +64,7 @@ const ProfileTab = ({ handleLogout }: ProfileTabProps) => {
         onClick={(event) => handleListItemClick(event, 1)}
       >
         <ListItemIcon>
-          <UserOutlined />
+          <PersonOutline />
         </ListItemIcon>
         <ListItemText primary="View Profile" />
       </ListItemButton>
@@ -61,10 +73,18 @@ const ProfileTab = ({ handleLogout }: ProfileTabProps) => {
         onClick={(event) => handleListItemClick(event, 3)}
       >
         <ListItemIcon>
-          <WalletOutlined />
+          <WalletRounded />
         </ListItemIcon>
         <ListItemText primary="Billing" />
       </ListItemButton>
+      {userIsAdmin && (
+        <ListItemButton onClick={() => handlePathChange("/admin")}>
+          <ListItemIcon>
+            <AdminPanelSettingsOutlined />
+          </ListItemIcon>
+          <ListItemText primary={"Admin"} />
+        </ListItemButton>
+      )}
       <ListItemButton
         selected={selectedIndex === 4}
         onClick={(event) => {
@@ -73,7 +93,7 @@ const ProfileTab = ({ handleLogout }: ProfileTabProps) => {
         }}
       >
         <ListItemIcon>
-          <LogoutOutlined />
+          <Logout />
         </ListItemIcon>
         <ListItemText primary="Logout" />
       </ListItemButton>

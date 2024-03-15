@@ -1,0 +1,7 @@
+mutation UpdatePaymentStatus ($orderId: String!) {
+    updatePaymentStatus(orderId: $orderId) {
+        data
+        status
+        success
+    }
+}

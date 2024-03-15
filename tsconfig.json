@@ -22,7 +22,9 @@
     "incremental": true
   },
   "include": [
-    "src"
+    "src",
+    "@graphql/common.d.ts",
+    "@types/GENERATED_API_TYPES.d.ts"
   ],
   "exclude": [
     "node_modules"

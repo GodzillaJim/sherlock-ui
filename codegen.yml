@@ -1,0 +1,39 @@
+overwrite: true
+schema:
+  - http://localhost:5000/graphql
+documents:
+  - "src/**/*.gql"
+  - "!src/**/**.generated.gql"
+  - "src/**/*.graphql"
+generates:
+  ./@types/GENERATED_API_TYPES.d.ts:
+    plugins:
+      - "typescript"
+    config:
+      noExport: true # global types are not the best idea
+      immutableTypes: false
+      enumsAsTypes: true
+      enumAsConst: true
+      constEnums: true
+  graphql/:
+    preset: near-operation-file
+    presetConfig:
+      baseTypesPath: ./common
+      importTypesNamespace: common
+      enumAsConst: true
+    plugins:
+      - "typescript-operations"
+      - "typescript-react-apollo"
+    config:
+      withHooks: true
+      withHOC: false
+      withComponent: false
+  ./graphql/common.ts:
+    plugins:
+      - "typescript"
+    config:
+      immutableTypes: false
+      enumsAsTypes: true
+      enumsAsConst: true
+      constEnums: true
+

@@ -1,0 +1,7 @@
+mutation PublishResponse($responseId: String!) {
+    publishResponse(responseId: $responseId) {
+        status
+        message
+        success
+    }
+}

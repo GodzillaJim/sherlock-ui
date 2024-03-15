@@ -23,6 +23,7 @@ import en from "@cospired/i18n-iso-languages/langs/en.json";
 import currencyCodes from "currency-codes";
 import timezones from "timezones.json";
 import { object, string } from "yup";
+import { toast } from "react-toastify";
 
 languages.registerLocale(en);
 
@@ -33,10 +34,9 @@ const AdditionalInformation = () => {
 
   const [updateUser, { loading: updating }] = useUpdateUserMutation({
     refetchQueries: [CurrentUserDocument],
-    onCompleted: () => alert("Success"),
+    onCompleted: () => toast.success("Success"),
     onError: (e) => {
-      console.log("Error: ", e);
-      alert(e.message);
+      toast.error(e.message);
     },
   });
 

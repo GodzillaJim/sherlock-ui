@@ -1,0 +1,7 @@
+mutation deleteOrderResponse($responsesId: String!) {
+    deleteOrderResponse (responseId: $responsesId) {
+        message
+        status
+        success
+    }
+}

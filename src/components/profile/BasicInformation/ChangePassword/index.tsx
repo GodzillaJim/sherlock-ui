@@ -10,14 +10,15 @@ import { useFormik } from "formik";
 import React from "react";
 import { object, string } from "yup";
 import { useUpdatePasswordMutation } from "../../../../generated";
+import { toast } from "react-toastify";
 
 const ChangePassword = () => {
   const [updatePassword, { loading }] = useUpdatePasswordMutation({
     onCompleted: (data) => {
-      alert(data.updatePassword?.message);
+      toast.success(data.updatePassword?.message);
     },
     onError: (e) => {
-      alert(e.message);
+      toast.error(e.message);
     },
   });
   const { values, setFieldValue, errors, touched, handleSubmit } = useFormik<{

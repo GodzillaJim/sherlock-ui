@@ -1,6 +1,6 @@
 type User {
     id: ID
-    email: String!
+    email: String
     firstName: String
     lastName: String
     password: String
@@ -46,7 +46,7 @@ type Timezone {
 type UserDetails {
     firstName: String!
     lastName: String!
-    email: String!
+    email: String
     id: ID!
     roles: [Role]
 }

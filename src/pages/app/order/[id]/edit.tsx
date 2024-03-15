@@ -1,330 +1,344 @@
-import React, {useEffect, useMemo, useState} from "react";
-import {EditorState} from "draft-js";
-import useUploadAttachments from "../../../../helpers/orders/useUploadAttachments";
+import React, { useMemo } from "react";
+import { EditorState } from "draft-js";
+import { Order } from "../../../../../graphql/common";
+import Dropdown from "../../../../components/Dropdown";
 import {
-    Attachment,
-    AttachmentInput,
-    GetOrderDocument,
-    Order,
-    OrderInput,
-    Type,
-    useGetOrderQuery,
-    useUpdateOrderMutation,
-    WritingStyle
-} from "../../../../generated";
-import {addDays} from "date-fns";
-import {date, number, object, string} from "yup";
-import {useFormik} from "formik";
-import Dropdown, {DropdownOption} from "../../../../components/Dropdown";
-import {getEnumAsArray} from "../../../../helpers/HelperFunctions";
-import {Box, Button, Card, CardContent, Grid, Paper, TextField,} from "@mui/material";
+  Autocomplete,
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  InputAdornment,
+  Paper,
+  TextField,
+  Tooltip,
+} from "@mui/material";
 import CustomEditor from "../../../../components/CustomEditor";
 import FileUploader from "../../../../components/FileUploader";
 import DateTimePicker from "../../../../components/DateTimePicker";
 import MainLayout from "../../../../layout/MainLayout";
-import dayjs from "dayjs";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import AttachmentList from "../../../../components/edit/AttachmentList";
-import {fromEditorState, toEditorState} from "../../../../helpers/editor";
-import {getServerSideProps as getServerSidePropsCopy} from "./view";
+import { getServerSideProps as getServerSidePropsCopy } from "./view";
+import {
+  AutoStories,
+  Cancel,
+  CheckOutlined,
+  FolderCopy,
+  Numbers,
+} from "@mui/icons-material";
+import { useEditOrder } from "../../../../helpers/orders/useEditOrder";
+import {
+  essayCategories,
+  getAcademicLevelOptions,
+  getOrderStatusIndex,
+  getOrderTypeOptions,
+  getWritingStyleOptions,
+} from "../../../../helpers/utils";
+import dayjs from "dayjs";
+import SelectionTabs from "../../../../components/common/SelectionTabs";
+import ProgressSteppers from "../../../../components/common/ProgressSteppers";
 
-const EditOrder = ({order}: { order: Order }) => {
-    const isServerSide = typeof window === "undefined";
-    const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
-    const [files, setFiles] = useState<File[]>([]);
+const EditOrder = ({ order }: { order: Order }) => {
+  const isServerSide = typeof window === "undefined";
 
-    const router = useRouter()
-    const {id} = router.query
-    const {uploadAttachments, error, loading: uploading} = useUploadAttachments();
-    const {data, loading: gettingOrder} = useGetOrderQuery({variables: {orderId: id as string}})
-    const [updateOrder, {
-        data: updated,
-        error: updateError,
-        loading: updating
-    }] = useUpdateOrderMutation({refetchQueries: [GetOrderDocument]})
+  const router = useRouter();
+  const { id } = router.query;
+  const {
+    formik,
+    existingAttachments,
+    totalPrice,
+    loading,
+    editorState,
+    setEditorState,
+    files,
+    setFiles,
+    handleCheckout,
+  } = useEditOrder({
+    orderId: (id || "") as string,
+  });
 
-    const existingAttachments = useMemo(() => {
-        if (order && order.attachments) return order.attachments as Attachment[]
-        return []
-    }, [data])
+  const { handleSubmit, values, setFieldValue, errors, touched } = formik;
 
-    useEffect(() => {
-        if (updateError && !updating) {
-            alert(updateError.message)
-            console.log(updateError)
-        }
-        if (!updating && !updateError && updated) {
-            alert('Success')
-        }
-    }, [updated, updateError, updating])
+  const handleEditorChange = (content: EditorState) => {
+    setEditorState(content);
+  };
 
-    const loading = useMemo(() => {
-        return updating || gettingOrder || uploading
-    }, [updating, gettingOrder, uploading])
+  const handleCancel = () => {
+    router.push(`/app/order/${order.orderId}/view`);
+  };
 
-    useEffect(() => {
-        if (isServerSide) {
-            return;
-        }
-        setEditorState(() => EditorState.createEmpty());
-    }, [isServerSide]);
-
-    useEffect(() => {
-        if (error) {
-            console.log("UploadAttachmentsError: ", error);
-            alert(error)
-        }
-    }, [error]);
-
-    useEffect(() => {
-        if (data && data.getOrder && data.getOrder.description && data.getOrder.description !== "") {
-            setEditorState(toEditorState(data.getOrder.description))
-        }
-    }, [data?.getOrder])
-
-    const initialValues: OrderInput = useMemo(() => {
-        const temp = {
-            deadline: addDays(new Date(), 1),
-            numberOfPages: 1,
-            title: "",
-            type: Type.Article,
-            writingStyle: WritingStyle.Apa7,
-            description: '',
-            attachments: [],
-        }
-
-        if (!data || !data.getOrder) {
-            return temp
-        }
-        const order = data.getOrder as Order
-        const savedAttachments = order.attachments as Attachment[]
-
-        return {
-            ...temp, ...order,
-            attachments: savedAttachments.map(({key, name, location, mimeType}) => ({
-                name: name as string,
-                key: key as string,
-                location: location as string,
-                mimeType: mimeType || ""
-            })),
-            deadline: dayjs(order.deadline).toDate(),
-        }
-    }, [data]);
-
-
-    const requiredMessage = "This field is required!";
-
-    const validationSchema = object().shape({
-        title: string().required(requiredMessage),
-        type: string().required(requiredMessage),
-        numberOfPages: number().required(requiredMessage),
-        writingStyle: string().required(requiredMessage),
-        deadline: date().required(requiredMessage),
-        description: string(),
-    });
-
-    const onSubmit = async ({
-                                writingStyle,
-                                wordsPerPage,
-                                type,
-                                title,
-                                numberOfPages,
-                                description,
-                                deadline,
-                                attachments
-                            }: OrderInput) => {
-        try {
-            const orderInput = {
-                writingStyle,
-                wordsPerPage,
-                type,
-                title,
-                numberOfPages,
-                description,
-                deadline,
-                attachments
-            }
-            if (files.length) {
-                const newAttachments = await uploadAttachments(files);
-                const verifyAttachments = newAttachments?.map(({key, name, location, mimeType}) => ({
-                    key,
-                    name: name || key,
-                    location,
-                    mimeType
-                })) || []
-                const oldAttachments = attachments as AttachmentInput[]
-                const verifyOldAttachments = oldAttachments.map(({key, name, mimeType, location}) => ({
-                    key,
-                    name: name || key,
-                    location,
-                    mimeType
-                }))
-                orderInput.attachments = [...verifyAttachments, ...verifyOldAttachments]
-            }
-
-            setFiles([])
-            await updateOrder({variables: {orderId: id as string || data?.getOrder?.orderId, orderInput}})
-// eslint-disable-next-line
-        } catch (e: any) {
-            console.log("Upload attachments error: ", e);
-            alert("Failed to upload: " + e.message);
-        }
-    };
-    const {handleSubmit, values, setFieldValue, errors, touched} =
-        useFormik<OrderInput>({
-            initialValues,
-            onSubmit,
-            validationSchema,
-            enableReinitialize: true
-        });
-
-    useEffect(() => {
-        setFieldValue('description', fromEditorState(editorState))
-    }, [editorState])
-
-    const getOrderTypeOptions = (): DropdownOption[] => {
-        return getEnumAsArray(Type);
-    };
-
-    const getWritingStyleOptions = (): DropdownOption[] => {
-        return getEnumAsArray(WritingStyle);
-    };
-
-
-    const handleEditorChange = (content: EditorState) => {
-        setEditorState(content)
-    }
-
-    if (isServerSide) return <div/>;
-    return (
-        <form noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={2} columns={12}>
-                <Grid item xs={12} sm={12} md={8} lg={9} id={"main-content"}>
-                    <Grid container direction={"column"} spacing={2}>
-                        <Grid item>
-                            <Card>
-                                <CardContent>
-                                    <TextField
-                                        size="small"
-                                        label={"Title"}
-                                        fullWidth
-                                        value={values.title}
-                                        onChange={(e) =>
-                                            setFieldValue("title", e.target.value || "")
-                                        }
-                                        error={Boolean(touched.title && errors.title)}
-                                        helperText={touched.title ? errors.title : undefined}
-                                        disabled={loading}
-                                    />
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                        <Grid item>
-                            <Paper sx={{p: 3}}>
-                                <CustomEditor
-                                    value={editorState}
-                                    onChange={handleEditorChange}
-                                    readView={false}/>
-                            </Paper>
-                        </Grid>
-                        <Grid item>
-                            <Card sx={{p: 3}}>
-                                <FileUploader files={files} onChange={(files: File[]) => setFiles(files)}/>
-                                <Grid container spacing={1} direction={'column'} sx={{overflow: 'auto'}}>
-                                    {existingAttachments.length &&
-                                        <AttachmentList attachments={existingAttachments}/>}
-                                </Grid>
-                            </Card>
-                        </Grid>
-                        <Grid item>
-                            <Grid container spacing={3} justifyContent={"end"}>
-                                <Grid item>
-                                    <Button disabled={loading} variant={"contained"} color={"error"}>
-                                        Cancel
-                                    </Button>
-                                </Grid>
-                                <Grid item>
-                                    <Button
-                                        disabled={loading}
-                                        onClick={() => handleSubmit()}
-                                        variant={"contained"}
-                                        color={"success"}
-                                    >
-                                        Save
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid item xs={12} sm={12} md={4} lg={3} id={"side-content"}>
-                    <Card>
-                        <CardContent>
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    gap: (theme) => theme.spacing(5),
-                                }}
-                            >
-                                <TextField
-                                    label="Number of Pages"
-                                    type="number"
-                                    value={values.numberOfPages}
-                                    onChange={(e) =>
-                                        setFieldValue("numberOfPages", e.target.value)
-                                    }
-                                    error={Boolean(touched.numberOfPages && errors.numberOfPages)}
-                                    helperText={touched.numberOfPages && errors.numberOfPages}
-                                    size="small"
-                                    disabled={loading}
-                                />
-                                <DateTimePicker
-                                    label="Deadline"
-                                    value={values.deadline}
-                                    onChange={(date) => setFieldValue("deadline", date)}
-                                    disablePast
-                                    setValue={(date) => setFieldValue("deadline", date)}
-                                    disabled={loading}
-                                />
-                                <Dropdown
-                                    label="Type of Work"
-                                    options={getOrderTypeOptions()}
-                                    value={values.type}
-                                    onChange={(val) => setFieldValue("type", val)}
-                                    touched={touched.type}
-                                    error={Boolean(touched.type && errors.type)}
-                                    helperText={
-                                        touched.type && errors.type ? errors.type : undefined
-                                    }
-                                    disabled={loading}
-                                />
-                                <Dropdown
-                                    label="Writing Style"
-                                    options={getWritingStyleOptions()}
-                                    value={values.writingStyle}
-                                    onChange={(val) => setFieldValue("writingStyle", val)}
-                                    touched={touched.writingStyle}
-                                    error={Boolean(touched.writingStyle && errors.writingStyle)}
-                                    helperText={
-                                        touched.writingStyle && errors.writingStyle
-                                            ? errors.writingStyle
-                                            : undefined
-                                    }
-                                    disabled={loading}
-                                />
-                            </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            </Grid>
-        </form>
+  const academicLevel = useMemo(() => {
+    return getAcademicLevelOptions().find(
+      (option) => option.value === values.academicLevel
     );
+  }, [values]);
+
+  const isPaid = order.price?.paymentStatus === "PAID";
+  const statusIndex = getOrderStatusIndex(order.status);
+
+  if (isServerSide) return <div />;
+  return (
+    <form noValidate onSubmit={handleSubmit}>
+      <Grid container spacing={2} columns={12} pb={2} flexDirection={"column"}>
+        <Grid item xs={12} sm={12} md={12} lg={8}>
+          <ProgressSteppers activeStep={isPaid ? 3 : 1} />
+        </Grid>
+        <Grid item xs={12} sm={12} md={12} lg={8} id={"main-content"}>
+          <Grid container direction={"column"} spacing={2}>
+            <Grid item>
+              <Card>
+                <CardContent>
+                  <Grid container flexDirection={"column"} gap={6}>
+                    <Grid item>
+                      <TextField
+                        size="small"
+                        label={"Title"}
+                        fullWidth
+                        value={values.title}
+                        onChange={(e) =>
+                          setFieldValue("title", e.target.value || "")
+                        }
+                        error={Boolean(touched.title && errors.title)}
+                        helperText={touched.title ? errors.title : undefined}
+                        disabled={loading}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <Autocomplete
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label={"Discipline"}
+                            size={"small"}
+                          />
+                        )}
+                        options={essayCategories}
+                        disablePortal
+                        value={values.discipline}
+                        onChange={(e, value) =>
+                          setFieldValue("discipline", value)
+                        }
+                      />
+                    </Grid>
+                    <Grid item>
+                      <SelectionTabs
+                        value={academicLevel}
+                        options={getAcademicLevelOptions()}
+                        onChange={(option) =>
+                          setFieldValue("academicLevel", option.value)
+                        }
+                        label={"Academic Level"}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Grid container gap={2}>
+                        <Grid item>
+                          <TextField
+                            label="Number of Pages"
+                            type="number"
+                            value={values.numberOfPages}
+                            onChange={(e) =>
+                              setFieldValue("numberOfPages", e.target.value)
+                            }
+                            error={Boolean(
+                              touched.numberOfPages && errors.numberOfPages
+                            )}
+                            helperText={
+                              touched.numberOfPages && errors.numberOfPages
+                            }
+                            size="small"
+                            disabled={loading}
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position={"start"}>
+                                  <AutoStories />
+                                </InputAdornment>
+                              ),
+                            }}
+                          />
+                        </Grid>
+                        <Grid item>
+                          <TextField
+                            label={"Words per page"}
+                            value={values.wordsPerPage}
+                            type={"number"}
+                            onChange={(e) =>
+                              setFieldValue("wordsPerPage", e.target.value)
+                            }
+                            error={Boolean(
+                              touched.wordsPerPage && errors.wordsPerPage
+                            )}
+                            helperText={
+                              touched.wordsPerPage && errors.wordsPerPage
+                            }
+                            size="small"
+                            disabled={loading}
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position={"start"}>
+                                  <Numbers />
+                                </InputAdornment>
+                              ),
+                            }}
+                          />
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <DateTimePicker
+                        label="Deadline"
+                        value={dayjs(values.deadline).toDate()}
+                        onChange={(date) => setFieldValue("deadline", date)}
+                        disablePast
+                        setValue={(date) => setFieldValue("deadline", date)}
+                        disabled={loading}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <Grid container gap={2}>
+                        <Grid item xs={5}>
+                          <Dropdown
+                            label="Type of Work"
+                            options={getOrderTypeOptions()}
+                            value={values.type}
+                            onChange={(val) => setFieldValue("type", val)}
+                            touched={touched.type}
+                            error={Boolean(touched.type && errors.type)}
+                            helperText={
+                              touched.type && errors.type
+                                ? errors.type
+                                : undefined
+                            }
+                            disabled={loading}
+                          />
+                        </Grid>
+                        <Grid item xs={5}>
+                          <Dropdown
+                            label="Writing Style"
+                            options={getWritingStyleOptions()}
+                            value={values.writingStyle}
+                            onChange={(val) =>
+                              setFieldValue("writingStyle", val)
+                            }
+                            touched={touched.writingStyle}
+                            error={Boolean(
+                              touched.writingStyle && errors.writingStyle
+                            )}
+                            helperText={
+                              touched.writingStyle && errors.writingStyle
+                                ? errors.writingStyle
+                                : undefined
+                            }
+                            disabled={loading}
+                          />
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item>
+              <Paper sx={{ p: 3 }}>
+                <CustomEditor
+                  value={editorState}
+                  onChange={handleEditorChange}
+                  readView={false}
+                />
+              </Paper>
+            </Grid>
+            <Grid item>
+              <Card sx={{ p: 3 }}>
+                <FileUploader
+                  files={files}
+                  onChange={(files: File[]) => setFiles(files)}
+                />
+                <Grid
+                  container
+                  spacing={1}
+                  direction={"column"}
+                  sx={{ overflow: "auto" }}
+                >
+                  {existingAttachments.length ? (
+                    <AttachmentList
+                      attachments={existingAttachments}
+                      parentEntityId={order.orderId}
+                      pageType={"ORDER"}
+                    />
+                  ) : (
+                    ""
+                  )}
+                </Grid>
+              </Card>
+            </Grid>
+            <Grid item>
+              <Grid container spacing={3} justifyContent={"end"}>
+                <Grid item>
+                  <Tooltip title="Changes will not be saved">
+                    <Button
+                      disabled={loading}
+                      variant={"contained"}
+                      color={"error"}
+                      onClick={handleCancel}
+                      startIcon={<Cancel />}
+                    >
+                      Cancel
+                    </Button>
+                  </Tooltip>
+                </Grid>
+                <Grid item>
+                  <Tooltip
+                    title={
+                      !(statusIndex >= 2)
+                        ? "Save changes as draft. Writers will not see this order yet. You can return later to submit."
+                        : "You can't make changes because the work has started. "
+                    }
+                  >
+                    <Button
+                      disabled={loading || statusIndex >= 2}
+                      onClick={() => handleSubmit()}
+                      variant={"contained"}
+                      color={"success"}
+                      startIcon={<FolderCopy />}
+                    >
+                      Save
+                    </Button>
+                  </Tooltip>
+                </Grid>
+                {!isPaid ? (
+                  <Grid item>
+                    <Tooltip
+                      title={
+                        "Submit the order for writers to work on it. You will have a limited window to make changes after checkout."
+                      }
+                    >
+                      <Button
+                        variant="contained"
+                        disabled={loading}
+                        type="button"
+                        startIcon={<CheckOutlined />}
+                        onClick={handleCheckout}
+                      >
+                        Checkout {totalPrice ? `$ ${totalPrice}` : ""}
+                      </Button>
+                    </Tooltip>
+                  </Grid>
+                ) : (
+                  ""
+                )}
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+    </form>
+  );
 };
 
 EditOrder.getLayout = function (page: React.ReactNode) {
-    return <MainLayout>{page}</MainLayout>;
+  return <MainLayout>{page}</MainLayout>;
 };
 
-export const getServerSideProps = getServerSidePropsCopy
+export const getServerSideProps = getServerSidePropsCopy;
 export default EditOrder;

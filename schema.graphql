@@ -1,0 +1,352 @@
+# This file was generated. Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+interface IResponse {
+    status: Float
+    success: Boolean
+}
+
+type AddResponseFeedback implements IResponse {
+    data: String
+    status: Float
+    success: Boolean
+}
+
+type Attachment {
+    key: String
+    location: String
+    mimeType: String
+    name: String
+}
+
+type AuthResponse {
+    email: String
+    firstName: String
+    jwtToken: AuthToken
+    roles: [Role]
+}
+
+type AuthToken {
+    expiry: String
+    id: ID!
+    jwtToken: String
+    type: TokenType
+}
+
+type ClientSecretResponse implements IResponse {
+    data: String
+    status: Float
+    success: Boolean
+}
+
+type CreateOrderResponse implements IResponse {
+    data: String
+    status: Float
+    success: Boolean
+}
+
+type Filter {
+    limits: Float
+}
+
+type Firebase {
+    identities: Identity
+    sign_in_provider: String
+}
+
+type GetOrderResponse implements IResponse {
+    data: OrderResponse
+    status: Float
+    success: Boolean
+}
+
+type Identity {
+    email: [String]
+    googlecom: [String]
+}
+
+type Mutation {
+    addOrderResponse(orderId: String, orderResponse: OrderResponseInput): AddResponseFeedback
+    cancelOrder(orderId: String!): Response
+    createOrder(orderInput: OrderInput): Response
+    createOrderFromTitle(title: String): CreateOrderResponse
+    deleteAttachment(attachmentKey: String, orderId: String): Response
+    deleteOrderResponse(responseId: String): Response
+    deleteOrderResponseAttachment(attachmentKey: String!, responseId: String!): Response
+    generatePaymentIntent(orderId: String!): ClientSecretResponse
+    login(payload: LoginPayload): AuthResponse
+    publishOrder(orderId: String!): Response
+    publishResponse(responseId: String!): Response
+    register(payload: RegisterPayload): AuthResponse
+    saveOrderDescription(description: String, orderId: String): Response
+    unPublishOrder(orderId: String!): Response
+    unPublishResponse(responseId: String!): Response
+    updateHealth: String
+    updateOrder(orderId: String, orderInput: OrderInput): Response
+    updateOrderResponse(orderId: String, orderResponseInput: OrderResponseInput, responseId: String): AddResponseFeedback
+    updatePassword(payload: PasswordChangePayload): Response
+    updatePaymentStatus(orderId: String!): ClientSecretResponse
+    updateUser(payload: UserUpdatePayload): Response
+}
+
+type Order {
+    academicLevel: String
+    attachments: [Attachment]!
+    createdAt: Date
+    deadline: Date!
+    description: String
+    discipline: String
+    numberOfPages: Float!
+    orderId: String!
+    price: Price
+    published: Boolean
+    responses: [OrderResponse!]!
+    status: OrderStatus!
+    title: String!
+    type: Type!
+    wordsPerPage: Float
+    writingStyle: WritingStyle!
+}
+
+type OrderPage {
+    docs: [Order!]!
+    hasNextPage: Boolean
+    hasPrevPage: Boolean
+    limit: Float
+    nextPage: Float
+    offset: Float
+    page: Float
+    pagingCounter: Float
+    prevPage: Float
+    totalDocs: Float
+    totalPages: Float
+}
+
+type OrderResponse {
+    answer: String
+    attachments: [Attachment]
+    comments: String
+    createdAt: Date!
+    createdBy: User!
+    id: ID!
+    published: Boolean!
+    question: Order!
+    responseType: ResponseType!
+    updatedAt: Date!
+}
+
+type Price {
+    amount: Float
+    clientSecret: String
+    currency: String
+    paymentStatus: PaymentStatus
+}
+
+type Query {
+    getMyOrders(pagination: Pagination!): OrderPage
+    getMyResponses: [OrderResponse]
+    getOrder(orderId: String!): Order
+    getOrderResponse(responseId: String!): GetOrderResponse
+    getPublicOrders(filter: FilterOrders, pagination: Pagination): OrderPage
+    getResponsesToQuestionsByUser: [OrderResponse]
+    getUserOrders(email: String): [Order]
+    health: String
+    me: User
+}
+
+type Response {
+    message: String
+    status: Int
+    success: Boolean
+}
+
+type Role {
+    name: RoleType
+}
+
+type Timezone {
+    abbr: String
+    isdst: Boolean
+    offset: Int
+    text: String
+    utc: [String]
+    value: String
+}
+
+type User {
+    aud: String
+    auth_time: Float
+    currency: String
+    email: String!
+    email_verified: Boolean
+    exp: Float
+    firebase: Firebase
+    firstName: String
+    iat: Float
+    id: ID!
+    iss: String
+    language: String
+    lastName: String
+    orders: [String]
+    password: String
+    picture: String
+    responses: [String]
+    roles: [Role]
+    sub: String
+    timezone: Timezone
+    uid: String
+    user_id: String
+    username: String
+}
+
+enum AcademicLevel {
+    HIGH_SCHOOL
+    NONE
+    POST_GRADUATE
+    UNDERGRADUATE
+}
+
+enum OrderStatus {
+    ACTIVE
+    CANCELED
+    COMPLETED
+    DRAFT
+    IN_PROGRESS
+}
+
+enum PaymentStatus {
+    CANCELED
+    PAID
+    UN_PAID
+}
+
+enum ResponseStatus {
+    HAS_NO_RESPONSE
+    HAS_RESPONSE
+}
+
+enum ResponseType {
+    attachment
+    text
+}
+
+enum RoleType {
+    ADMIN
+    CUSTOMER
+    EDITOR
+    WRITER
+}
+
+enum TokenType {
+    BEARER
+}
+
+enum Type {
+    ARTICLE
+    BIBLIOGRAPHY
+    ESSAY
+    PROMPT
+    REVIEW
+}
+
+enum WritingStyle {
+    APA6
+    APA7
+    HARVARD
+    MLA
+}
+
+scalar Date
+
+"The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf)."
+scalar JSON
+
+scalar ObjectId
+
+input AttachmentInput {
+    key: String!
+    location: String!
+    mimeType: String!
+    name: String!
+}
+
+input FilterOrders {
+    createdAfter: Date
+    createdBefore: Date
+    limit: Float
+    responseStatus: ResponseStatus
+    title: String
+    typeOfWork: Type
+    writingStyle: WritingStyle
+}
+
+input LoginPayload {
+    email: String
+    password: String
+}
+
+input OrderInput {
+    academicLevel: AcademicLevel!
+    attachments: [AttachmentInput]!
+    deadline: Date!
+    description: String
+    discipline: String!
+    numberOfPages: Float!
+    title: String!
+    type: Type!
+    wordsPerPage: Float
+    writingStyle: WritingStyle!
+}
+
+input OrderResponseInput {
+    answer: String
+    attachments: [AttachmentInput]
+    comments: String
+    responseType: ResponseType
+}
+
+input Pagination {
+    currentPage: Float
+    perPage: Float
+}
+
+input PasswordChangePayload {
+    currentPassword: String
+    newPassword: String
+}
+
+input RegisterPayload {
+    email: String!
+    firstName: String!
+    lastName: String!
+    password: String!
+    username: String
+}
+
+input RoleInput {
+    name: RoleType
+}
+
+input TimezoneInput {
+    abbr: String
+    isdst: Boolean
+    offset: Int
+    text: String
+    utc: [String]
+    value: String
+}
+
+input UserUpdatePayload {
+    currency: String
+    email: String!
+    firstName: String!
+    id: ID!
+    language: String
+    lastName: String!
+    timezone: TimezoneInput
+    username: String
+}
