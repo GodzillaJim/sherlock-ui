@@ -3,7 +3,6 @@ import React, { useContext, useEffect } from "react";
 import { MainContext } from "../../Context/MainContext";
 import Header from "./Header";
 import CustomDrawer from "./Drawer";
-import { useRouter } from "next/router";
 
 interface ContentProps extends BoxProps {
   drawerIsOpen: boolean;
@@ -23,7 +22,6 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   const theme = useTheme();
   const matchDownLG = useMediaQuery(theme.breakpoints.down("xl"));
   const mainContext = useContext(MainContext);
-  const router = useRouter();
 
   const [open, setOpen] = React.useState<boolean>(
     Boolean(mainContext?.layout.drawerIsOpen)

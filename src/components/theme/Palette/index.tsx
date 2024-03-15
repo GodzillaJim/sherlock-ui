@@ -1,20 +1,3 @@
-import { Color } from "@mui/material";
-
-type ThemeOption = {
-  colors: Color;
-  heading: string;
-  paper: string;
-  backgroundDefault: string;
-  background: string;
-  darkTextPrimary: string;
-  darkTextSecondary: string;
-  textDark: string;
-  menuSelected: string;
-  menuSelectedBack: string;
-  divider: string;
-  customization: string;
-};
-
 export const themeOptions = {
   colors: {
     paper: "#fff",

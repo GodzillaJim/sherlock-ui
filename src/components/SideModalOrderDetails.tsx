@@ -3,7 +3,7 @@ import { Alert, Box, Modal, styled } from "@mui/material";
 import { useGetOrderQuery } from "../Apollo/schema/GetOrder.generated";
 import OrderDetailsComponent from "./orders/OrderDetailsComponent";
 import CustomLoader from "./CustomLoader";
-import { Order } from "../generated";
+import { Order } from "../../graphql/common";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   position: "absolute",

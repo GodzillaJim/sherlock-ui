@@ -224,7 +224,7 @@ const Checkout = () => {
 
                               <ListItem>
                                 <ListItemIcon sx={{ minWidth: 36 }}>
-                                  <DollarOutlined rev={undefined} />
+                                  <DollarOutlined />
                                 </ListItemIcon>
                                 <ListItemText
                                   secondary={"Price"}

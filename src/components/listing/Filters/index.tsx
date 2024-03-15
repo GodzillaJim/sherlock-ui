@@ -52,7 +52,7 @@ const Filters = () => {
     router.push({
       pathname: "/public/listing",
       query: Object.fromEntries(
-        Object.entries(newFilters).filter(([key, value]) => Boolean(value))
+        Object.entries(newFilters).filter(([_key, value]) => Boolean(value))
       ),
     });
   };

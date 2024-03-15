@@ -32,15 +32,13 @@ const Respond = () => {
   const router = useRouter();
   const [openOrderDetails, setOpenOrderDetails] = useState(false);
 
-  const params = useSearchParams();
-
   const orderId = router.query.id;
 
   const [addOrderResponse, { loading: creating, error: creationError }] =
     useAddOrderResponseMutation();
 
   const prepareResponse = async (
-    orderId: string,
+    _orderId: string,
     values: OrderResponseInput
   ): Promise<OrderResponseInput> => {
     const orderResponse = { ...values };
@@ -183,7 +181,7 @@ const Respond = () => {
         <SideModalOrderDetails
           open={openOrderDetails}
           handleClose={() => setOpenOrderDetails(false)}
-          orderId={orderId}
+          orderId={orderId as string}
         />
       )}
     </form>

@@ -71,7 +71,7 @@ const CreateOrder = () => {
     "Collect your paper",
   ];
 
-  const [activeStep, setActiveStep] = useState(5);
+  const [activeStep] = useState(5);
 
   return (
     <Grid

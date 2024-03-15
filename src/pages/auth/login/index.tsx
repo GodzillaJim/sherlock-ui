@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import { Google } from "@mui/icons-material";
 import { useAuth } from "../../../Context/AuthManager";
-import { GoogleLoginButton } from "react-social-login-buttons";
 
 const StyledGrid = styled(Grid)`
   width: 100%;

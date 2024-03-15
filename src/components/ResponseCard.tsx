@@ -20,7 +20,7 @@ type ResponseCardProps = {
   response: OrderResponse;
 };
 
-const StyledCard = styled(Card)(({ theme }) => ({
+const StyledCard = styled(Card)(() => ({
   width: "100%",
   cursor: "pointer",
   padding: 0,

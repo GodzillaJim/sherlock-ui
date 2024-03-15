@@ -1,10 +1,10 @@
 import React, { ChangeEvent, useMemo } from "react";
 import { IconButton, InputAdornment, styled, TextField } from "@mui/material";
-import { SearchOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { setFilters } from "../../../store/filters";
 import { useRouter } from "next/router";
+import { SearchOutlined } from "@mui/icons-material";
 
 const SearchTextField = styled(TextField)(({ theme }) => ({
   [theme.breakpoints.down("sm")]: {

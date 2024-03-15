@@ -13,7 +13,7 @@ import NotFound from "../../../../components/common/NotFound";
 import OrderDetailsComponent from "../../../../components/orders/OrderDetailsComponent";
 import { isAdmin, isWriter } from "../../../../helpers/User";
 import { useAuth } from "../../../../Context/AuthManager";
-import { Order } from "../../../../generated";
+import { Order } from "../../../../../graphql/common";
 
 type PublicOrderDetailsProps = {
   order: Order;

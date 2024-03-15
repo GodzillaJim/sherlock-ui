@@ -17,6 +17,7 @@ import { useGeneratePaymentIntentMutation } from "../../Apollo/schema/GeneratePa
 import { useRouter } from "next/router";
 import { paperType, writingStyle } from "../utils";
 import { useUpdateOrderMutation } from "../../Apollo/schema/UpdateOrder.generated";
+import { Order } from "../../../graphql/common";
 
 type UseEditOrderProps = {
   orderId: string;

@@ -65,7 +65,7 @@ const Respond = () => {
         responseType: ResponseType.Text,
       },
       onSubmit: async (values) => {
-        const orderId = router.query.id;
+        const orderId = router.query.id as string;
         console.log("Submitting: ", {
           orderId,
           values,

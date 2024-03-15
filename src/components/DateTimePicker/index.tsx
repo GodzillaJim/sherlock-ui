@@ -34,12 +34,6 @@ type Props = DateTimePickerProps<Date> & {
   textFieldProps?: TextFieldProps;
 };
 
-const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "row",
-  gap: theme.spacing(2),
-}));
-
 const DateTimePicker = (props: Props) => {
   const getHelperText = () => {
     if (props.touched && props.error) return props.error;

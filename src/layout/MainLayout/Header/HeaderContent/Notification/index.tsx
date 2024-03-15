@@ -17,14 +17,9 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import {
-  BellOutlined,
-  GiftOutlined,
-  MessageOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
 import Transitions from "../../../../../components/Transitions";
 import MainCard from "../../../../../components/MainCard";
+import { BellFilled, GiftOutlined, MessageOutlined, SettingOutlined } from "@ant-design/icons";
 
 const avatarSX = {
   width: 36,
@@ -83,7 +78,7 @@ const Notification = () => {
           onClick={handleToggle}
         >
           <Badge badgeContent={4} color="info">
-            <BellOutlined />
+            <BellFilled />
           </Badge>
         </IconButton>
         <Popper

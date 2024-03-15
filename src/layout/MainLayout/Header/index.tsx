@@ -1,7 +1,7 @@
 import React from "react";
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { AppBar, Grid, IconButton, styled, Toolbar } from "@mui/material";
 import HeaderContent from "./HeaderContent";
+import { Menu, MenuOpen } from "@mui/icons-material";
 
 const CustomAppBar = styled(AppBar)(({ theme }) => ({
   height: 56,
@@ -38,7 +38,7 @@ const Header = ({ open, handleDrawerToggle }: HeaderProps) => {
               minWidth: 40,
             }}
           >
-            {!open ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            {!open ? <MenuOpen /> : <Menu />}
           </IconButton>
         </Grid>
         <Grid item>
