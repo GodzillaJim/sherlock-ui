@@ -24,7 +24,7 @@ const config = {
   reactStrictMode: false,
 };
 
-const withTM = tm(["@ant-design\\icons-svg", "rc-util"]);
+const withTM = tm(["@ant-design/icons-svg", "rc-util"]);
 
 // eslint-disable-next-line no-undef
 module.exports = withTM(config);
