@@ -5,7 +5,7 @@
   "dependencies": {
     "@ant-design/colors": "^6.0.0",
     "@ant-design/icons": "4.3.0",
-    "@ant-design/icons-svg": "^4.4.2",
+    "@ant-design/icons-svg": "4.3.0",
     "@apollo/client": "^3.8.1",
     "@cospired/i18n-iso-languages": "^4.0.1",
     "@emotion/react": "^11.10.6",
