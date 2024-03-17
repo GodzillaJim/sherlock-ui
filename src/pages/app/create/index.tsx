@@ -14,6 +14,7 @@ import {
   Stepper,
   TextField,
   Typography,
+  styled,
 } from "@mui/material";
 import { useFormik } from "formik";
 import {
@@ -29,6 +30,12 @@ import {
 } from "../../../components/common/CustomStepLabel";
 import { withRequireAuth } from "../../../Context/AuthManager/withRequireAuth";
 import { GetMyOrdersDocument } from "../../../Apollo/schema/GetMyOrders.generated";
+import { ArrowForwardIosOutlined } from "@mui/icons-material";
+
+const CreateButton = styled(Button)`
+  height: 56px;
+  width: 145px;
+`;
 
 const CreateOrder = () => {
   const [createOrderFromTitle, { loading, data, error }] =
@@ -104,15 +111,17 @@ const CreateOrder = () => {
           <CardContent>
             <Grid container direction={"column"} spacing={3}>
               <Grid item>
-                <Typography variant={"h4"}>Create order</Typography>
+                <Typography variant={"h6"}>Create order</Typography>
               </Grid>
               <Divider />
               <Grid item>
                 <form noValidate onSubmit={handleSubmit}>
                   <FormGroup>
-                    <Grid container spacing={1}>
-                      <Grid item xs={12} sm={9}>
+                    <Grid container gap={2} flexDirection={'column'}>
+                      <Grid item xs={12}>
                         <TextField
+                          multiline
+                          minRows={4}
                           name={"title"}
                           value={values.title}
                           onChange={handleChange}
@@ -121,22 +130,30 @@ const CreateOrder = () => {
                           size={"medium"}
                           fullWidth
                           label={"Enter a title for your paper"}
+                          placeholder="Example: The bold and the beautiful"
                         />
                       </Grid>
-                      <Grid item xs={12} sm={3} px={2}>
+                      <Grid item xs={12} display={"flex"} justifyContent={"end"} width={'100%'}>
                         <Button
                           disabled={values.title === "" || !isValid || loading}
-                          sx={{ mt: 0.5 }}
-                          size={"large"}
                           type={"submit"}
                           variant={"contained"}
-                          fullWidth
+                          endIcon={
+                            loading ? (
+                              <CircularProgress
+                                size={15}
+                                sx={{
+                                  color: (theme) => theme.palette.primary.main,
+                                    marginLeft: 0.5,
+                                    marginBottom: 0.2
+                                }}
+                              />
+                            ) : (
+                              <ArrowForwardIosOutlined />
+                            )
+                          }
                         >
-                          {loading ? (
-                            <CircularProgress variant={"determinate"} />
-                          ) : (
-                            "Create"
-                          )}
+                          Next
                         </Button>
                       </Grid>
                     </Grid>
