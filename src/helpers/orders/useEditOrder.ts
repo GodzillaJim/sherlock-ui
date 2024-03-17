@@ -25,6 +25,7 @@ type UseEditOrderProps = {
 };
 export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
   const [files, setFiles] = useState<File[]>([]);
+  const [skipToast, setSkipToast] = useState(false);
   const router = useRouter();
   const [editorState, setEditorState] = useState<EditorState>(
     EditorState.createEmpty()
@@ -43,7 +44,7 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
   });
 
   useEffect(() => {
-    if (updated) {
+    if (updated && !skipToast) {
       toast.success(updated.updateOrder?.message || "Operation successful.");
     }
   }, [updated]);
@@ -84,6 +85,27 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
       return data.getOrder.attachments as Attachment[];
     return [];
   }, [data]);
+
+  const isEditorEmpty = () => {
+    const contentState = editorState.getCurrentContent();
+
+    // Method 1: Check for plain text
+    const text = contentState.getPlainText().trim();
+    if (text === "") {
+      return true; // Editor is empty
+    }
+
+    // Method 2: Check the blocks
+    const allBlocks = contentState.getBlockMap();
+    if (allBlocks.size === 1) {
+      const firstBlock = allBlocks.first();
+      if (firstBlock.getType() === "unstyled" && firstBlock.getLength() === 0) {
+        return true; // Editor is empty
+      }
+    }
+
+    return false; // Editor has content
+  };
 
   const initialValues: OrderInput = useMemo(() => {
     const temp = {
@@ -208,6 +230,19 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
     onSubmit,
     validationSchema,
     enableReinitialize: true,
+    validate(values) {
+        const errors: Record<string, string> = { };
+
+        if (isEditorEmpty()) {
+          errors.description = 'Instructions cannot be empty.'
+        }
+
+        return errors;
+    },
+  });
+
+  useEffect(() => {
+    console.log("EditOrderFormik: ", formik);
   });
 
   useEffect(() => {
@@ -252,6 +287,7 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
   }, [clientSecretError]);
 
   const handleCheckout = async () => {
+    setSkipToast(true);
     // Save any changes
     await formik.handleSubmit();
 

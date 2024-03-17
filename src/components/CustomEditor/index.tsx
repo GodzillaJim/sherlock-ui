@@ -1,6 +1,13 @@
 import React, { useEffect, useMemo } from "react";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { Box, Divider, Typography } from "@mui/material";
+import {
+  Box,
+  Divider,
+  FormHelperText,
+  InputLabel,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { EditorState } from "draft-js";
 import dynamic from "next/dynamic";
 import { clearInterval } from "timers";
@@ -19,6 +26,9 @@ type CustomEditorProps = {
   readView: boolean;
   setValue?: (description: string) => void;
   label?: string;
+  required?: boolean;
+  error?: boolean;
+  helperText?: string;
 };
 
 const CustomEditor = ({
@@ -27,6 +37,9 @@ const CustomEditor = ({
   orderId,
   readView,
   label,
+  required,
+  error,
+  helperText,
 }: CustomEditorProps) => {
   const handleEditorChange = (newEditorSate: EditorState) => {
     onChange(newEditorSate);
@@ -57,14 +70,30 @@ const CustomEditor = ({
     <div>
       {
         <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-          <Typography
-            component={"div"}
-            variant="h5"
-            color={"InfoText"}
-            textTransform={"uppercase"}
-          >
-            {label || "Instructions"}
-          </Typography>
+          <InputLabel required={required} variant="filled">
+            <Tooltip title="This field is required">
+              <Typography
+                component={"span"}
+                variant="h6"
+                color={"InfoText"}
+                textTransform={"capitalize"}
+              >
+                {label || "Instructions"}
+              </Typography>
+            </Tooltip>
+            {helperText ? (
+              <FormHelperText
+                sx={{
+                  color: (theme) =>
+                    error ? theme.palette.error.main : "inherit",
+                }}
+              >
+                {helperText}
+              </FormHelperText>
+            ) : (
+              ""
+            )}
+          </InputLabel>
           <Divider />
           <div>
             {readView && (

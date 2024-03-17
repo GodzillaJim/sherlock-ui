@@ -245,6 +245,15 @@ const EditOrder = ({ order }: { order: Order }) => {
                   value={editorState}
                   onChange={handleEditorChange}
                   readView={false}
+                  required
+                  error={Boolean(
+                    touched.description && errors.description
+                  )}
+                  helperText={
+                    touched.description && errors.description
+                      ? errors.description
+                      : undefined
+                  }
                 />
               </Paper>
             </Grid>
