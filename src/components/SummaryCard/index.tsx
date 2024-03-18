@@ -10,9 +10,11 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  styled,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useRef } from "react";
 import { useRouter } from "next/router";
 import {
   AlarmOn,
@@ -23,19 +25,49 @@ import {
   Title,
 } from "@mui/icons-material";
 import dayjs from "dayjs";
-import StringUtility from "../../helpers/utils";
+import StringUtility, {
+  getStatusColor,
+  GetStatusColorProps,
+} from "../../helpers/utils";
 import { Order } from "../../../graphql/common";
 
 type SummaryCardType = {
   order: Order;
 };
+
+const CustomBadge = styled("div")<{ status: GetStatusColorProps }>(
+  ({ theme, status }) => `
+  position: absolute;
+  margin-right: auto;
+  padding: ${theme.spacing(0.8)};
+  zIndex: 10;
+  background-color: ${status.background};
+  color: ${status.color};
+  border-radius: ${theme.shape.borderRadius}px;
+  margin: 0 0 ${theme.spacing(1.5)} 0;
+  cursor: pointer;
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  `
+);
 const SummaryCard = ({ order }: SummaryCardType) => {
   const router = useRouter();
+
+  const cardRef = useRef<HTMLDivElement>(null);
   const handleClick = (type: "view" | "edit") => {
     router.push(`/app/order/${order.orderId}/${type}`).then();
   };
+
+  const status = getStatusColor(order.status);
+
   return (
-    <Card>
+    <Card ref={cardRef}>
+      <Tooltip title={status.tooltipMessage}>
+        <CustomBadge status={status}>
+          <Typography variant={"caption"}>{order.status}</Typography>
+        </CustomBadge>
+      </Tooltip>
+
       <CardContent sx={{ p: 2 }}>
         <Grid container spacing={2} direction={"column"}>
           <Grid item>

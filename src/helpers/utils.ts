@@ -157,3 +157,47 @@ export const getOrderStatusIndex = (status: OrderStatus) => {
       return 0;
   }
 };
+
+export type GetStatusColorProps = {
+  background: string;
+  color: string;
+  tooltipMessage: string;
+};
+
+export const getStatusColor = (status: OrderStatus): GetStatusColorProps => {
+  switch (status) {
+    case "DRAFT":
+      return {
+        background: "#e0e0e0",
+        color: "#757575",
+        tooltipMessage: "This order has not been published yet.",
+      }; // Light grey
+    case "ACTIVE":
+      return {
+        background: "#4caf50",
+        color: "#ffffff",
+        tooltipMessage:
+          "The order has been submitted and work will start promptly",
+      }; // Bright green
+    case "IN_PROGRESS":
+      return {
+        background: "#2196f3",
+        color: "#ffffff",
+        tooltipMessage: "Work on this order has begun.",
+      }; // Sky blue
+    case "COMPLETED":
+      return {
+        background: "#ffd700",
+        color: "#ffffff",
+        tooltipMessage: "A response for this order is ready for collection.",
+      }; // Gold
+    case "CANCELED":
+      return {
+        background: "#d32f2f",
+        color: "#ffffff",
+        tooltipMessage: "This order is not being worked on.",
+      }; // Dark red
+    default:
+      return { background: "#e0e0e0", color: "#757575", tooltipMessage: "" };
+  }
+};

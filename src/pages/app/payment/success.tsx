@@ -28,7 +28,7 @@ const PaymentSuccess = () => {
             Thank you for your order!
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: 2 }}>
-            {`Your order has been sent to writers. Check the order details for
+            {`Your order has been sent to writers. Check the order details page for
             updates. You will receive an email confirmation shortly.`}
           </Typography>
           <Box sx={{ display: "flex", gap: 2 }}>
