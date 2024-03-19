@@ -1,6 +1,7 @@
 import * as common from '../../../graphql/common';
 
 import { gql } from '@apollo/client';
+import { OrderFragmentFragmentDoc } from './fragments/OrderFragment.generated';
 import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type GetPublicOrdersQueryVariables = common.Exact<{
@@ -9,37 +10,14 @@ export type GetPublicOrdersQueryVariables = common.Exact<{
 }>;
 
 
-export type GetPublicOrdersQuery = { __typename?: 'Query', getPublicOrders?: { __typename?: 'OrderPage', totalDocs?: number | null, limit?: number | null, hasPrevPage?: boolean | null, hasNextPage?: boolean | null, page?: number | null, totalPages?: number | null, offset?: number | null, prevPage?: number | null, nextPage?: number | null, pagingCounter?: number | null, docs: Array<{ __typename?: 'Order', orderId: string, title: string, description?: string | null, writingStyle: common.WritingStyle, type: common.Type, numberOfPages: number, wordsPerPage?: number | null, deadline: any, createdAt?: any | null, published?: boolean | null, price?: { __typename?: 'Price', paymentStatus?: common.PaymentStatus | null, currency?: string | null, clientSecret?: string | null, amount?: number | null } | null, responses: Array<{ __typename?: 'OrderResponse', id: string, comments?: string | null, answer?: string | null, responseType: common.ResponseType, createdAt: any, updatedAt: any }> }> } | null };
+export type GetPublicOrdersQuery = { __typename?: 'Query', getPublicOrders?: { __typename?: 'OrderPage', totalDocs?: number | null, limit?: number | null, hasPrevPage?: boolean | null, hasNextPage?: boolean | null, page?: number | null, totalPages?: number | null, offset?: number | null, prevPage?: number | null, nextPage?: number | null, pagingCounter?: number | null, docs: Array<{ __typename?: 'Order', orderId: string, title: string, description?: string | null, writingStyle: common.WritingStyle, type: common.Type, numberOfPages: number, wordsPerPage?: number | null, deadline: any, createdAt?: any | null, published?: boolean | null, status: common.OrderStatus, academicLevel?: string | null, discipline?: string | null, attachments: Array<{ __typename?: 'Attachment', name?: string | null, location?: string | null, key?: string | null, mimeType?: string | null } | null>, responses: Array<{ __typename?: 'OrderResponse', id: string, comments?: string | null, answer?: string | null, responseType: common.ResponseType, createdAt: any, updatedAt: any, createdBy: { __typename?: 'User', id: string, email: string, firstName?: string | null, lastName?: string | null, password?: string | null, username?: string | null, currency?: string | null, language?: string | null, orders?: Array<string | null> | null, responses?: Array<string | null> | null, uid?: string | null, picture?: string | null, iss?: string | null, aud?: string | null, auth_time?: number | null, user_id?: string | null, sub?: string | null, iat?: number | null, exp?: number | null, email_verified?: boolean | null, roles?: Array<{ __typename?: 'Role', name?: common.RoleType | null } | null> | null, timezone?: { __typename?: 'Timezone', value?: string | null, abbr?: string | null, offset?: number | null, isdst?: boolean | null, text?: string | null, utc?: Array<string | null> | null } | null, firebase?: { __typename?: 'Firebase', sign_in_provider?: string | null, identities?: { __typename?: 'Identity', googlecom?: Array<string | null> | null, email?: Array<string | null> | null } | null } | null } }>, price?: { __typename?: 'Price', amount?: number | null, clientSecret?: string | null, currency?: string | null, paymentStatus?: common.PaymentStatus | null } | null }> } | null };
 
 
 export const GetPublicOrdersDocument = gql`
     query GetPublicOrders($pagination: Pagination, $filter: FilterOrders) {
   getPublicOrders(pagination: $pagination, filter: $filter) {
     docs {
-      orderId
-      title
-      description
-      writingStyle
-      type
-      numberOfPages
-      wordsPerPage
-      deadline
-      createdAt
-      published
-      price {
-        paymentStatus
-        currency
-        clientSecret
-        amount
-      }
-      responses {
-        id
-        comments
-        answer
-        responseType
-        createdAt
-        updatedAt
-      }
+      ...OrderFragment
     }
     totalDocs
     limit
@@ -53,7 +31,7 @@ export const GetPublicOrdersDocument = gql`
     pagingCounter
   }
 }
-    `;
+    ${OrderFragmentFragmentDoc}`;
 
 /**
  * __useGetPublicOrdersQuery__

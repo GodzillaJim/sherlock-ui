@@ -1,5 +1,5 @@
-import { FilterOrders } from "../../generated";
 import { createSlice } from "@reduxjs/toolkit";
+import { FilterOrders } from "../../../graphql/common";
 
 const initialState: Partial<FilterOrders & { currentPage: number }> = {
   createdBefore: null,
@@ -9,6 +9,7 @@ const initialState: Partial<FilterOrders & { currentPage: number }> = {
   typeOfWork: null,
   writingStyle: null,
   currentPage: 1,
+  status: null,
 };
 
 const filterSlice = createSlice({

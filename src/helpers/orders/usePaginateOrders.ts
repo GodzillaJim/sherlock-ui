@@ -13,7 +13,10 @@ const usePaginateOrders = () => {
   const filters = useSelector((state: RootState) => state.filters);
   const dispatch = useDispatch();
 
-  const handleChange = (field: string, value?: string | number | null) => {
+  const handleChange = (
+    field: string,
+    value?: string | number | null | string[]
+  ) => {
     dispatch(setFilters({ ...filters, [field]: value }));
   };
 

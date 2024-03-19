@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import MainLayout from "../../layout/MainLayout";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { withRequireAuth } from "../../Context/AuthManager/withRequireAuth";
 import usePaginateOrders from "../../helpers/orders/usePaginateOrders";
 import OrderListTable from "../../components/Table/OrderListTable";
@@ -16,6 +16,7 @@ import { Search } from "@mui/icons-material";
 import Dropdown from "../../components/Dropdown";
 import {
   getOrderTypeOptions,
+  getStatusOptions,
   getWritingStyleOptions,
 } from "../../helpers/utils";
 import CustomLoader from "../../components/CustomLoader";
@@ -35,6 +36,15 @@ const Admin = () => {
   const handleTitleSearch = (value?: string) => {
     handleChange("title", value);
   };
+
+  const statusValue = useMemo(() => {
+    const allOptions = getStatusOptions();
+    if (filters?.status?.[0]) {
+      return allOptions.find((s) => s.value === filters?.status?.[0]);
+    }
+
+    return null;
+  }, [filters]);
 
   return (
     <Grid container flexDirection={"column"}>
@@ -59,7 +69,7 @@ const Admin = () => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={"auto"} md={2}>
                 <Dropdown
                   label="Type of Work"
                   options={getOrderTypeOptions()}
@@ -67,12 +77,22 @@ const Admin = () => {
                   value={filters?.typeOfWork || ""}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={"auto"} md={2}>
                 <Dropdown
                   label="Writing Style"
                   options={getWritingStyleOptions()}
                   value={filters?.writingStyle || ""}
                   onChange={(value) => handleChange("writingStyle", value)}
+                />
+              </Grid>
+              <Grid item xs={"auto"} md={2}>
+                <Dropdown
+                  label="Status"
+                  options={getStatusOptions()}
+                  value={statusValue?.value}
+                  onChange={(value) =>
+                    handleChange("status", value ? ([value] as string[]) : null)
+                  }
                 />
               </Grid>
               <Grid item>

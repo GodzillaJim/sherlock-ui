@@ -3,9 +3,10 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useMemo } from "react";
 import { priceWithCurrency } from "../../helpers/orders/pricing";
 import dayjs from "dayjs";
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, Tooltip, Typography } from "@mui/material";
 import NextLink from "next/link";
 import { Visibility } from "@mui/icons-material";
+import { getStatusColor } from "../../helpers/utils";
 
 type OrderListTableProps = {
   orderPage: OrderPage;
@@ -31,6 +32,25 @@ const OrderListTable = ({ orderPage }: OrderListTableProps) => {
     {
       field: "status",
       headerName: "Status",
+      renderCell: (params) => {
+        const status = getStatusColor(params.value);
+
+        return (
+          <Tooltip title={status.tooltipMessage}>
+            <Typography
+              variant={"caption"}
+              sx={{
+                color: status.color,
+                backgroundColor: status.background,
+                p: 0.4,
+                borderRadius: (theme) => `${theme.shape.borderRadius}px`,
+              }}
+            >
+              {params.value}
+            </Typography>
+          </Tooltip>
+        );
+      },
     },
     {
       field: "numberOfPages",
