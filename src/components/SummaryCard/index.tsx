@@ -60,6 +60,8 @@ const SummaryCard = ({ order }: SummaryCardType) => {
 
   const status = getStatusColor(order.status);
 
+  const isCanceled = order.status === "CANCELED";
+
   return (
     <Card ref={cardRef}>
       <Tooltip title={status.tooltipMessage}>
@@ -150,9 +152,13 @@ const SummaryCard = ({ order }: SummaryCardType) => {
             }}
           >
             <div>
-              <Typography lineHeight={2}>
-                Total responses: {order.responses?.length}
-              </Typography>
+              {order.responses.length > 0 ? (
+                <Typography lineHeight={2}>
+                  Total responses: {order.responses?.length}
+                </Typography>
+              ) : (
+                ""
+              )}
             </div>
             <div>
               <Button
@@ -162,12 +168,16 @@ const SummaryCard = ({ order }: SummaryCardType) => {
               >
                 Details
               </Button>
-              <Button
-                startIcon={<EditOutlined />}
-                onClick={() => handleClick("edit")}
-              >
-                Edit
-              </Button>
+              {!isCanceled ? (
+                <Button
+                  startIcon={<EditOutlined />}
+                  onClick={() => handleClick("edit")}
+                >
+                  Edit
+                </Button>
+              ) : (
+                ""
+              )}
             </div>
           </Box>
         </Grid>

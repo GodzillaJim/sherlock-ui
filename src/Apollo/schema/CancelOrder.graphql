@@ -1,5 +1,5 @@
-mutation CancelOrder($orderId: String!) {
-    cancelOrder(orderId: $orderId) {
+mutation CancelOrder($cancelOrderInput: CancelOrderInput!) {
+    cancelOrder(cancelOrderInput: $cancelOrderInput) {
         status
         message
         success

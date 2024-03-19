@@ -17,7 +17,9 @@ const OrderDetails = () => {
   const params = useSearchParams();
   const router = useRouter();
 
-  const [getOrder, { loading, error, data }] = useGetOrderLazyQuery();
+  const [getOrder, { loading, error, data }] = useGetOrderLazyQuery({
+    fetchPolicy: "network-only",
+  });
 
   useEffect(() => {
     const orderId = router.query.id as string;

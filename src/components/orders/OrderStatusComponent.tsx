@@ -38,7 +38,8 @@ const getStatusColor = (status: OrderStatus) => {
       return {
         background: "#d32f2f",
         color: "#ffffff",
-        tooltipMessage: "This order is not being worked on.",
+        tooltipMessage:
+          "This order is no longer active. Any refunds will be processed promptly",
       }; // Dark red
     default:
       return { background: "#e0e0e0", color: "#757575" };

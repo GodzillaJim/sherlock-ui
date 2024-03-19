@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { EditorState } from "draft-js";
 import { toEditorState } from "../../helpers/editor";
 import {
@@ -29,13 +29,9 @@ import {
   ViewComfy,
 } from "@mui/icons-material";
 import NextLink from "next/link";
-import { GetOrderDocument } from "../../Apollo/schema/GetOrder.generated";
-import { GetMyOrdersDocument } from "../../Apollo/schema/GetMyOrders.generated";
 import { useAuth } from "../../Context/AuthManager";
 import { isAdmin, isWriter } from "../../helpers/User";
 import { calculateOrderPrice } from "../../helpers/orders/pricing";
-import { useCancelOrderMutation } from "../../Apollo/schema/CancelOrder.generated";
-import { toast } from "react-toastify";
 import { useStripe } from "@stripe/react-stripe-js";
 import { StripeContext } from "../../Context/Stripe";
 import OrderStatusComponent from "./OrderStatusComponent";
@@ -58,7 +54,6 @@ const OrderDetailsComponent = ({
   order,
   hideEditButton = false,
 }: OrderDetailsComponentProps) => {
-  const [isPaid, setIsPaid] = useState(false);
   const [orderStatus, setOrderStatus] = useState<string | number | null>(null);
   const router = useRouter();
   const auth = useAuth();
@@ -76,16 +71,6 @@ const OrderDetailsComponent = ({
     );
   }, [auth, order]);
 
-  const [cancelOrder, { loading: cancellingOrder }] = useCancelOrderMutation({
-    onCompleted: (data1) => {
-      toast.success(data1.cancelOrder?.message);
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-    refetchQueries: [GetOrderDocument, GetMyOrdersDocument],
-  });
-
   const [editor, setEditor] = useState<EditorState>(() => {
     if (order && order.description) {
       return toEditorState(order.description);
@@ -99,7 +84,7 @@ const OrderDetailsComponent = ({
 
   const handleCancelOrder = async () => {
     const orderId = order.orderId;
-    await cancelOrder({ variables: { orderId } });
+    router.push(`/app/order/${orderId}/cancel`);
   };
 
   const handleCheckout = () => {
@@ -112,30 +97,19 @@ const OrderDetailsComponent = ({
 
   const totalPrice = calculateOrderPrice(order);
 
-  const checkPaymentStatus = async () => {
-    const clientSecret = order.price?.clientSecret;
-    if (clientSecret) {
-      const intent = await stripe?.retrievePaymentIntent(clientSecret);
-      console.log("Intent: ", intent, order);
-
-      if (
-        intent?.paymentIntent?.status === "succeeded" ||
-        order.price?.paymentStatus === "PAID"
-      ) {
-        setIsPaid(true);
-      }
-    }
-  };
-
-  useEffect(() => {
+  const isPaid = useMemo(() => {
+    let temp = false;
     if (order) {
-      checkPaymentStatus();
+      temp = order.price?.paymentStatus === "PAID";
     }
+    return temp;
   }, [order]);
 
   const userIsAdmin = useMemo(() => {
     return auth.localUser?.roles?.some((role) => role?.name === "ADMIN");
   }, [auth]);
+
+  const isClosed = order.status === "CANCELED";
 
   return (
     <div>
@@ -149,13 +123,13 @@ const OrderDetailsComponent = ({
           >
             <Grid item>
               <Grid container my={1}>
-                {!isPaid && (
+                {!isPaid && !isClosed && (
                   <Grid item>
                     <Price>Total Price: ${totalPrice}</Price>
                   </Grid>
                 )}
 
-                {isPaid && (
+                {(isPaid || isClosed) && (
                   <Grid item>
                     <OrderStatusComponent status={order.status} />
                   </Grid>
@@ -169,13 +143,12 @@ const OrderDetailsComponent = ({
                 gap={{ xs: 1, md: 3 }}
                 flexDirection={"row"}
               >
-                {isOwner && (
+                {isOwner && !isClosed && (
                   <Grid item>
                     <Button
                       variant={"contained"}
                       startIcon={isPaid ? <Cancel /> : <PaymentOutlined />}
                       onClick={isPaid ? handleCancelOrder : handleCheckout}
-                      disabled={cancellingOrder}
                       color={isPaid ? "error" : "inherit"}
                     >
                       {isPaid
@@ -187,7 +160,7 @@ const OrderDetailsComponent = ({
                   </Grid>
                 )}
                 <Grid item>
-                  {!hideEditButton && (
+                  {!hideEditButton && !isClosed && (
                     <Button
                       onClick={handleEdit}
                       variant={"outlined"}

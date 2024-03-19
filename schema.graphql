@@ -71,7 +71,7 @@ type Identity {
 
 type Mutation {
     addOrderResponse(orderId: String, orderResponse: OrderResponseInput): AddResponseFeedback
-    cancelOrder(orderId: String!): Response
+    cancelOrder(cancelOrderInput: CancelOrderInput!): Response
     createOrder(orderInput: OrderInput): Response
     createOrderFromTitle(title: String): CreateOrderResponse
     deleteAttachment(attachmentKey: String, orderId: String): Response
@@ -147,6 +147,7 @@ type Price {
 }
 
 type Query {
+    getClientSecret(orderId: String!): String!
     getMyOrders(filters: FilterOrders, pagination: Pagination!): OrderPage
     getMyResponses: [OrderResponse]
     getOrder(orderId: String!): Order
@@ -272,6 +273,11 @@ input AttachmentInput {
     location: String!
     mimeType: String!
     name: String!
+}
+
+input CancelOrderInput {
+    orderId: String!
+    reason: String!
 }
 
 input FilterOrders {

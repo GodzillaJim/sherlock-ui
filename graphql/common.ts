@@ -61,6 +61,11 @@ export type AuthToken = {
   type?: Maybe<TokenType>;
 };
 
+export type CancelOrderInput = {
+  orderId: Scalars['String']['input'];
+  reason: Scalars['String']['input'];
+};
+
 export type ClientSecretResponse = IResponse & {
   __typename?: 'ClientSecretResponse';
   data?: Maybe<Scalars['String']['output']>;
@@ -153,7 +158,7 @@ export type MutationAddOrderResponseArgs = {
 
 
 export type MutationCancelOrderArgs = {
-  orderId: Scalars['String']['input'];
+  cancelOrderInput: CancelOrderInput;
 };
 
 
@@ -353,6 +358,7 @@ export type Price = {
 
 export type Query = {
   __typename?: 'Query';
+  getClientSecret: Scalars['String']['output'];
   getMyOrders?: Maybe<OrderPage>;
   getMyResponses?: Maybe<Array<Maybe<OrderResponse>>>;
   getOrder?: Maybe<Order>;
@@ -362,6 +368,11 @@ export type Query = {
   getUserOrders?: Maybe<Array<Maybe<Order>>>;
   health?: Maybe<Scalars['String']['output']>;
   me?: Maybe<User>;
+};
+
+
+export type QueryGetClientSecretArgs = {
+  orderId: Scalars['String']['input'];
 };
 
 

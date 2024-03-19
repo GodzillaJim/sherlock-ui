@@ -4,7 +4,7 @@ import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type CancelOrderMutationVariables = common.Exact<{
-  orderId: common.Scalars['String']['input'];
+  cancelOrderInput: common.CancelOrderInput;
 }>;
 
 
@@ -12,8 +12,8 @@ export type CancelOrderMutation = { __typename?: 'Mutation', cancelOrder?: { __t
 
 
 export const CancelOrderDocument = gql`
-    mutation CancelOrder($orderId: String!) {
-  cancelOrder(orderId: $orderId) {
+    mutation CancelOrder($cancelOrderInput: CancelOrderInput!) {
+  cancelOrder(cancelOrderInput: $cancelOrderInput) {
     status
     message
     success
@@ -35,7 +35,7 @@ export type CancelOrderMutationFn = Apollo.MutationFunction<CancelOrderMutation,
  * @example
  * const [cancelOrderMutation, { data, loading, error }] = useCancelOrderMutation({
  *   variables: {
- *      orderId: // value for 'orderId'
+ *      cancelOrderInput: // value for 'cancelOrderInput'
  *   },
  * });
  */
