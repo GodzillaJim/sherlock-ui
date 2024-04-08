@@ -10,7 +10,7 @@ export const withRequireAuth =
 
       if (!cookies.authToken) {
         return {
-          redirect: { destination: `/signin?next=${context.resolvedUrl}` },
+          redirect: { destination: `/auth/login?next=${context.resolvedUrl}` },
         };
       }
       await verifyIdToken(cookies.authToken);
@@ -25,7 +25,7 @@ export const withRequireAuth =
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      if (error.code === "auth/id-token-expired") {
+      if (error.code === "signup/id-token-expired") {
         return {
           redirect: {
             destination: `/refresh?next=${next}`,

@@ -11,6 +11,7 @@ const config = {
       { hostname: "localhost" },
       { hostname: "lh3.googleusercontent.com" },
       { hostname: "sherlock-staging.s3.us-west-1.amazonaws.com" },
+      { hostname: "sherlock-staging-v1.s3.amazonaws.com" },
     ],
   },
   rewrites: async () => {

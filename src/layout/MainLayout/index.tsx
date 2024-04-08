@@ -50,7 +50,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
       <Content
         drawerIsOpen={Boolean(mainContext?.layout.drawerIsOpen)}
         component="main"
-        sx={{ width: "100%", p: { xs: 2, sm: 3 } }}
+        sx={{ width: "100%", p: { xs: 1, sm: 3 } }}
       >
         {children}
       </Content>

@@ -90,6 +90,7 @@ export const getServerSideProps = async (
 
     console.log(data);
     return { props: { order: data.getOrder } };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any /*tslint:disable-line:no-explicit-any*/) {
     return {
       props: {

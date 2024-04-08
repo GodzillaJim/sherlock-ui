@@ -19,10 +19,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { setFilters } from "../../../store/filters";
 import { useSearchParams } from "next/navigation";
+import { GraphQLError } from "graphql";
 
 type ListingProps = {
   orderPage: OrderPage;
-  error: any;
+  error: GraphQLError;
 };
 const Listing = ({ orderPage, error }: ListingProps) => {
   const filters = useSelector((state: RootState) => state.filters);
@@ -55,13 +56,6 @@ const Listing = ({ orderPage, error }: ListingProps) => {
       );
     }
   }, [orderPage]);
-
-  useEffect(() => {
-    if (error) {
-      console.log("Error: ", JSON.parse(error.stack));
-    }
-    console.log("OrderPage: ", orderPage);
-  });
 
   return (
     <Grid
@@ -151,6 +145,7 @@ export const getServerSideProps = async (
     }
 
     return { props: { orderPage: data.getPublicOrders } };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any /*tslint:disable-line:no-explicit-any*/) {
     console.log("Another Error: ", error);
     return {

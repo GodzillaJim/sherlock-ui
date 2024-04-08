@@ -17,6 +17,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
   p: theme.spacing(1.5),
   wordWrap: "break-word",
   whiteSpace: "normal",
+  padding: theme.spacing(3)
 }));
 
 type SideModalOrderDetailsProps = {

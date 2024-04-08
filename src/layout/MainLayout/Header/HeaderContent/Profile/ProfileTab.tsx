@@ -9,9 +9,6 @@ import {
 import {
   AdminPanelSettingsOutlined,
   Logout,
-  ModeEditOutline,
-  PersonOutline,
-  WalletRounded,
 } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { useAuth } from "../../../../../Context/AuthManager";
@@ -50,7 +47,7 @@ const ProfileTab = ({ handleLogout }: ProfileTabProps) => {
         },
       }}
     >
-      <ListItemButton
+      {/* <ListItemButton
         selected={selectedIndex === 0}
         onClick={(event) => handleListItemClick(event, 0)}
       >
@@ -76,7 +73,7 @@ const ProfileTab = ({ handleLogout }: ProfileTabProps) => {
           <WalletRounded />
         </ListItemIcon>
         <ListItemText primary="Billing" />
-      </ListItemButton>
+      </ListItemButton> */}
       {userIsAdmin && (
         <ListItemButton onClick={() => handlePathChange("/admin")}>
           <ListItemIcon>

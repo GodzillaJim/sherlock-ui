@@ -32,12 +32,13 @@ import NextLink from "next/link";
 import { useAuth } from "../../Context/AuthManager";
 import { isAdmin, isWriter } from "../../helpers/User";
 import { calculateOrderPrice } from "../../helpers/orders/pricing";
-import { useStripe } from "@stripe/react-stripe-js";
 import { StripeContext } from "../../Context/Stripe";
 import OrderStatusComponent from "./OrderStatusComponent";
-import { Order } from "../../../graphql/common";
+import { Order, OrderResponse } from "../../../graphql/common";
 import Dropdown from "../Dropdown";
 import { getStatusOptions } from "../../helpers/utils";
+import MessageContainer from "../messages/MessageContainer";
+import { useEditOrder } from "../../helpers/orders/useEditOrder";
 
 const Price = styled(Typography)`
   font-size: 1.25rem;
@@ -54,16 +55,18 @@ const OrderDetailsComponent = ({
   order,
   hideEditButton = false,
 }: OrderDetailsComponentProps) => {
-  const [orderStatus, setOrderStatus] = useState<string | number | null>(null);
   const router = useRouter();
   const auth = useAuth();
-  const stripe = useStripe();
+
+  const { formik, loading } = useEditOrder({ orderId: order.orderId });
 
   const canRespond = useMemo(() => {
     if (!auth.localUser) return false;
     if (isAdmin(auth?.localUser)) return true;
     return !!isWriter(auth.localUser);
   }, [auth]);
+
+  const showEditButton = ["DRAFT","ACTIVE"].includes(order.status);
 
   const isOwner = useMemo(() => {
     return auth?.localUser?.orders?.some(
@@ -109,17 +112,29 @@ const OrderDetailsComponent = ({
     return auth.localUser?.roles?.some((role) => role?.name === "ADMIN");
   }, [auth]);
 
-  const isClosed = order.status === "CANCELED";
+  const isClosed =
+    order.status === "CANCELED" || order.price?.paymentStatus === "CANCELED";
+
+  const orderResponses = useMemo(() => {
+    let temp: OrderResponse[] = [];
+
+    if (order?.responses.length) {
+      temp = order.responses.filter((response) => Boolean(response.published));
+    }
+
+    return temp;
+  }, [order]);
 
   return (
     <div>
-      <Grid container spacing={2} sx={{ marginBottom: 2 }}>
+      <Grid container spacing={2} sx={{ marginBottom: 2 }} maxWidth={"lg"} mt={2}>
         <Grid item sx={{ width: "100%" }}>
           <Grid
             container
             justifyContent={"space-between"}
             gap={3}
             flexDirection={"row"}
+            alignItems={"center"}
           >
             <Grid item>
               <Grid container my={1}>
@@ -143,7 +158,7 @@ const OrderDetailsComponent = ({
                 gap={{ xs: 1, md: 3 }}
                 flexDirection={"row"}
               >
-                {isOwner && !isClosed && (
+                {isOwner && !isClosed && order.status !== "IN_PROGRESS" && (
                   <Grid item>
                     <Button
                       variant={"contained"}
@@ -151,16 +166,12 @@ const OrderDetailsComponent = ({
                       onClick={isPaid ? handleCancelOrder : handleCheckout}
                       color={isPaid ? "error" : "inherit"}
                     >
-                      {isPaid
-                        ? order.status === "IN_PROGRESS"
-                          ? "Request to cancel"
-                          : "Cancel Order"
-                        : "Checkout"}
+                      {isPaid ? "Cancel Order" : "Checkout"}
                     </Button>
                   </Grid>
                 )}
                 <Grid item>
-                  {!hideEditButton && !isClosed && (
+                  {!hideEditButton && !isClosed && showEditButton && (
                     <Button
                       onClick={handleEdit}
                       variant={"outlined"}
@@ -192,12 +203,17 @@ const OrderDetailsComponent = ({
                 <Dropdown
                   label="Set status"
                   options={getStatusOptions()}
-                  value={orderStatus}
-                  onChange={(value) => setOrderStatus(value)}
+                  value={formik.values.status}
+                  onChange={(value) => formik.setFieldValue("status", value)}
                 />
               </Grid>
               <Grid item>
-                <Button>Save order</Button>
+                <Button
+                  onClick={formik.submitForm}
+                  disabled={formik.isSubmitting || loading}
+                >
+                  Save order
+                </Button>
               </Grid>
             </Grid>
           </Grid>
@@ -284,7 +300,7 @@ const OrderDetailsComponent = ({
         <Grid item>
           <Card sx={{ width: "100%" }}>
             <List>
-              {order.responses?.map(
+              {orderResponses?.map(
                 (response) =>
                   response?.createdBy?.firstName && (
                     <ListItem
@@ -319,6 +335,13 @@ const OrderDetailsComponent = ({
             </List>
           </Card>
         </Grid>
+        {isPaid && !isClosed ? (
+          <Grid item xs={12} id='messages'>
+            <MessageContainer orderId={order.orderId} />
+          </Grid>
+        ) : (
+          ""
+        )}
       </Grid>
     </div>
   );

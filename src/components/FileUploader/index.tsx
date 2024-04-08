@@ -55,7 +55,7 @@ const FileUploader = ({ onChange, files, disabled }: FileUploaderProps) => {
           onClick={() => setShowModal(!showModal)}
           disabled={disabled}
         >
-          <Typography variant="h5">Add Attachments</Typography>
+          <Typography variant="h6">Add Attachments</Typography>
         </Button>
         <Divider />
         <Modal

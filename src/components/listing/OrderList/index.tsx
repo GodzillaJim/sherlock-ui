@@ -39,7 +39,7 @@ const OrderList = ({ orderPage }: OrderListProps) => {
     router.push({
       pathname: "/public/listing",
       query: Object.fromEntries(
-        Object.entries(newFilters).filter(([_key, value]) => Boolean(value))
+        Object.entries(newFilters).filter((keyValue) => Boolean(keyValue[1]))
       ),
     });
   };

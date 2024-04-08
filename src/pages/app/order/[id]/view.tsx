@@ -5,13 +5,14 @@ import {
   useGetOrderLazyQuery,
 } from "../../../../Apollo/schema/GetOrder.generated";
 import { useSearchParams } from "next/navigation";
-import { Alert, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import CustomLoader from "../../../../components/CustomLoader";
 import { GetServerSidePropsContext } from "next";
 import { createApolloClient } from "../../../../Apollo";
 import { useRouter } from "next/router";
 import OrderDetailsComponent from "../../../../components/orders/OrderDetailsComponent";
 import { Order } from "../../../../../graphql/common";
+import ErrorMessage from "../../../../components/ErrorMessage";
 
 const OrderDetails = () => {
   const params = useSearchParams();
@@ -19,6 +20,10 @@ const OrderDetails = () => {
 
   const [getOrder, { loading, error, data }] = useGetOrderLazyQuery({
     fetchPolicy: "network-only",
+  });
+
+  useEffect(() => {
+    console.log("GetOrder: ", data);
   });
 
   useEffect(() => {
@@ -31,12 +36,12 @@ const OrderDetails = () => {
 
   return (
     <Grid container>
+      {error && (
+        <Grid item xs={12} mt={5}>
+          <ErrorMessage message={error.message} />
+        </Grid>
+      )}
       <Grid item>
-        {error && (
-          <Alert variant={"outlined"} color={"error"}>
-            {error.message}
-          </Alert>
-        )}
         {loading && <CustomLoader />}
         {data?.getOrder ? (
           <OrderDetailsComponent order={data.getOrder as Order} />
@@ -68,10 +73,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       variables: { orderId },
     });
     if (error) {
-      return { props: { error } };
+      return { props: { error: error.message } };
     }
 
     return { props: { order: data.getOrder } };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any /*tslint:disable-line:no-explicit-any*/) {
     console.log("Error: ", error);
     return {

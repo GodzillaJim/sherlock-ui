@@ -16,10 +16,8 @@ import {
 import CustomEditor from "../../../../components/CustomEditor";
 import FileUploader from "../../../../components/FileUploader";
 import DateTimePicker from "../../../../components/DateTimePicker";
-import MainLayout from "../../../../layout/MainLayout";
 import { useRouter } from "next/router";
 import AttachmentList from "../../../../components/edit/AttachmentList";
-import { getServerSideProps as getServerSidePropsCopy } from "./view";
 import {
   AutoStories,
   Cancel,
@@ -38,6 +36,11 @@ import {
 import dayjs from "dayjs";
 import SelectionTabs from "../../../../components/common/SelectionTabs";
 import ProgressSteppers from "../../../../components/common/ProgressSteppers";
+import MainLayout from "../../../../layout/MainLayout";
+import ErrorMessage from "../../../../components/ErrorMessage";
+import { GetServerSidePropsContext } from "next";
+import { createApolloClient } from "../../../../Apollo";
+import { GetOrderDocument, GetOrderQuery } from "../../../../Apollo/schema/GetOrder.generated";
 
 const EditOrder = ({ order }: { order: Order }) => {
   const isServerSide = typeof window === "undefined";
@@ -80,7 +83,7 @@ const EditOrder = ({ order }: { order: Order }) => {
   if (isServerSide) return <div />;
   return (
     <form noValidate onSubmit={handleSubmit}>
-      <Grid container spacing={2} columns={12} pb={2} flexDirection={"column"}>
+      <Grid container spacing={2} columns={12} pb={2} flexDirection={"column"} mt={1}>
         <Grid item xs={12} sm={12} md={12} lg={8}>
           <ProgressSteppers activeStep={isPaid ? 3 : 1} />
         </Grid>
@@ -114,6 +117,7 @@ const EditOrder = ({ order }: { order: Order }) => {
                           />
                         )}
                         options={essayCategories}
+                        disabled={loading}
                         disablePortal
                         value={values.discipline}
                         onChange={(e, value) =>
@@ -246,9 +250,7 @@ const EditOrder = ({ order }: { order: Order }) => {
                   onChange={handleEditorChange}
                   readView={false}
                   required
-                  error={Boolean(
-                    touched.description && errors.description
-                  )}
+                  error={Boolean(touched.description && errors.description)}
                   helperText={
                     touched.description && errors.description
                       ? errors.description
@@ -345,9 +347,61 @@ const EditOrder = ({ order }: { order: Order }) => {
   );
 };
 
-EditOrder.getLayout = function (page: React.ReactNode) {
+type WrapperProps = {
+  error?: { message: string };
+  order?: Order;
+};
+const Wrapper = ({ error, order }: WrapperProps) => {
+  return (
+    <>
+      {error && <ErrorMessage message={error.message} />}
+      {order && <EditOrder order={order} />}
+    </>
+  );
+};
+
+Wrapper.getLayout = function (page: React.ReactNode) {
   return <MainLayout>{page}</MainLayout>;
 };
 
-export const getServerSideProps = getServerSidePropsCopy;
-export default EditOrder;
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  try {
+    const authToken = context.req.cookies.authToken;
+    if (!authToken) {
+      return { props: { error: { message: "Login to continue" } } };
+    }
+    const client = createApolloClient(authToken);
+
+    const orderId = context?.params?.id;
+    if (!orderId) return;
+
+    const { data, error } = await client.query<GetOrderQuery>({
+      query: GetOrderDocument,
+      variables: { orderId },
+    });
+
+    if (error) {
+      return { props: { error: error.message } };
+    }
+
+    const canEditStatus: OrderStatus[] = ["ACTIVE", "DRAFT"];
+    if (data.getOrder && !canEditStatus.includes(data.getOrder?.status)) {
+      return {
+        redirect: {
+          destination: `/app/order/${orderId}/view`,
+          permanent: false
+        }
+      }
+    }
+
+    return { props: { order: data.getOrder } };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any /*tslint:disable-line:no-explicit-any*/) {
+    console.log("Error: ", error);
+    return {
+      props: { error: { message: error?.message || "Something went wrong" } },
+    };
+  }
+}
+
+export default Wrapper;

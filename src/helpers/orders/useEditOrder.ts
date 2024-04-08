@@ -15,7 +15,7 @@ import { calculateOrderPrice } from "./pricing";
 import { toast } from "react-toastify";
 import { useGeneratePaymentIntentMutation } from "../../Apollo/schema/GeneratePaymentIntent.generated";
 import { useRouter } from "next/router";
-import { paperType, writingStyle } from "../utils";
+import { orderStatus, paperType, writingStyle } from "../utils";
 import { useUpdateOrderMutation } from "../../Apollo/schema/UpdateOrder.generated";
 import { Order } from "../../../graphql/common";
 import { GetMyOrdersDocument } from "../../Apollo/schema/GetMyOrders.generated";
@@ -65,7 +65,10 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
     }
 
     if (attachmentError) {
-      toast.error(attachmentError || "Failed to upload attachments");
+      toast.error(
+        attachmentError ||
+          "We could not upload all the documents. You can rety later."
+      );
     }
   }, [error, updateError, attachmentError]);
 
@@ -118,6 +121,7 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
       attachments: [],
       academicLevel: "NONE" as AcademicLevel,
       discipline: "",
+      status: orderStatus.draft as OrderStatus,
     };
 
     if (!data || !data.getOrder) {
@@ -141,6 +145,7 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
         })
       ),
       deadline: dayjs(order.deadline).toDate().toISOString(),
+      status: order.status || orderStatus.draft,
     };
   }, [data]);
 
@@ -168,7 +173,8 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
     attachments,
     discipline,
     academicLevel,
-  }: OrderInput & { discipline: string; academicLevel: AcademicLevel }) => {
+    status,
+  }: OrderInput) => {
     try {
       const orderInput = {
         writingStyle,
@@ -181,6 +187,7 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
         attachments,
         discipline,
         academicLevel,
+        status,
       };
       if (files.length) {
         const newAttachments = await uploadAttachments(files);
@@ -223,21 +230,19 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
     }
   };
 
-  const formik = useFormik<
-    OrderInput & { discipline: string; academicLevel: AcademicLevel }
-  >({
+  const formik = useFormik<OrderInput>({
     initialValues,
     onSubmit,
     validationSchema,
     enableReinitialize: true,
-    validate(values) {
-        const errors: Record<string, string> = { };
+    validate() {
+      const errors: Record<string, string> = {};
 
-        if (isEditorEmpty()) {
-          errors.description = 'Instructions cannot be empty.'
-        }
+      if (isEditorEmpty()) {
+        errors.description = "Instructions cannot be empty.";
+      }
 
-        return errors;
+      return errors;
     },
   });
 

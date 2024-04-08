@@ -20,7 +20,7 @@ const Dashboard = (): JSX.Element => {
   }, [data]);
 
   return (
-    <Grid container padding={3} spacing={5} direction={"column"}>
+    <Grid container padding={{ xs: 0, md: 3 }} pt={{ xs: 3 }} spacing={3} direction={"column"}>
       <Grid item width={"100%"} textAlign={"end"}>
         <NextLink href={"/app/create"}>
           <Button color="secondary" variant="contained" startIcon={<Add />}>

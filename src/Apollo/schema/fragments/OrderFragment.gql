@@ -72,4 +72,16 @@ fragment OrderFragment on Order {
     status
     academicLevel
     discipline
+    messages {
+        id
+        message
+        createdAt
+        replyTo {
+            message
+            createdAt
+        }
+        sender {
+            ...UserFragment
+        }
+    }
 }

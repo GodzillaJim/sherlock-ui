@@ -17,7 +17,7 @@ type AddResponseFeedback implements IResponse {
 }
 
 type Attachment {
-    key: String
+    key: String!
     location: String
     mimeType: String
     name: String
@@ -69,12 +69,21 @@ type Identity {
     googlecom: [String]
 }
 
+type Message {
+    createdAt: Date!
+    id: ID!
+    message: String!
+    replyTo: Message
+    sender: User!
+}
+
 type Mutation {
     addOrderResponse(orderId: String, orderResponse: OrderResponseInput): AddResponseFeedback
     cancelOrder(cancelOrderInput: CancelOrderInput!): Response
     createOrder(orderInput: OrderInput): Response
     createOrderFromTitle(title: String): CreateOrderResponse
     deleteAttachment(attachmentKey: String, orderId: String): Response
+    deleteOrder(orderId: String!): Response
     deleteOrderResponse(responseId: String): Response
     deleteOrderResponseAttachment(attachmentKey: String!, responseId: String!): Response
     generatePaymentIntent(orderId: String!): ClientSecretResponse
@@ -83,6 +92,7 @@ type Mutation {
     publishResponse(responseId: String!): Response
     register(payload: RegisterPayload): AuthResponse
     saveOrderDescription(description: String, orderId: String): Response
+    sendOrderMessage(input: SendOrderMessageInput!): Response
     unPublishOrder(orderId: String!): Response
     unPublishResponse(responseId: String!): Response
     updateHealth: String
@@ -95,11 +105,12 @@ type Mutation {
 
 type Order {
     academicLevel: String
-    attachments: [Attachment]!
+    attachments: [Attachment!]!
     createdAt: Date
     deadline: Date!
     description: String
     discipline: String
+    messages: [Message!]
     numberOfPages: Float!
     orderId: String!
     price: Price
@@ -303,6 +314,7 @@ input OrderInput {
     description: String
     discipline: String!
     numberOfPages: Float!
+    status: OrderStatus
     title: String!
     type: Type!
     wordsPerPage: Float
@@ -336,6 +348,12 @@ input RegisterPayload {
 
 input RoleInput {
     name: RoleType
+}
+
+input SendOrderMessageInput {
+    message: String!
+    orderId: String!
+    replyTo: String
 }
 
 input TimezoneInput {

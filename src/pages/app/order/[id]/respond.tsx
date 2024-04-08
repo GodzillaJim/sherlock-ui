@@ -95,7 +95,7 @@ const Respond = () => {
 
   return (
     <form noValidate onSubmit={handleSubmit}>
-      <Grid container flexDirection={"column"} gap={2}>
+      <Grid container flexDirection={"column"} gap={2} maxWidth={"lg"}>
         {error && (
           <Grid item>
             <Alert variant={"outlined"} color={"error"}>

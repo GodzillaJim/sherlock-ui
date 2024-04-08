@@ -14,7 +14,6 @@ import {
   Stepper,
   TextField,
   Typography,
-  styled,
 } from "@mui/material";
 import { useFormik } from "formik";
 import {
@@ -31,11 +30,6 @@ import {
 import { withRequireAuth } from "../../../Context/AuthManager/withRequireAuth";
 import { GetMyOrdersDocument } from "../../../Apollo/schema/GetMyOrders.generated";
 import { ArrowForwardIosOutlined } from "@mui/icons-material";
-
-const CreateButton = styled(Button)`
-  height: 56px;
-  width: 145px;
-`;
 
 const CreateOrder = () => {
   const [createOrderFromTitle, { loading, data, error }] =
@@ -107,7 +101,7 @@ const CreateOrder = () => {
         </Stepper>
       </Grid>
       <Grid item xs={12} sm={12} md={7} mt={5}>
-        <Card sx={{ width: 600 }}>
+        <Card sx={{ minWidth: { xs: 400, md: 600 } }}>
           <CardContent>
             <Grid container direction={"column"} spacing={3}>
               <Grid item>
