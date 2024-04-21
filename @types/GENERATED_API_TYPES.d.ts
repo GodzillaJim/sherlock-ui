@@ -88,6 +88,7 @@ type Filter = {
 type FilterOrders = {
   createdAfter?: InputMaybe<Scalars['Date']['input']>;
   createdBefore?: InputMaybe<Scalars['Date']['input']>;
+  currentPage?: InputMaybe<Scalars['Int']['input']>;
   limit?: InputMaybe<Scalars['Float']['input']>;
   responseStatus?: InputMaybe<ResponseStatus>;
   status?: InputMaybe<Array<InputMaybe<OrderStatus>>>;
@@ -391,6 +392,7 @@ type Query = {
   getUserOrders?: Maybe<Array<Maybe<Order>>>;
   health?: Maybe<Scalars['String']['output']>;
   me?: Maybe<User>;
+  sendTestEmail?: Maybe<Response>;
 };
 
 

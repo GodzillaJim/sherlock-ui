@@ -1,0 +1,7 @@
+query SendTestMail {
+  sendTestEmail {
+    message
+    success
+    status
+  }
+}

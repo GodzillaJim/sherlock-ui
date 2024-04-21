@@ -168,6 +168,7 @@ type Query {
     getUserOrders(email: String): [Order]
     health: String
     me: User
+    sendTestEmail: Response
 }
 
 type Response {
@@ -294,6 +295,7 @@ input CancelOrderInput {
 input FilterOrders {
     createdAfter: Date
     createdBefore: Date
+    currentPage: Int
     limit: Float
     responseStatus: ResponseStatus
     status: [OrderStatus]

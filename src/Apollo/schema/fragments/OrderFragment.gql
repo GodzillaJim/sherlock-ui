@@ -60,6 +60,7 @@ fragment OrderFragment on Order {
                 sign_in_provider
             }
         }
+        published
     }
     createdAt
     published

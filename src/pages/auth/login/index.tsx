@@ -8,12 +8,14 @@ import {
   Container,
   Divider,
   Grid,
+  ListItemIcon,
   styled,
   Typography,
 } from "@mui/material";
-import { Google, Lock } from "@mui/icons-material";
+import { Google } from "@mui/icons-material";
 import { useAuth } from "../../../Context/AuthManager";
 import NextLink from "next/link";
+import LogoOnly from "../../../components/common/logos/LogoOnly";
 
 const StyledGrid = styled(Grid)`
   width: 100%;
@@ -28,7 +30,11 @@ const Login = () => {
         <Grid item xs={12} md={4}>
           <Card>
             <CardHeader
-              avatar={<Lock />}
+              avatar={
+                <ListItemIcon>
+                  <LogoOnly />
+                </ListItemIcon>
+              }
               title={
                 <Typography color={"inherit"} variant={"h6"}>
                   Welcome back

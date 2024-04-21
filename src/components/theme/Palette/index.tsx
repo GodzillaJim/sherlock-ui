@@ -1,3 +1,5 @@
+import { lighten } from "@mui/system";
+
 export const themeOptions = {
   colors: {
     paper: "#fff",
@@ -10,11 +12,12 @@ export const themeOptions = {
       primary800: "#1565c0",
     },
     secondary: {
-      secondaryLight: "#ff4081",
-      secondaryMain: "#f50057",
-      secondaryDark: "#c51162",
-      secondary200: "#b39ddb",
-      secondary800: "#4527a0",
+      secondaryLight: "#93776C",
+      secondaryMain: "#795548",
+      secondaryDark: "#543B32",
+      secondary200: lighten("#795548", 0.2),
+      secondary800: lighten("#795548", 0.8),
+      contrastText: "#d2cdcd",
     },
     success: {
       successLight: "#81c784",
@@ -114,4 +117,4 @@ export const palette = {
     paper: themeOptions.colors.paper,
   },
   divider: themeOptions.colors.grey.grey200,
-}
+};
