@@ -31,6 +31,7 @@ const App = ({ Component, pageProps }: NextConfig) => {
           name={"viewport"}
           content={"width=device-width, initial-scale=1, maximum-scale=1"}
         />
+        <title>WriteSpear - The art of piercing words</title>
       </Head>
       <Provider store={store}>
         <LoadingOverlayWrapper
