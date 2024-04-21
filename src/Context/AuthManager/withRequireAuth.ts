@@ -33,5 +33,7 @@ export const withRequireAuth =
           },
         };
       }
+
+      return { props: {} };
     }
   };

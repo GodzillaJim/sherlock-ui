@@ -88,6 +88,7 @@ export type Filter = {
 export type FilterOrders = {
   createdAfter?: InputMaybe<Scalars['Date']['input']>;
   createdBefore?: InputMaybe<Scalars['Date']['input']>;
+  currentPage?: InputMaybe<Scalars['Int']['input']>;
   limit?: InputMaybe<Scalars['Float']['input']>;
   responseStatus?: InputMaybe<ResponseStatus>;
   status?: InputMaybe<Array<InputMaybe<OrderStatus>>>;

@@ -66,7 +66,7 @@ const OrderDetailsComponent = ({
     return !!isWriter(auth.localUser);
   }, [auth]);
 
-  const showEditButton = ["DRAFT","ACTIVE"].includes(order.status);
+  const showEditButton = ["DRAFT", "ACTIVE"].includes(order.status);
 
   const isOwner = useMemo(() => {
     return auth?.localUser?.orders?.some(
@@ -116,10 +116,13 @@ const OrderDetailsComponent = ({
     order.status === "CANCELED" || order.price?.paymentStatus === "CANCELED";
 
   const orderResponses = useMemo(() => {
-    let temp: OrderResponse[] = [];
+    let temp: OrderResponse[] = order.responses;
 
-    if (order?.responses.length) {
-      temp = order.responses.filter((response) => Boolean(response.published));
+    if (order?.responses.length && !userIsAdmin) {
+      temp = order.responses.filter((response) => {
+        console.log("Published: ", response);
+        return Boolean(response.published);
+      });
     }
 
     return temp;
@@ -127,7 +130,13 @@ const OrderDetailsComponent = ({
 
   return (
     <div>
-      <Grid container spacing={2} sx={{ marginBottom: 2 }} maxWidth={"lg"} mt={2}>
+      <Grid
+        container
+        spacing={2}
+        sx={{ marginBottom: 2 }}
+        maxWidth={"lg"}
+        mt={2}
+      >
         <Grid item sx={{ width: "100%" }}>
           <Grid
             container
@@ -336,7 +345,7 @@ const OrderDetailsComponent = ({
           </Card>
         </Grid>
         {isPaid && !isClosed ? (
-          <Grid item xs={12} id='messages'>
+          <Grid item xs={12} id="messages">
             <MessageContainer orderId={order.orderId} />
           </Grid>
         ) : (

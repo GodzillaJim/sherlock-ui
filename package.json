@@ -109,6 +109,7 @@
     "@graphql-codegen/cli": "^5.0.0",
     "@graphql-codegen/client-preset": "^4.1.0",
     "@graphql-codegen/near-operation-file-preset": "^3.0.0",
+    "@svgr/webpack": "^8.1.0",
     "@types/draftjs-to-html": "^0.8.1",
     "@types/istanbul-lib-coverage": "^2.0.4",
     "@types/lint-staged": "^13.2.0",
