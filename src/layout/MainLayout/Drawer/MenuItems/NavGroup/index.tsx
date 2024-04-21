@@ -11,6 +11,7 @@ import {
 import { ChevronRight } from "@mui/icons-material";
 import Transitions from "../../../../../components/Transitions";
 import { v4 } from "uuid";
+import { useRouter } from "next/router";
 
 type NavGroupProps = {
   item: NavItemProps["item"];
@@ -31,6 +32,17 @@ const NavGroup = ({ item }: NavGroupProps) => {
     }
   });
 
+  const router = useRouter();
+
+  const handleClick = () => {
+    if (item.type === "item" && item.url) {
+      router.push(item.url);
+      return;
+    }
+
+    setExpand(!expand);
+  };
+
   return (
     <List
       subheader={
@@ -42,7 +54,7 @@ const NavGroup = ({ item }: NavGroupProps) => {
           justifyContent={"space-between"}
           gap={2}
           borderRadius={2}
-          onClick={() => setExpand(!expand)}
+          onClick={handleClick}
           sx={{
             cursor: "pointer",
             ":hover": {
@@ -77,20 +89,22 @@ const NavGroup = ({ item }: NavGroupProps) => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item key={`nav-group-${v4()}`}>
-            {!expand ? (
-              <ChevronRight sx={{ color: theme.palette.grey[500] }} />
-            ) : (
-              <ChevronRight
-                sx={{
-                  transitionDuration: 0.8,
-                  transitionProperty: "transform",
-                  color: theme.palette.grey[500],
-                  transform: "rotate(90deg)",
-                }}
-              />
-            )}
-          </Grid>
+          {item.type !== "item" && (
+            <Grid item key={`nav-group-${v4()}`}>
+              {!expand ? (
+                <ChevronRight sx={{ color: theme.palette.grey[500] }} />
+              ) : (
+                <ChevronRight
+                  sx={{
+                    transitionDuration: 0.8,
+                    transitionProperty: "transform",
+                    color: theme.palette.grey[500],
+                    transform: "rotate(90deg)",
+                  }}
+                />
+              )}
+            </Grid>
+          )}
         </Grid>
       }
     >

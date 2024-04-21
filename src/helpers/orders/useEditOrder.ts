@@ -215,7 +215,8 @@ export const useEditOrder = ({ orderId }: UseEditOrderProps) => {
 
       setFiles([]);
 
-      orderInput.numberOfPages = parseInt(numberOfPages + "");
+      orderInput.numberOfPages = parseFloat(numberOfPages + "");
+      orderInput.wordsPerPage = parseInt(wordsPerPage + "");
 
       await updateOrder({
         variables: {

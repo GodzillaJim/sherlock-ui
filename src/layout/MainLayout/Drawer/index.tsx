@@ -3,6 +3,7 @@ import {
   CancelOutlined,
   Check,
   Drafts,
+  MailOutline,
   NoteOutlined,
   PunchClock,
 } from "@mui/icons-material";
@@ -23,6 +24,13 @@ const adminItems: NavItemProps["item"][] = [
     type: "item",
     icon: <NoteOutlined />,
     url: "/admin",
+  },
+  {
+    id: 2,
+    title: "Emails",
+    type: "item",
+    icon: <MailOutline />,
+    url: "/admin/mail",
   },
 ];
 

@@ -392,6 +392,7 @@ export type Query = {
   getUserOrders?: Maybe<Array<Maybe<Order>>>;
   health?: Maybe<Scalars['String']['output']>;
   me?: Maybe<User>;
+  sendTestEmail?: Maybe<Response>;
 };
 
 
