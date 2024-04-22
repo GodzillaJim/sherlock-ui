@@ -1,0 +1,14 @@
+fragment MessageFragment on Message {
+    createdAt
+    sender {
+        ...UserFragment
+    }
+    message
+    attachments {
+        key
+        location
+        mimeType
+        name
+    }
+    id
+}

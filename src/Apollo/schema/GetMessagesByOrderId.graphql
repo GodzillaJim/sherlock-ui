@@ -1,0 +1,8 @@
+query GetMessagesByOrderId ($orderId: String!) {
+    getMessagesByOrderId(orderId: $orderId) {
+        ...MessageFragment,
+        replyTo {
+            ...MessageFragment
+        }
+    }
+}
