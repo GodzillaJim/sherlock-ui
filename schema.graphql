@@ -70,6 +70,7 @@ type Identity {
 }
 
 type Message {
+    attachments: [Attachment!]!
     createdAt: Date!
     id: ID!
     message: String!
@@ -159,6 +160,7 @@ type Price {
 
 type Query {
     getClientSecret(orderId: String!): String!
+    getMessagesByOrderId(orderId: String!): [Message!]!
     getMyOrders(filters: FilterOrders, pagination: Pagination!): OrderPage
     getMyResponses: [OrderResponse]
     getOrder(orderId: String!): Order
@@ -353,6 +355,7 @@ input RoleInput {
 }
 
 input SendOrderMessageInput {
+    attachments: [AttachmentInput!]!
     message: String!
     orderId: String!
     replyTo: String

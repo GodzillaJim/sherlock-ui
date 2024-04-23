@@ -13,7 +13,7 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import React, { useCallback, useState } from "react";
+import React, { ReactNode, useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { v4 } from "uuid";
 
@@ -31,8 +31,16 @@ type FileUploaderProps = {
   onChange: (files: File[]) => void;
   files: Array<File>;
   disabled?: boolean;
+  anchor?: (onClick: () => void) => ReactNode;
+  hideUploads?: boolean;
 };
-const FileUploader = ({ onChange, files, disabled }: FileUploaderProps) => {
+const FileUploader = ({
+  onChange,
+  files,
+  disabled,
+  anchor,
+  hideUploads,
+}: FileUploaderProps) => {
   const [showModal, setShowModal] = useState(false);
 
   const removeFile = (file: File) => {
@@ -46,18 +54,26 @@ const FileUploader = ({ onChange, files, disabled }: FileUploaderProps) => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
+  const handleToggleModal = () => setShowModal(!showModal);
+
   return (
     <Grid container direction={"column"}>
       <Grid item>
-        <Button
-          variant="text"
-          startIcon={<AttachmentSharp />}
-          onClick={() => setShowModal(!showModal)}
-          disabled={disabled}
-        >
-          <Typography variant="h6">Add Attachments</Typography>
-        </Button>
-        <Divider />
+        {!anchor ? (
+          <>
+            <Button
+              variant="text"
+              startIcon={<AttachmentSharp />}
+              onClick={handleToggleModal}
+              disabled={disabled}
+            >
+              <Typography variant="h6">Add Attachments</Typography>
+            </Button>
+            <Divider />
+          </>
+        ) : (
+          anchor(handleToggleModal)
+        )}
         <Modal
           aria-aria-labelledby="file-upload-modal-title"
           aria-aria-describedby="file-upload-modal-description"
@@ -124,28 +140,29 @@ const FileUploader = ({ onChange, files, disabled }: FileUploaderProps) => {
       </Grid>
       <Grid item>
         <List>
-          {files.map((file, index) => {
-            return (
-              <ListItem
-                key={`item-${v4()}-${file.name}-${index + 1}`}
-                secondaryAction={
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => removeFile(file)}
-                  >
-                    <Close />
-                  </IconButton>
-                }
-              >
-                <ListItemText>
-                  <Typography variant="caption">{`${index + 1}. ${
-                    file.name
-                  }`}</Typography>
-                </ListItemText>
-              </ListItem>
-            );
-          })}
+          {!hideUploads &&
+            files.map((file, index) => {
+              return (
+                <ListItem
+                  key={`item-${v4()}-${file.name}-${index + 1}`}
+                  secondaryAction={
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => removeFile(file)}
+                    >
+                      <Close />
+                    </IconButton>
+                  }
+                >
+                  <ListItemText>
+                    <Typography variant="caption">{`${index + 1}. ${
+                      file.name
+                    }`}</Typography>
+                  </ListItemText>
+                </ListItem>
+              );
+            })}
         </List>
       </Grid>
     </Grid>

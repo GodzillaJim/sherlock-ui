@@ -128,6 +128,7 @@ type LoginPayload = {
 
 type Message = {
   __typename?: 'Message';
+  attachments: Array<Attachment>;
   createdAt: Scalars['Date']['output'];
   id: Scalars['ID']['output'];
   message: Scalars['String']['output'];
@@ -383,6 +384,7 @@ type Price = {
 type Query = {
   __typename?: 'Query';
   getClientSecret: Scalars['String']['output'];
+  getMessagesByOrderId: Array<Message>;
   getMyOrders?: Maybe<OrderPage>;
   getMyResponses?: Maybe<Array<Maybe<OrderResponse>>>;
   getOrder?: Maybe<Order>;
@@ -397,6 +399,11 @@ type Query = {
 
 
 type QueryGetClientSecretArgs = {
+  orderId: Scalars['String']['input'];
+};
+
+
+type QueryGetMessagesByOrderIdArgs = {
   orderId: Scalars['String']['input'];
 };
 
@@ -466,6 +473,7 @@ type RoleType =
   | 'WRITER';
 
 type SendOrderMessageInput = {
+  attachments: Array<AttachmentInput>;
   message: Scalars['String']['input'];
   orderId: Scalars['String']['input'];
   replyTo?: InputMaybe<Scalars['String']['input']>;
