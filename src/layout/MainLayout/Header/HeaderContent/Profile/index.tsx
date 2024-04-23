@@ -23,9 +23,7 @@ import { useAuth } from "../../../../../Context/AuthManager";
 import { RoleType } from "../../../../../generated";
 import Image from "next/image";
 import {
-  AccountBoxOutlined,
   LogoutRounded,
-  SettingsApplications,
 } from "@mui/icons-material";
 
 type TabPanelProps = {
@@ -406,18 +404,18 @@ const Profile = () => {
                                           alignItems: "center",
                                           textTransform: "capitalize",
                                         }}
-                                        icon={
-                                          <AccountBoxOutlined
-                                            style={{
-                                              marginBottom: 0,
-                                              marginRight: "10px",
-                                            }}
-                                          />
-                                        }
-                                        label="Profile"
+                                        // icon={
+                                        //   <AccountBoxOutlined
+                                        //     style={{
+                                        //       marginBottom: 0,
+                                        //       marginRight: "10px",
+                                        //     }}
+                                        //   />
+                                        // }
+                                        label=""
                                         {...allyProps(0)}
                                       />
-                                      <Tab
+                                      {/* <Tab
                                         sx={{
                                           display: "flex",
                                           flexDirection: "row",
@@ -435,7 +433,7 @@ const Profile = () => {
                                         }
                                         label="Setting"
                                         {...allyProps(1)}
-                                      />
+                                      /> */}
                                     </Tabs>
                                   </Box>
                                   <TabPanel value={value} index={0}>

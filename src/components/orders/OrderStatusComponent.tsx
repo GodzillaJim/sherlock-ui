@@ -1,5 +1,12 @@
 import React from "react";
-import { Button, Grid, styled, Tooltip, Typography } from "@mui/material";
+import {
+  Button,
+  darken,
+  Grid,
+  styled,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { startCase } from "lodash";
 import { OrderStatus } from "../../../graphql/common";
 
@@ -50,6 +57,15 @@ const StyledButton = styled(Button)<{ status: OrderStatus }>`
   background-color: ${({ status }) => getStatusColor(status).background};
   color: ${({ theme, status }) =>
     theme.palette.getContrastText(getStatusColor(status).background)};
+
+  &:hover {
+    background-color: ${({ status }) =>
+      darken(getStatusColor(status).background, 0.5)};
+    color: ${({ theme, status }) =>
+      theme.palette.getContrastText(
+        darken(getStatusColor(status).background, 0.5)
+      )};
+  }
 `;
 const OrderStatusComponent = ({ status }: OrderStatusComponentProps) => {
   return (
@@ -60,7 +76,7 @@ const OrderStatusComponent = ({ status }: OrderStatusComponentProps) => {
       <Grid item alignItems={"center"}>
         <Tooltip title={getStatusColor(status).tooltipMessage}>
           <StyledButton status={status}>
-            {startCase(status.replace("_", "").toLowerCase())}
+            {startCase(status.replace("_", " ").toLowerCase())}
           </StyledButton>
         </Tooltip>
       </Grid>

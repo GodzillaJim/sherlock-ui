@@ -85,12 +85,12 @@ const ResponseDetails = () => {
     publishResponse,
     { loading: publishingResponse, error: publishingResponseError },
   ] = usePublishResponseMutation({
-    refetchQueries: [GetOrderResponseDocument],
+    refetchQueries: [GetOrderResponseDocument, GetOrderDocument],
   });
 
   const [unPublishResponse, { loading: unPublishingResponse }] =
     useUnPublishResponseMutation({
-      refetchQueries: [GetOrderResponseDocument],
+      refetchQueries: [GetOrderResponseDocument, GetOrderDocument],
     });
 
   const [deleteOrderResponse, { error: deletingResponseError }] =

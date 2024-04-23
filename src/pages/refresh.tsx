@@ -23,7 +23,7 @@ const Refresh = () => {
           router.push("/");
         }
       } else {
-        const url = next ? `/signin?next=${next}` : `/signin?next=/`;
+        const url = next ? `/auth/login?next=${next}` : `/auth/login?next=/`;
         router.push(url);
       }
     }

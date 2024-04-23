@@ -24,7 +24,7 @@ const Dashboard = ({ myOrders }: DashboardProps): JSX.Element => {
   }, [myOrders]);
 
   return (
-    <Grid container padding={3} spacing={2} direction={"column"}>
+    <Grid container padding={{ xs: 0, md: 3 }} pt={{ xs: 3 }} spacing={2} direction={"column"}>
       <Grid item width={"100%"} textAlign={"end"}>
         <NextLink href={"/app/create"}>
           <Button color="secondary" variant="contained" startIcon={<Add />}>

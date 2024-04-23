@@ -32,7 +32,7 @@ export type AddResponseFeedback = IResponse & {
 
 export type Attachment = {
   __typename?: 'Attachment';
-  key?: Maybe<Scalars['String']['output']>;
+  key: Scalars['String']['output'];
   location?: Maybe<Scalars['String']['output']>;
   mimeType?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
@@ -88,6 +88,7 @@ export type Filter = {
 export type FilterOrders = {
   createdAfter?: InputMaybe<Scalars['Date']['input']>;
   createdBefore?: InputMaybe<Scalars['Date']['input']>;
+  currentPage?: InputMaybe<Scalars['Int']['input']>;
   limit?: InputMaybe<Scalars['Float']['input']>;
   responseStatus?: InputMaybe<ResponseStatus>;
   status?: InputMaybe<Array<InputMaybe<OrderStatus>>>;
@@ -125,6 +126,16 @@ export type LoginPayload = {
   password?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type Message = {
+  __typename?: 'Message';
+  attachments: Array<Attachment>;
+  createdAt: Scalars['Date']['output'];
+  id: Scalars['ID']['output'];
+  message: Scalars['String']['output'];
+  replyTo?: Maybe<Message>;
+  sender: User;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   addOrderResponse?: Maybe<AddResponseFeedback>;
@@ -132,6 +143,7 @@ export type Mutation = {
   createOrder?: Maybe<Response>;
   createOrderFromTitle?: Maybe<CreateOrderResponse>;
   deleteAttachment?: Maybe<Response>;
+  deleteOrder?: Maybe<Response>;
   deleteOrderResponse?: Maybe<Response>;
   deleteOrderResponseAttachment?: Maybe<Response>;
   generatePaymentIntent?: Maybe<ClientSecretResponse>;
@@ -140,6 +152,7 @@ export type Mutation = {
   publishResponse?: Maybe<Response>;
   register?: Maybe<AuthResponse>;
   saveOrderDescription?: Maybe<Response>;
+  sendOrderMessage?: Maybe<Response>;
   unPublishOrder?: Maybe<Response>;
   unPublishResponse?: Maybe<Response>;
   updateHealth?: Maybe<Scalars['String']['output']>;
@@ -175,6 +188,11 @@ export type MutationCreateOrderFromTitleArgs = {
 export type MutationDeleteAttachmentArgs = {
   attachmentKey?: InputMaybe<Scalars['String']['input']>;
   orderId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationDeleteOrderArgs = {
+  orderId: Scalars['String']['input'];
 };
 
 
@@ -220,6 +238,11 @@ export type MutationSaveOrderDescriptionArgs = {
 };
 
 
+export type MutationSendOrderMessageArgs = {
+  input: SendOrderMessageInput;
+};
+
+
 export type MutationUnPublishOrderArgs = {
   orderId: Scalars['String']['input'];
 };
@@ -260,11 +283,12 @@ export type MutationUpdateUserArgs = {
 export type Order = {
   __typename?: 'Order';
   academicLevel?: Maybe<Scalars['String']['output']>;
-  attachments: Array<Maybe<Attachment>>;
+  attachments: Array<Attachment>;
   createdAt?: Maybe<Scalars['Date']['output']>;
   deadline: Scalars['Date']['output'];
   description?: Maybe<Scalars['String']['output']>;
   discipline?: Maybe<Scalars['String']['output']>;
+  messages?: Maybe<Array<Message>>;
   numberOfPages: Scalars['Float']['output'];
   orderId: Scalars['String']['output'];
   price?: Maybe<Price>;
@@ -284,6 +308,7 @@ export type OrderInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   discipline: Scalars['String']['input'];
   numberOfPages: Scalars['Float']['input'];
+  status?: InputMaybe<OrderStatus>;
   title: Scalars['String']['input'];
   type: Type;
   wordsPerPage?: InputMaybe<Scalars['Float']['input']>;
@@ -359,6 +384,7 @@ export type Price = {
 export type Query = {
   __typename?: 'Query';
   getClientSecret: Scalars['String']['output'];
+  getMessagesByOrderId: Array<Message>;
   getMyOrders?: Maybe<OrderPage>;
   getMyResponses?: Maybe<Array<Maybe<OrderResponse>>>;
   getOrder?: Maybe<Order>;
@@ -368,10 +394,16 @@ export type Query = {
   getUserOrders?: Maybe<Array<Maybe<Order>>>;
   health?: Maybe<Scalars['String']['output']>;
   me?: Maybe<User>;
+  sendTestEmail?: Maybe<Response>;
 };
 
 
 export type QueryGetClientSecretArgs = {
+  orderId: Scalars['String']['input'];
+};
+
+
+export type QueryGetMessagesByOrderIdArgs = {
   orderId: Scalars['String']['input'];
 };
 
@@ -439,6 +471,13 @@ export type RoleType =
   | 'CUSTOMER'
   | 'EDITOR'
   | 'WRITER';
+
+export type SendOrderMessageInput = {
+  attachments: Array<AttachmentInput>;
+  message: Scalars['String']['input'];
+  orderId: Scalars['String']['input'];
+  replyTo?: InputMaybe<Scalars['String']['input']>;
+};
 
 export type Timezone = {
   __typename?: 'Timezone';

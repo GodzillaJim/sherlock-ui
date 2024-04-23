@@ -1,0 +1,7 @@
+mutation SendOrderMessage ($input: SendOrderMessageInput!) {
+    sendOrderMessage(input: $input) {
+        message
+        success
+        status
+    }
+}

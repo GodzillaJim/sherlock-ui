@@ -2,7 +2,7 @@ import {
   Box,
   Button,
   Card,
-  CardActionArea,
+  CardActions,
   CardContent,
   Divider,
   Grid,
@@ -18,8 +18,9 @@ import React, { useRef } from "react";
 import { useRouter } from "next/router";
 import {
   AlarmOn,
+  Delete,
   EditOutlined,
-  InfoOutlined,
+  Feed,
   PagesOutlined,
   QuestionAnswerOutlined,
   Title,
@@ -28,8 +29,13 @@ import dayjs from "dayjs";
 import StringUtility, {
   getStatusColor,
   GetStatusColorProps,
+  orderIsDeletable,
+  orderIsEditable,
 } from "../../helpers/utils";
 import { Order } from "../../../graphql/common";
+import { useDeleteOrderMutation } from "../../Apollo/schema/DeleteOrder.generated";
+import { toast } from "react-toastify";
+import { GetMyOrdersDocument } from "../../Apollo/schema/GetMyOrders.generated";
 
 type SummaryCardType = {
   order: Order;
@@ -53,6 +59,12 @@ const CustomBadge = styled("div")<{ status: GetStatusColorProps }>(
 const SummaryCard = ({ order }: SummaryCardType) => {
   const router = useRouter();
 
+  const [deleteOrder, { loading: deleting }] = useDeleteOrderMutation({
+    onCompleted: () => toast.success("Item deleted successfully!"),
+    onError: (error) => toast.error(error.message),
+    refetchQueries: [GetMyOrdersDocument],
+  });
+
   const cardRef = useRef<HTMLDivElement>(null);
   const handleClick = (type: "view" | "edit") => {
     router.push(`/app/order/${order.orderId}/${type}`).then();
@@ -61,6 +73,19 @@ const SummaryCard = ({ order }: SummaryCardType) => {
   const status = getStatusColor(order.status);
 
   const isCanceled = order.status === "CANCELED";
+
+  const handleDeleteOrder = async () => {
+    if (!orderIsDeletable(order)) {
+      toast.error(`You can't delete this one right now.`);
+      return;
+    }
+
+    await deleteOrder({ variables: { orderId: order.orderId } });
+  };
+
+  const numberOfResponses = order.responses.filter(
+    (response) => response.published
+  ).length;
 
   return (
     <Card ref={cardRef}>
@@ -140,48 +165,60 @@ const SummaryCard = ({ order }: SummaryCardType) => {
         </Grid>
       </CardContent>
       <Divider />
-      <CardActionArea component={"div"}>
-        <Grid item>
-          <Box
-            sx={{
-              display: "flex",
-              direction: "row",
-              justifyContent: "space-between",
-              m: 0.5,
-              p: 0.5,
-            }}
-          >
-            <div>
-              {order.responses.length > 0 ? (
-                <Typography lineHeight={2}>
-                  Total responses: {order.responses?.length}
-                </Typography>
-              ) : (
-                ""
-              )}
-            </div>
-            <div>
+      <CardActions>
+        <Box
+          sx={{
+            display: "flex",
+            direction: "row",
+            justifyContent: "space-between",
+            m: 0.5,
+            p: 0.5,
+            width: "100%",
+          }}
+        >
+          <div>
+            {numberOfResponses > 0 ? (
+              <Typography lineHeight={2}>
+                Total responses: {numberOfResponses}
+              </Typography>
+            ) : (
+              ""
+            )}
+          </div>
+          <div>
+            <Box sx={{ display: "flex", gap: 2 }}>
               <Button
-                startIcon={<InfoOutlined />}
+                startIcon={<Feed />}
                 onClick={() => handleClick("view")}
-                sx={{ mr: 2 }}
+                disabled={deleting}
               >
                 Details
               </Button>
-              {!isCanceled ? (
+              {!isCanceled && orderIsEditable(order) ? (
                 <Button
                   startIcon={<EditOutlined />}
                   onClick={() => handleClick("edit")}
+                  disabled={deleting}
                 >
                   Edit
                 </Button>
               ) : (
                 ""
               )}
-            </div>
-          </Box>
-        </Grid>
-      </CardActionArea>
+              {order.status === "DRAFT" && (
+                <Button
+                  color={"error"}
+                  startIcon={<Delete />}
+                  onClick={handleDeleteOrder}
+                  disabled={deleting}
+                >
+                  Delete
+                </Button>
+              )}
+            </Box>
+          </div>
+        </Box>
+      </CardActions>
     </Card>
   );
 };

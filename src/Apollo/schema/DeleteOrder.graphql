@@ -1,0 +1,7 @@
+mutation deleteOrder ($orderId: String!) {
+    deleteOrder(orderId: $orderId) {
+        status
+        success
+        message
+    }
+}

@@ -8,7 +8,7 @@ import { setFilters } from "../../store/filters";
 const usePaginateOrders = () => {
   const router = useRouter();
   const query = router.query;
-  const [page, setPageNumber] = useState(1);
+  const [page] = useState(1);
 
   const filters = useSelector((state: RootState) => state.filters);
   const dispatch = useDispatch();
@@ -31,7 +31,7 @@ const usePaginateOrders = () => {
 
   const pathFilters = useMemo(() => {
     return Object.fromEntries(
-      Object.entries(filters).filter(([key, value]) => Boolean(value))
+      Object.entries(filters).filter((keyValue) => Boolean(keyValue[1]))
     );
   }, [filters]);
 
@@ -42,7 +42,7 @@ const usePaginateOrders = () => {
   }, [pathFilters]);
 
   const processFilters = (currentFilters: typeof filters) => {
-    const { currentPage, ...rest } = currentFilters;
+    const { ...rest } = currentFilters;
 
     return rest;
   };

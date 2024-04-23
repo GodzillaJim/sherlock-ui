@@ -18,6 +18,7 @@ import {
 import Cookies from "js-cookie";
 import { useCurrentUserLazyQuery } from "../../Apollo/schema/CurrentUserQuery.generated";
 import { client } from "../../Apollo";
+import { useSearchParams } from "next/navigation";
 
 type AuthContextType = {
   user?: User;
@@ -27,7 +28,7 @@ type AuthContextType = {
   signOut?: () => void;
   setAuthDetails?: (response: AuthResponse) => void;
   refresh: () => void;
-  error?: string
+  error?: string;
 };
 
 export const AuthContext = createContext<AuthContextType>({
@@ -51,6 +52,7 @@ const AuthManager = ({ children }: AuthManagerType) => {
 
   const router = useRouter();
   const { next } = router.query;
+  const params = useSearchParams();
 
   const handleRouteChange = async (url: string) => {
     setLoading(true);
@@ -77,20 +79,22 @@ const AuthManager = ({ children }: AuthManagerType) => {
   };
 
   useEffect(() => {
-    if (next && user) {
-      handleRouteChange(next as string);
+    if (user) {
+      if (next) {
+        handleRouteChange(next as string);
+      }
     }
-  }, [user]);
+  }, [user, next]);
 
   useEffect(() => {
     // Firebase updates cookie every hour. This ensures the token is updated
     const unsubscribe = onIdTokenChanged(auth, handleUser);
 
     return () => unsubscribe();
-  }, []);
+  }, [auth.currentUser]);
 
   const signInWithGoogle = () => {
-    setError("")
+    setError("");
     setLoading(true);
     const provider = new GoogleAuthProvider();
 
@@ -135,7 +139,7 @@ const AuthManager = ({ children }: AuthManagerType) => {
         signInWithGoogle,
         signOut,
         refresh,
-        error
+        error,
       }}
     >
       {children}

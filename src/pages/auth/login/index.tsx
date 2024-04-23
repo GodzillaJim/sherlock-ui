@@ -3,14 +3,19 @@ import {
   Button,
   Card,
   CardContent,
+  CardHeader,
   CircularProgress,
   Container,
+  Divider,
   Grid,
-  Typography,
+  ListItemIcon,
   styled,
+  Typography,
 } from "@mui/material";
 import { Google } from "@mui/icons-material";
 import { useAuth } from "../../../Context/AuthManager";
+import NextLink from "next/link";
+import LogoOnly from "../../../components/common/logos/LogoOnly";
 
 const StyledGrid = styled(Grid)`
   width: 100%;
@@ -24,17 +29,21 @@ const Login = () => {
       <StyledGrid container justifyContent={"center"} alignContent={"center"}>
         <Grid item xs={12} md={4}>
           <Card>
+            <CardHeader
+              avatar={
+                <ListItemIcon>
+                  <LogoOnly />
+                </ListItemIcon>
+              }
+              title={
+                <Typography color={"inherit"} variant={"h6"}>
+                  Welcome back
+                </Typography>
+              }
+            />
+            <Divider sx={{ mb: 2 }} />
             <CardContent>
               <Grid container spacing={3} direction={"column"}>
-                <Grid item>
-                  <Typography
-                    color={"inherit"}
-                    textAlign={"center"}
-                    variant={"h6"}
-                  >
-                    Welcome back
-                  </Typography>
-                </Grid>
                 <Grid item>
                   <Button
                     variant={"contained"}
@@ -59,6 +68,21 @@ const Login = () => {
                 ) : (
                   ""
                 )}
+                <Divider sx={{ mt: 3.5 }} />
+                <Grid item>
+                  <Typography
+                    variant={"caption"}
+                  >{`Don't have an account?`}</Typography>
+                  <Typography variant={"caption"} sx={{ mx: 0.8 }}>
+                    <NextLink
+                      href={`/auth/signup?next=/app`}
+                      passHref
+                      legacyBehavior
+                    >
+                      Register here.
+                    </NextLink>
+                  </Typography>
+                </Grid>
               </Grid>
             </CardContent>
           </Card>

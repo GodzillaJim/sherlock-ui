@@ -2,3 +2,4 @@ src/generated/*
 src/Apollo/schema/*
 @types
 graphql
+public/index.html

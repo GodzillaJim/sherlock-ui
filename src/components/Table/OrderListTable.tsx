@@ -75,7 +75,7 @@ const OrderListTable = ({ orderPage }: OrderListTableProps) => {
   ];
 
   const orders = useMemo(() => {
-    let temp: any[] = [];
+    let temp: Order[] = [];
 
     if (orderPage) {
       temp = orderPage.docs?.map((doc: Order) => {
@@ -88,7 +88,7 @@ const OrderListTable = ({ orderPage }: OrderListTableProps) => {
           deadline: dayjs(doc.deadline).format("DD, MMM YYYY"),
           id: doc.orderId,
         };
-      });
+      }) as Order[];
     }
 
     return temp;

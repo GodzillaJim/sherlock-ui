@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 import { Box, Button, Grid } from "@mui/material";
 import NextLink from "next/link";
 import HomepageLayout from "../layout/HomepageLayout";
+import LogoAndText from "../components/common/logos/LogoAndText";
 
 const HomePage = (): JSX.Element => {
   return (
@@ -14,15 +15,17 @@ const HomePage = (): JSX.Element => {
       gap={3}
     >
       <Grid item>
-        Hello world
-        {/* <Box display={"flex"} gap={2}>
+        <LogoAndText />
+      </Grid>
+      <Grid item>
+        <Box display={"flex"} gap={2}>
           <NextLink href={"/auth/login?next=/app"}>
             <Button variant={"contained"}>Log in</Button>
           </NextLink>
           <NextLink href={"/auth/signup"}>
             <Button variant={"contained"}>Sign up</Button>
           </NextLink>
-        </Box> */}
+        </Box> 
       </Grid>
     </Grid>
   );

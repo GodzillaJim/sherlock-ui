@@ -1,6 +1,7 @@
 import Cookies from "js-cookie";
 import { FirebaseOptions, getApps, initializeApp } from "@firebase/app";
 import { getAuth } from "@firebase/auth";
+import { RoleType } from "../../generated";
 
 export const config: FirebaseOptions = {
   appId: process.env.NEXT_PUBLIC_APP_ID,
@@ -47,5 +48,19 @@ export const getIdToken = async () => {
   } catch (e) {
     console.log(e);
     return "";
+  }
+};
+
+export const getAccountTypeText = (user: User) => {
+  if (user && user.roles) {
+    const roles = user.roles;
+    const isAdmin = roles.find((role) => role?.name === RoleType.Admin);
+    const isEditor = roles.find((role) => role?.name === RoleType.Editor);
+    const isWriter = roles.find((role) => role?.name === RoleType.Writer);
+
+    if (isAdmin) return "Admin";
+    if (isEditor) return "Editor";
+    if (isWriter) return "Writer";
+    return "Customer";
   }
 };

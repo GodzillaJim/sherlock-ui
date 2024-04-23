@@ -14,7 +14,6 @@ import {
   Stepper,
   TextField,
   Typography,
-  styled,
 } from "@mui/material";
 import { useFormik } from "formik";
 import {
@@ -31,11 +30,7 @@ import {
 import { withRequireAuth } from "../../../Context/AuthManager/withRequireAuth";
 import { GetMyOrdersDocument } from "../../../Apollo/schema/GetMyOrders.generated";
 import { ArrowForwardIosOutlined } from "@mui/icons-material";
-
-const CreateButton = styled(Button)`
-  height: 56px;
-  width: 145px;
-`;
+import { CurrentUserDocument } from "../../../Apollo/schema/CurrentUserQuery.generated";
 
 const CreateOrder = () => {
   const [createOrderFromTitle, { loading, data, error }] =
@@ -43,7 +38,7 @@ const CreateOrder = () => {
       onError: (error1) => {
         console.log("Error: ", { error1 });
       },
-      refetchQueries: [GetMyOrdersDocument],
+      refetchQueries: [GetMyOrdersDocument, CurrentUserDocument],
     });
   const router = useRouter();
 
@@ -107,7 +102,7 @@ const CreateOrder = () => {
         </Stepper>
       </Grid>
       <Grid item xs={12} sm={12} md={7} mt={5}>
-        <Card sx={{ width: 600 }}>
+        <Card sx={{ minWidth: { xs: 400, md: 600 } }}>
           <CardContent>
             <Grid container direction={"column"} spacing={3}>
               <Grid item>
@@ -117,7 +112,7 @@ const CreateOrder = () => {
               <Grid item>
                 <form noValidate onSubmit={handleSubmit}>
                   <FormGroup>
-                    <Grid container gap={2} flexDirection={'column'}>
+                    <Grid container gap={2} flexDirection={"column"}>
                       <Grid item xs={12}>
                         <TextField
                           multiline
@@ -133,7 +128,13 @@ const CreateOrder = () => {
                           placeholder="Example: The bold and the beautiful"
                         />
                       </Grid>
-                      <Grid item xs={12} display={"flex"} justifyContent={"end"} width={'100%'}>
+                      <Grid
+                        item
+                        xs={12}
+                        display={"flex"}
+                        justifyContent={"end"}
+                        width={"100%"}
+                      >
                         <Button
                           disabled={values.title === "" || !isValid || loading}
                           type={"submit"}
@@ -144,8 +145,8 @@ const CreateOrder = () => {
                                 size={15}
                                 sx={{
                                   color: (theme) => theme.palette.primary.main,
-                                    marginLeft: 0.5,
-                                    marginBottom: 0.2
+                                  marginLeft: 0.5,
+                                  marginBottom: 0.2,
                                 }}
                               />
                             ) : (

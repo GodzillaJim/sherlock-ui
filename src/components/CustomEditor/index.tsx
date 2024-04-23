@@ -69,7 +69,14 @@ const CustomEditor = ({
   return (
     <div>
       {
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 3,
+            maxWidth: "lg",
+          }}
+        >
           <InputLabel required={required} variant="filled">
             <Tooltip title="This field is required">
               <Typography

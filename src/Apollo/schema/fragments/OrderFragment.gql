@@ -60,6 +60,7 @@ fragment OrderFragment on Order {
                 sign_in_provider
             }
         }
+        published
     }
     createdAt
     published
@@ -72,4 +73,16 @@ fragment OrderFragment on Order {
     status
     academicLevel
     discipline
+    messages {
+        id
+        message
+        createdAt
+        replyTo {
+            message
+            createdAt
+        }
+        sender {
+            ...UserFragment
+        }
+    }
 }

@@ -107,6 +107,14 @@ const ColorlibStepIconRoot = styled("div")<{
   zIndex: 1,
   color: "#fff",
   width: 50,
+  [theme.breakpoints.down("sm")]: {
+    width: 40,
+    height: 40,
+
+    "& .step-icon": {
+      fontSize: 16,
+    },
+  },
   height: 50,
   display: "flex",
   borderRadius: "50%",
@@ -127,11 +135,11 @@ export const ColorlibStepIcon = (props: StepIconProps) => {
   const { active, completed, className } = props;
 
   const icons: { [index: string]: React.ReactElement } = {
-    1: <TitleRounded />,
-    2: <PlaylistAdd />,
-    3: <PaymentOutlined />,
-    4: <ModelTraining />,
-    5: <Check />,
+    1: <TitleRounded className="step-icon" />,
+    2: <PlaylistAdd className="step-icon" />,
+    3: <PaymentOutlined className="step-icon" />,
+    4: <ModelTraining className="step-icon" />,
+    5: <Check className="step-icon" />,
   };
 
   return (

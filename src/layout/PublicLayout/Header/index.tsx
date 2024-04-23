@@ -38,7 +38,7 @@ const TopSearchBar = () => {
 
   const pathFilters = useMemo(() => {
     return Object.fromEntries(
-      Object.entries(filters).filter(([key, value]) => Boolean(value))
+      Object.entries(filters).filter((keyValue) => Boolean(keyValue[1]))
     );
   }, [filters]);
 

@@ -40,9 +40,10 @@ const useUploadAttachments = () => {
       }));
 
       setAttachmentList(results);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any /*tslint:disable-line:no-explicit-any*/) {
       setError(e.message);
-      console.log("Attachment upload error: ", e);
+      console.log("We could not upload all the attachments ", e);
       results = null;
     }
     setLoading(false);

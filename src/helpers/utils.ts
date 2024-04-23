@@ -8,7 +8,7 @@ import {
   upperFirst,
 } from "lodash";
 import { DropdownOption } from "../components/Dropdown";
-import { OrderStatus } from "../../graphql/common";
+import { Order, OrderStatus } from "../../graphql/common";
 
 export default class StringUtility {
   static toCamelCase(str: string) {
@@ -58,6 +58,7 @@ export const orderStatus = {
   active: "ACTIVE",
   completed: "COMPLETED",
   canceled: "CANCELED",
+  inProgress: "IN_PROGRESS",
 };
 
 export const essayCategories = [
@@ -201,3 +202,9 @@ export const getStatusColor = (status: OrderStatus): GetStatusColorProps => {
       return { background: "#e0e0e0", color: "#757575", tooltipMessage: "" };
   }
 };
+
+export const orderIsDeletable = (order: Order) =>
+  ["DRAFT"].includes(order.status);
+
+export const orderIsEditable = (order: Order) =>
+  ["DRAFT", "ACTIVE"].includes(order.status);
