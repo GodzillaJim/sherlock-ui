@@ -18,7 +18,6 @@ import {
 import Cookies from "js-cookie";
 import { useCurrentUserLazyQuery } from "../../Apollo/schema/CurrentUserQuery.generated";
 import { client } from "../../Apollo";
-import { useSearchParams } from "next/navigation";
 
 type AuthContextType = {
   user?: User;
@@ -52,7 +51,6 @@ const AuthManager = ({ children }: AuthManagerType) => {
 
   const router = useRouter();
   const { next } = router.query;
-  const params = useSearchParams();
 
   const handleRouteChange = async (url: string) => {
     setLoading(true);
