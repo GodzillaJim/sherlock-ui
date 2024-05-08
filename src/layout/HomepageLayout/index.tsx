@@ -1,54 +1,56 @@
-import { Grid, styled, Typography } from "@mui/material";
-import React, { ReactNode } from "react";
+import { Grid, styled } from "@mui/material";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import CustomNavbar from "./CustomNavbar";
-import { Box } from "@mui/system";
+import Footer from "./Footer";
 
 type HomepageLayoutProps = {
   children: ReactNode;
 };
 
-const Wrapper = styled(Grid)`
-  background: rgb(2, 0, 10);
-  background: linear-gradient(
-    90deg,
-    rgba(2, 0, 10, 1) 0%,
-    rgba(63, 81, 181, 1) 93%
-  );
-`;
+const Wrapper = styled(Grid)``;
 
-const SectionTitle = styled(Typography)(
-  ({ theme }) => `
-font-size: 18px;
-padding: ${theme.spacing(0.7)} ${theme.spacing(3)};
-color: ${theme.palette.getContrastText(theme.palette.primary.main)};
-font-weight: 500;
-font-family: "Inter" sans serif;
-background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) -17.5%, rgba(255, 255, 255, 0) 118.75%);
-width: fit-content;
-border-radius: 50px;
-letter-spacing: 0.9px;
-`
-);
 
 const HomepageLayout = ({ children }: HomepageLayoutProps) => {
+  const [navBarHeight, setNavBarHeight] = useState(60);
+  const navBarRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (navBarRef.current) {
+      setNavBarHeight(navBarRef.current?.clientHeight);
+    }
+  }, [navBarRef]);
+
   return (
-    <Wrapper container flexDirection={"column"}>
-      <Grid item>
-        <Grid container maxWidth={"md"} flexDirection={"column"} mx="auto">
-          <Grid item>
-            <CustomNavbar />
+    <Wrapper
+      container
+      flexDirection={"column"}
+      width={"100%"}
+      className={"layout-root"}
+    >
+      <Grid item width={"100%"}>
+        <Grid
+          container
+          maxWidth={"xl"}
+          flexDirection={"column"}
+          mx="auto"
+          width={"100%"}
+          mb={8}
+        >
+          <Grid item height={navBarHeight} width={"100%"}>
+            <CustomNavbar ref={navBarRef} />
           </Grid>
-          <Grid item>
-            <Box display="flex" flexDirection={"column"} mt={24} alignItems={'center'}>
-              <div>
-                <SectionTitle>
-                  You ultimate content writing partner
-                </SectionTitle>
-              </div>
-            </Box>
+          <Grid
+            item
+            width={"100%"}
+            sx={{ minHeight: "80vh" }}
+            className={"layout-content-root"}
+          >
+            {children}
           </Grid>
-          {children}
         </Grid>
+      </Grid>
+      <Grid item>
+        <Footer />
       </Grid>
     </Wrapper>
   );
