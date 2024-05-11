@@ -7,18 +7,51 @@ import {
   List,
   Typography,
   useTheme,
+  styled,
 } from "@mui/material";
 import { ChevronRight } from "@mui/icons-material";
 import Transitions from "../../../../../components/Transitions";
 import { v4 } from "uuid";
 import { useRouter } from "next/router";
+import { useMainContext } from "../../../../../Context/MainContext";
 
 type NavGroupProps = {
   item: NavItemProps["item"];
 };
+
+const CustomGrid = styled(Grid)<{ active?: boolean }>(
+  ({ theme, active }) => `
+  & .MuiIcon-root {
+    color: ${active ? theme.palette.primary.main : theme.palette.grey[500]};
+  }
+
+  & .MuiTypography-root {
+    color: ${active ? theme.palette.primary.main : theme.palette.grey[500]};
+  }
+
+  &:hover {
+    & .MuiIcon-root {
+      color: ${theme.palette.getContrastText(theme.palette.primary.light)};
+    }
+    
+    & .MuiTypography-root {
+      color:  ${theme.palette.getContrastText(theme.palette.primary.light)};
+    }
+
+    & .MuiSvgIcon-root {
+      ${theme.palette.getContrastText(theme.palette.primary.light)};
+    }
+  }
+  transition: all 0.5s;
+`
+);
+
 const NavGroup = ({ item }: NavGroupProps) => {
+  console.log("Item: ", item);
   const [expand, setExpand] = React.useState<boolean>(false);
+  const mainContext = useMainContext();
   const theme = useTheme();
+
   const navCollapse = item.children?.map((menuItem) => {
     switch (menuItem.type) {
       case "item":
@@ -36,6 +69,7 @@ const NavGroup = ({ item }: NavGroupProps) => {
 
   const handleClick = () => {
     if (item.type === "item" && item.url) {
+      mainContext?.layout.setActiveItems([item.id]);
       router.push(item.url);
       return;
     }
@@ -43,8 +77,14 @@ const NavGroup = ({ item }: NavGroupProps) => {
     setExpand(!expand);
   };
 
+  const isSelected = React.useMemo(() => {
+    if (!mainContext) return false;
+    return Boolean(mainContext.layout.activeItems.find((id) => id === item.id));
+  }, [mainContext]);
+
   return (
     <List
+      className="nav-group-root"
       subheader={
         <Grid
           component={ButtonBase}
@@ -63,16 +103,15 @@ const NavGroup = ({ item }: NavGroupProps) => {
           }}
         >
           <Grid item key={`nav-group-${v4()}`}>
-            <Grid
+            <CustomGrid
               container
               direction="row"
               justifyContent={"flex-start"}
               gap={2}
               alignItems={"center"}
+              active={isSelected}
             >
-              {item.icon && (
-                <Icon sx={{ color: theme.palette.grey[500] }}>{item.icon}</Icon>
-              )}
+              {item.icon && <Icon>{item.icon}</Icon>}
               <Grid item>
                 <Typography
                   lineHeight={2}
@@ -87,7 +126,7 @@ const NavGroup = ({ item }: NavGroupProps) => {
                   {item.title}
                 </Typography>
               </Grid>
-            </Grid>
+            </CustomGrid>
           </Grid>
           {item.type !== "item" && (
             <Grid item key={`nav-group-${v4()}`}>

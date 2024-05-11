@@ -13,7 +13,6 @@ import { useAuth } from "../../../Context/AuthManager";
 import { EditOutlined, GoogleOutlined } from "@ant-design/icons";
 import NextLink from "next/link";
 
-
 const Register = (): JSX.Element => {
   const { signInWithGoogle, loading, error } = useAuth();
 
@@ -25,6 +24,7 @@ const Register = (): JSX.Element => {
       maxWidth={"lg"}
       mx={"auto"}
       width={"100%"}
+      alignItems={"center"}
     >
       <Grid item xs={12} sm={12} sx={{ pt: 4 }} width={"100%"}>
         <Grid
@@ -32,7 +32,6 @@ const Register = (): JSX.Element => {
           flexDirection={"column"}
           justifyContent={"center"}
           alignItems={"center"}
-          height={"80%"}
           width={"100%"}
           px={2}
         >

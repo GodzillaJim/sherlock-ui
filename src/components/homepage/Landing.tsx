@@ -12,6 +12,7 @@ import React from "react";
 import { Typewriter } from "react-simple-typewriter";
 import Pencil from "../../assets/images/pencil.svg";
 import { lighten } from "@mui/system";
+import NextLink from "next/link";
 
 const Wrapper = styled(Grid)`
   align-items: baseline;
@@ -20,7 +21,6 @@ const Wrapper = styled(Grid)`
   margin-top: ${({ theme }) => theme.spacing(5)};
   min-height: 75vh;
 `;
-
 
 const StyledPencil = styled(Pencil)(
   ({ theme }) => `
@@ -143,9 +143,11 @@ const Landing = () => {
                       to your needs: fostering a stronger brand, converting
                       visitors and more...
                     </Subtitle>
-                    <ActionButton variant={"contained"}>
-                      Order yours now.
-                    </ActionButton>
+                    <NextLink href={"/auth/signup?next=/app"}>
+                      <ActionButton variant={"contained"}>
+                        Order yours now.
+                      </ActionButton>
+                    </NextLink>
                   </Grid>
                 </Grid>
               </Grid>

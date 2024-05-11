@@ -242,7 +242,7 @@ const ResponseDetails = () => {
 
   return (
     <form noValidate onSubmit={handleSubmit}>
-      <Grid container flexDirection={"column"} gap={2}>
+      <Grid container flexDirection={"column"} gap={2} paddingY={2} px={{ md: 3 }}>
         {errorMessage && (
           <Grid item>
             <Alert variant={"outlined"} color={"error"}>

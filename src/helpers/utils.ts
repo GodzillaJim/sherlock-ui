@@ -9,6 +9,7 @@ import {
 } from "lodash";
 import { DropdownOption } from "../components/Dropdown";
 import { Order, OrderStatus } from "../../graphql/common";
+import { Theme } from "@mui/material";
 
 export default class StringUtility {
   static toCamelCase(str: string) {
@@ -165,12 +166,15 @@ export type GetStatusColorProps = {
   tooltipMessage: string;
 };
 
-export const getStatusColor = (status: OrderStatus): GetStatusColorProps => {
+export const getStatusColor = (
+  status: OrderStatus,
+  theme: Theme
+): GetStatusColorProps => {
   switch (status) {
     case "DRAFT":
       return {
-        background: "#e0e0e0",
-        color: "#757575",
+        background: theme.palette.primary.light,
+        color: theme.palette.getContrastText(theme.palette.primary.light),
         tooltipMessage: "This order has not been published yet.",
       }; // Light grey
     case "ACTIVE":
@@ -182,24 +186,28 @@ export const getStatusColor = (status: OrderStatus): GetStatusColorProps => {
       }; // Bright green
     case "IN_PROGRESS":
       return {
-        background: "#2196f3",
-        color: "#ffffff",
+        background: theme.palette.info.main,
+        color: theme.palette.getContrastText(theme.palette.info.main),
         tooltipMessage: "Work on this order has begun.",
       }; // Sky blue
     case "COMPLETED":
       return {
-        background: "#ffd700",
-        color: "#ffffff",
+        background: theme.palette.success.main,
+        color: theme.palette.getContrastText(theme.palette.success.main),
         tooltipMessage: "A response for this order is ready for collection.",
       }; // Gold
     case "CANCELED":
       return {
-        background: "#d32f2f",
-        color: "#ffffff",
+        background: theme.palette.error.main,
+        color: theme.palette.getContrastText(theme.palette.error.main),
         tooltipMessage: "This order is not being worked on.",
       }; // Dark red
     default:
-      return { background: "#e0e0e0", color: "#757575", tooltipMessage: "" };
+      return {
+        background: theme.palette.common.black,
+        color: theme.palette.getContrastText(theme.palette.common.black),
+        tooltipMessage: "",
+      };
   }
 };
 

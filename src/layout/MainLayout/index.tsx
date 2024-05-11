@@ -1,5 +1,5 @@
 import { Box, BoxProps, styled, useMediaQuery, useTheme } from "@mui/material";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useMemo } from "react";
 import { MainContext } from "../../Context/MainContext";
 import Header from "./Header";
 import CustomDrawer from "./Drawer";
@@ -9,10 +9,12 @@ interface ContentProps extends BoxProps {
 }
 
 const Content = styled(Box)<ContentProps>`
+  flex-grow: 1;
   top: ${({ theme }) => theme.spacing(5)};
   display: block;
   position: relative;
-  transition: width 0.5s ease-out;
+  transition: margin-left ${({ theme  }) => theme.transitions.duration.standard}ms;
+  transition: width ${({ theme  }) => theme.transitions.duration.standard}ms;
 `;
 
 type MainLayoutProps = {
@@ -23,12 +25,13 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   const matchDownLG = useMediaQuery(theme.breakpoints.down("xl"));
   const mainContext = useContext(MainContext);
 
-  const [open, setOpen] = React.useState<boolean>(
-    Boolean(mainContext?.layout.drawerIsOpen)
-  );
+  const open = useMemo(() => mainContext?.layout.drawerIsOpen || false, [mainContext?.layout.drawerIsOpen])
+
+  const setOpen = (value: boolean) => {
+    mainContext?.layout.setDrawerIsOpen(value)
+  }
 
   const handleDrawerToggle = () => {
-    setOpen(!open);
     mainContext?.layout.setDrawerIsOpen(!open);
   };
 
@@ -37,20 +40,22 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     mainContext?.layout.setDrawerIsOpen(!matchDownLG);
   }, [matchDownLG]);
 
-  useEffect(() => {
-    if (open !== mainContext?.layout.drawerIsOpen) {
-      setOpen(Boolean(mainContext?.layout.drawerIsOpen));
-    }
-  }, [mainContext?.layout.drawerIsOpen]);
+
+  const drawerWidth = useMemo(() => open ? 250 : 0, [open])
 
   return (
-    <Box sx={{ display: "flex", width: "100%" }}>
+    <Box sx={{ display: "flex", width: "100%", flexDirection: "column" }}>
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       <CustomDrawer open={open} handleDrawerToggle={handleDrawerToggle} />
       <Content
         drawerIsOpen={Boolean(mainContext?.layout.drawerIsOpen)}
         component="main"
-        sx={{ width: "100%", p: { xs: 1, sm: 3 } }}
+        sx={{
+          p: { xs: 1, sm: 3 },
+          display: "flex",
+          flexDirection: "column",
+          marginLeft: { md: `${drawerWidth}px` },
+        }}
       >
         {children}
       </Content>

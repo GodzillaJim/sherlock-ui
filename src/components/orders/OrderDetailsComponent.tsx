@@ -167,7 +167,7 @@ const OrderDetailsComponent = ({
                 gap={{ xs: 1, md: 3 }}
                 flexDirection={"row"}
               >
-                {isOwner && !isClosed && order.status !== "IN_PROGRESS" && (
+                {isOwner && !isClosed && order.status !== "IN_PROGRESS" && order.status !== "COMPLETED" && (
                   <Grid item>
                     <Button
                       variant={"contained"}

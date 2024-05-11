@@ -7,6 +7,10 @@ const CustomAppBar = styled(AppBar)(({ theme }) => ({
   height: 56,
   borderBottom: "1px",
   borderColor: theme.palette.divider,
+
+  [theme.breakpoints.down('md')]: {
+    position: 'relative'
+  }
 }));
 
 type HeaderProps = {
@@ -16,9 +20,6 @@ type HeaderProps = {
 
 const Header = ({ open, handleDrawerToggle }: HeaderProps) => {
   const isServerSide = typeof window === undefined;
-
-  const iconBackColor = "grey.100";
-  const iconBackColorOpen = "grey.200";
 
   const mainHeader = (
     <Toolbar>
@@ -31,14 +32,13 @@ const Header = ({ open, handleDrawerToggle }: HeaderProps) => {
             edge="start"
             color="secondary"
             sx={{
-              color: "text.primary",
-              bgColor: open ? iconBackColorOpen : iconBackColor,
+              color: (theme) => theme.palette.getContrastText(theme.palette.primary.main),
               ml: { xs: 0, lg: -2 },
               minHeight: 40,
               minWidth: 40,
             }}
           >
-            {!open ? <MenuOpen /> : <Menu />}
+            {open ? <MenuOpen /> : <Menu />}
           </IconButton>
         </Grid>
         <Grid item>
