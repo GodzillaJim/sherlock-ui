@@ -1,13 +1,14 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   CancelOutlined,
   Check,
   Drafts,
+  HomeWorkOutlined,
   MailOutline,
   NoteOutlined,
   PunchClock,
 } from "@mui/icons-material";
-import { Divider, Drawer, List } from "@mui/material";
+import { Divider, Drawer, List, useMediaQuery, useTheme } from "@mui/material";
 import { useRouter } from "next/router";
 import NavGroup from "./MenuItems/NavGroup";
 import { NavItemProps } from "./MenuItems/NavItem";
@@ -37,34 +38,40 @@ const adminItems: NavItemProps["item"][] = [
 const navItems: NavItemProps["item"][] = [
   {
     id: 1,
+    title: "Home",
+    icon: <HomeWorkOutlined/>,
+    url: "/app",
+    type:"item"
+  },
+  {
+    id: 2,
     title: "Projects",
     type: "group",
     icon: <NoteOutlined />,
-    url: "/app",
     children: [
       {
-        id: 1.1,
+        id: 2.1,
         title: "Drafts",
         type: "item",
         icon: <Drafts />,
         url: "/app/drafts",
       },
       {
-        id: 1.2,
+        id: 2.2,
         title: "Active",
         type: "item",
         icon: <PunchClock />,
         url: "/app/published",
       },
       {
-        id: 2,
+        id: 2.3,
         title: "Completed",
         type: "item",
         url: "/app/complete",
         icon: <Check />,
       },
       {
-        id: 3,
+        id: 2.4,
         title: "Canceled",
         type: "item",
         url: "/app/canceled",
@@ -81,10 +88,8 @@ const CustomDrawer = ({ open, handleDrawerToggle }: CustomDrawerProps) => {
   const isAdmin = regex.test(router.pathname);
 
   const menu = isAdmin ? adminItems : navItems;
-
-  useEffect(() => {
-    console.log("Menu: ", { menu, regex, isAdmin, path: router.pathname });
-  });
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
     <Drawer
@@ -99,10 +104,12 @@ const CustomDrawer = ({ open, handleDrawerToggle }: CustomDrawerProps) => {
         },
         transition: "width 0.5s ease-out",
       }}
-      variant="persistent"
+      variant={isMobile ? "temporary": "persistent"}
       anchor="left"
       open={open}
       onClose={handleDrawerToggle}
+      ModalProps={{ keepMounted: true }}
+
     >
       <Divider />
       <List>
@@ -112,6 +119,6 @@ const CustomDrawer = ({ open, handleDrawerToggle }: CustomDrawerProps) => {
       </List>
     </Drawer>
   );
-};
+}
 
 export default CustomDrawer;

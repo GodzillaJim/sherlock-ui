@@ -13,6 +13,7 @@ import {
   styled,
   Tooltip,
   Typography,
+  useTheme,
 } from "@mui/material";
 import React, { useRef } from "react";
 import { useRouter } from "next/router";
@@ -70,7 +71,9 @@ const SummaryCard = ({ order }: SummaryCardType) => {
     router.push(`/app/order/${order.orderId}/${type}`).then();
   };
 
-  const status = getStatusColor(order.status);
+  const theme = useTheme();
+
+  const status = getStatusColor(order.status, theme);
 
   const isCanceled = order.status === "CANCELED";
 

@@ -3,7 +3,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useMemo } from "react";
 import { priceWithCurrency } from "../../helpers/orders/pricing";
 import dayjs from "dayjs";
-import { Button, Grid, Tooltip, Typography } from "@mui/material";
+import { Button, Grid, Tooltip, Typography, useTheme } from "@mui/material";
 import NextLink from "next/link";
 import { Visibility } from "@mui/icons-material";
 import { getStatusColor } from "../../helpers/utils";
@@ -14,6 +14,7 @@ type OrderListTableProps = {
   setPage: (page: number) => void;
 };
 const OrderListTable = ({ orderPage }: OrderListTableProps) => {
+  const theme = useTheme();
   const columns: GridColDef[] = [
     {
       field: "title",
@@ -33,7 +34,7 @@ const OrderListTable = ({ orderPage }: OrderListTableProps) => {
       field: "status",
       headerName: "Status",
       renderCell: (params) => {
-        const status = getStatusColor(params.value);
+        const status = getStatusColor(params.value, theme);
 
         return (
           <Tooltip title={status.tooltipMessage}>
@@ -95,7 +96,7 @@ const OrderListTable = ({ orderPage }: OrderListTableProps) => {
   }, [orderPage]);
   return (
     <Grid container>
-      <Grid item>
+      <Grid item width={'100%'}>
         <DataGrid columns={columns} rows={orders} showCellVerticalBorder />
       </Grid>
     </Grid>

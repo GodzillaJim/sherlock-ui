@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { MainContext } from "../../../../../Context/MainContext";
 import {
   Avatar,
@@ -45,12 +45,17 @@ const NavItem = ({ item, level }: NavItemProps) => {
     return Boolean(mainContext.layout.activeItems.find((id) => id === item.id));
   }, [mainContext]);
 
+  useEffect(() => {
+    console.log("IsSelected: ", { isSelected, mainContext, item });
+  });
+
   const drawerOpen = mainContext ? mainContext.layout.drawerIsOpen : false;
   const textColor = theme.palette.grey[600];
   const iconSelectedColor = "primary.main";
 
   return (
     <ListItemButton
+      className="nav-item-root"
       disabled={item.disabled}
       LinkComponent={NextLink}
       href={item.url || "#"}

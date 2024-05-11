@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 
 export type MainContext = {
   layout: {
@@ -13,7 +13,7 @@ type ContextProps = {
 };
 export const Context = ({ children }: ContextProps) => {
   const [openDrawer, setOpenDrawer] = React.useState(false);
-  const [activeItems, setActiveItems] = React.useState<number[]>([]);
+  const [activeItems, setActiveItems] = React.useState<number[]>([1]);
 
   return (
     <MainContext.Provider
@@ -33,3 +33,5 @@ export const Context = ({ children }: ContextProps) => {
   );
 };
 export const MainContext = React.createContext<MainContext | null>(null);
+
+export const useMainContext = () => useContext(MainContext)

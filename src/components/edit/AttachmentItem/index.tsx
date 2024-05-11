@@ -11,12 +11,13 @@ import React, { useState } from "react";
 import { Attachment } from "../../../generated";
 import Image from "next/image";
 import { getExtensionFromMimeType } from "../../../helpers/HelperFunctions";
-import { DeleteForever, FileDownload } from "@mui/icons-material";
+import { DeleteForever } from "@mui/icons-material";
 import { getIconFromExtension } from "../../common/FileIcons";
 import {
   AttachmentPageType,
   useDeleteAttachment,
 } from "../../../helpers/orders/useDeleteAttachment";
+import DownloadFile from "../../common/DowloadFile";
 
 type AttachmentItemProps = {
   attachment: Attachment;
@@ -92,21 +93,6 @@ const AttachmentItem = ({
     });
   };
 
-  const handleDownload = async () => {
-    try {
-      const file = attachment.name + "";
-      const url = `${
-        attachment.location + ""
-      }?response-content-disposition=attachment;filename=${file}`;
-      const link = document.createElement("a");
-      link.href = url;
-      link.click();
-      // eslint-disable-next-line
-    } catch (e: any) {
-      console.log(e.message, e);
-    }
-  };
-
   const getIcon = () => {
     if (attachment.mimeType && attachment.mimeType.startsWith("image")) {
       return (
@@ -146,13 +132,7 @@ const AttachmentItem = ({
           secondary={
             <Box>
               {attachment.location && (
-                <Button
-                  startIcon={<FileDownload />}
-                  onClick={handleDownload}
-                  disabled={loading || deleted}
-                >
-                  Download
-                </Button>
+                <DownloadFile attachment={attachment} disabled={deleted} />
               )}
               {!hideDeleteButton && (
                 <Button

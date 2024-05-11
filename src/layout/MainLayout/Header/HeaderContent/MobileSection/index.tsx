@@ -11,7 +11,6 @@ import {
 import { Box } from "@mui/system";
 import React, { useEffect } from "react";
 import Transitions from "../../../../../components/Transitions";
-import Search from "../Search";
 import Profile from "../Profile";
 
 const MobileSection = () => {
@@ -83,7 +82,6 @@ const MobileSection = () => {
               <ClickAwayListener onClickAway={handleClose}>
                 <AppBar color="inherit">
                   <Toolbar>
-                    <Search />
                     <Profile />
                   </Toolbar>
                 </AppBar>
