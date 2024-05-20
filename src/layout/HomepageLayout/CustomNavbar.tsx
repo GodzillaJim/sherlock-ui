@@ -26,7 +26,6 @@ import NextLink from "next/link";
 import LogoAndText from "../../components/common/logos/LogoAndText";
 import NavItem from "./NavItem";
 
-
 const MenuWrapper = styled(Box)(
   ({ theme }) => `
   display: none; 
@@ -75,7 +74,10 @@ const HideOnScroll = ({ children }: Props) => {
   );
 };
 
-const CustomNavbarComponent = (_: unknown, ref: ForwardedRef<HTMLDivElement>) => {
+const CustomNavbarComponent = (
+  _: unknown,
+  ref: ForwardedRef<HTMLDivElement>
+) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [elevate, setElevate] = useState(false);
 
